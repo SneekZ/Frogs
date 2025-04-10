@@ -21,7 +21,7 @@ func NewHandler() (DatabaseHandler, error) {
 	var err error
 	dbPool, err := sql.Open("mysql", dsn)
 	if err != nil {
-		return DatabaseHandler{}, nil
+		return DatabaseHandler{}, err
 	}
 
 	dbPool.SetMaxOpenConns(16)
@@ -45,7 +45,11 @@ func (dh *DatabaseHandler) GetPersonIdsBySnils(snils string) ([]int, error) {
 	if err != nil {
 		return []int{}, err
 	}
-	defer rows.Close()
+	defer func() {
+    if rows != nil {
+        rows.Close()
+    }
+	}()
 	
 	var ids []int
 	for rows.Next() {
@@ -69,8 +73,12 @@ func (dh *DatabaseHandler) GetPersonPasswordsBySnils(snils string) ([]string, er
 	if err != nil {
 		return []string{}, err
 	}
-	defer rows.Close()
-	
+	defer func() {
+    if rows != nil {
+        rows.Close()
+    }
+	}()
+
 	var passwords []string
 	for rows.Next() {
 		var password string 
