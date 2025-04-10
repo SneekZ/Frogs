@@ -23,6 +23,8 @@ func getRedisClient() *redis.Client {
 
 func postMessageIntoChannel(channel, message string) error {
 	client := getRedisClient()
+	defer client.Close()
+
 	ctx := context.Background()
 
 	err := client.Publish(ctx, channel, message).Err()
