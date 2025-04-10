@@ -1,0 +1,220 @@
+host: localhost:6007
+info:
+  contact: {}
+  description: API для работы с подписями
+  title: Frogs GoService API
+  version: alpha 1.0
+paths:
+  /containers:
+    get:
+      consumes:
+      - application/json
+      description: Отдает все контейнеры на сервере
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - containers
+  /containers/install/all:
+    get:
+      consumes:
+      - application/json
+      description: Устанавливает все контейнеры и возвращает их список
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - containers
+  /containers/install/containername/:containername:
+    get:
+      consumes:
+      - application/json
+      description: Устанавливает контейнер по названию и возвращает установленную
+        подпись
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - containers
+  /containers/install/foldername/:foldername:
+    get:
+      consumes:
+      - application/json
+      description: Устанавливает контейнер по названию папки и возвращает установленную
+        подпись
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - containers
+  /download/:filename:
+    get:
+      consumes:
+      - application/json
+      description: Скачивает файл с сервера
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - files
+  /license:
+    get:
+      consumes:
+      - application/json
+      description: Отдает лиценщию
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - license
+  /signs:
+    get:
+      consumes:
+      - application/json
+      description: Отдает все подписи на сервере
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - signs
+  /signs/signdocument:
+    post:
+      consumes:
+      - multipart/form-data
+      description: принимает документ и подпись, возвращает подписанный подписью документ
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - signs
+  /signs/snils/:snils:
+    get:
+      consumes:
+      - application/json
+      description: Отдает все подписи на сервере со снилсом из параметров
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - signs
+  /signs/thumbprint/:thumbprint:
+    get:
+      consumes:
+      - application/json
+      description: Отдает все подписи на сервере по отпечатку из параметров
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - signs
+  /signscheck:
+    get:
+      consumes:
+      - application/json
+      description: Проверяет и отдает все подписи на сервере
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - signs
+  /signscheck/snils/:snils:
+    get:
+      consumes:
+      - application/json
+      description: Проверяет и отдает подпись по снилсу
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - signs
+  /signscheck/thumbprint/:thumbprint:
+    get:
+      consumes:
+      - application/json
+      description: Проверяет и отдает подпись по отпечатку
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - signs
+  /status:
+    get:
+      consumes:
+      - application/json
+      description: Отдает полную информацию о сервере
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - status
+  /upload:
+    get:
+      consumes:
+      - multipart/form-data
+      description: Загружает файл в папку uploads
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - files
+swagger: "2.0"

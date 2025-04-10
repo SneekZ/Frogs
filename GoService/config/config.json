@@ -1,0 +1,38 @@
+{
+  "name": "Городская поликлиника 17",
+  "tags": ["spb", "p17"],
+  "hashname": "9b429100b80e92e15ee39572ed5b329147bd26edefd747d6e57869b4b035eea5",
+  "hashauth": "a14200b64e997208944eda0fd4feada29081d44355aae7f07fbb2e120b508890",
+  "certmgrpath": "/opt/cprocsp/bin/amd64/certmgr",
+  "csptestpath": "/opt/cprocsp/bin/amd64/csptest",
+  "keyspath": "/var/opt/cprocsp/keys/root",
+  "cryptcppath": "/opt/cprocsp/bin/amd64/cryptcp",
+  "cpconfigpath": "/opt/cprocsp/sbin/amd64/cpconfig",
+  "bashtype": "ssh",
+  "sshconnection": {
+    "host": "p17",
+    "port": "22",
+    "user": "root",
+    "password": "shedF34A"
+  },
+  "useredis": false,
+  "redisconnection": {
+    "host": "",
+    "port": "",
+    "password": "",
+    "db": 0
+  },
+  "connectiondata": {
+    "host": "localhost",
+    "port": "6007"
+  },
+  "databaseconnection": {
+    "host": "localhost",
+    "port": "3306",
+    "user": "dbuser",
+    "password": "dbpassword",
+    "database": "s11"
+  },
+  "maxflows": 20,
+  "env": "debug"
+}
