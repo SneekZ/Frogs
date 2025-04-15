@@ -20,8 +20,6 @@ type BashHandlerWrapper struct {
 func (bhw *BashHandlerWrapper) Exec(command string) (string, error) {
 	stdout, stderr, err := bhw.BashHandler.Exec(command)
 
-	fmt.Println(bhw.UseStdOutAsStdErr)
-
 	if err != nil {
 			switch bhw.UseStdOutAsStdErr {
 		case true:
