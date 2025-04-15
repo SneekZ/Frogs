@@ -20,6 +20,8 @@ type BashHandlerWrapper struct {
 func (bhw *BashHandlerWrapper) Exec(command string) (string, error) {
 	stdout, stderr, err := bhw.BashHandler.Exec(command)
 
+	fmt.Println(bhw.UseStdOutAsStdErr)
+
 	if err != nil {
 			switch bhw.UseStdOutAsStdErr {
 		case true:
@@ -29,12 +31,7 @@ func (bhw *BashHandlerWrapper) Exec(command string) (string, error) {
 	}
 	}
 
-	switch bhw.UseStdOutAsStdErr {
-	case true:
-		return bhw.ToEncoding(stdout), nil
-	default:
-		return bhw.ToEncoding(stderr), nil
-	}
+	return bhw.ToEncoding(stdout), nil
 }
 
 func NewBashHandlerWrapper(encoding string, useStdOutAsStdErr bool) (*BashHandlerWrapper, error) {
