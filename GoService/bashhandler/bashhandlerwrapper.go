@@ -21,7 +21,7 @@ func (bhw *BashHandlerWrapper) Exec(command string) (string, error) {
 	stdout, stderr, err := bhw.BashHandler.Exec(command)
 
 	if err != nil {
-			switch bhw.UseStdOutAsStdErr {
+		switch bhw.UseStdOutAsStdErr {
 		case true:
 			return "", fmt.Errorf("%s", bhw.ToEncoding(stdout)) 
 		default:

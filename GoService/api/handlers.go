@@ -1,6 +1,7 @@
 package api
 
 import (
+	"GoService/errorcodes"
 	"GoService/handlers"
 	"GoService/parser"
 	"fmt"
@@ -330,6 +331,8 @@ func GetInstallAllContainers(c *gin.Context) {
 
 type SignDocumentRequest struct {
 	Thumbprint string `form:"thumbprint" json:"thumbprint"`
+	FindPassword bool `form:"findpassword" json:"findpassword"`
+	Password string `form:"password" json:"password"`
 }
 
 // PostSignDocument принимает документ и подпись, возвращает подписанный подписью документ
@@ -371,18 +374,36 @@ func PostSignDocument(c *gin.Context) {
 	}
 
 	if len(sign) != 1 {
-		response.Error = fmt.Sprintf("найдено %d подписей, должно было найти ровно 1", len(sign))	
-	}
-
-	checkedSign, err := handlers.CheckSignsList(sign)
-	if err != nil {
-		response.Error = err.Error()
+		response.Error = fmt.Sprintf("найдено %d подписей, должно было найти ровно 1", len(sign))
 		c.JSON(http.StatusBadRequest, response)
+		return	
 	}
 
-	_, err = handlers.SignDocument(checkedSign[0], uploadedFilePath, checkedSign[0].Password)
+	if signDocumentRequest.FindPassword {
+		checkedSign, err := handlers.CheckSignsList(sign)
+		if err != nil {
+			response.Error = err.Error()
+			c.JSON(http.StatusBadRequest, response)
+			return
+		}
+
+		_, err = handlers.SignDocument(checkedSign[0], uploadedFilePath, checkedSign[0].Password)
+		if err != nil {
+			response.Error = errorcodes.GetErrorCode(err.Error())
+			c.JSON(http.StatusBadRequest, response)
+			return
+		}
+	} else {
+		_, err = handlers.SignDocument(sign[0], uploadedFilePath, signDocumentRequest.Password)
+		if err != nil {
+			response.Error = errorcodes.GetErrorCode(err.Error())
+			c.JSON(http.StatusBadRequest, response)
+			return
+		}
+	}
+
 	if err != nil {
-		response.Error = err.Error()
+		response.Error = errorcodes.GetErrorCode(err.Error())
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -394,8 +415,8 @@ func PostSignDocument(c *gin.Context) {
 	}
 
 	c.File(file.Filename + ".sgn")
-	_ = os.Remove(file.Filename + ".sgn")
-	_ = os.Remove("uploads/" + file.Filename)
+	os.Remove(file.Filename + ".sgn")
+	os.Remove("uploads/" + file.Filename)
 }
 
 // DeleteSignByThumbprint принимает thumbprint и удаляет подпись по нему

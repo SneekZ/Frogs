@@ -10,7 +10,7 @@
   "cpconfigpath": "/opt/cprocsp/sbin/amd64/cpconfig",
   "bashtype": "ssh",
   "sshconnection": {
-    "host": "p17",
+    "host": "p51vms",
     "port": "22",
     "user": "root",
     "password": "shedF34A"
@@ -33,6 +33,6 @@
     "password": "dbpassword",
     "database": "s11"
   },
-  "maxflows": 20,
+  "maxflows": 1,
   "env": "debug"
 }
