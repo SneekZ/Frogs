@@ -1,6 +1,7 @@
 package api
 
 import (
+	"GoService/databasehandler"
 	"GoService/errorcodes"
 	"GoService/handlers"
 	"GoService/parser"
@@ -11,6 +12,30 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+// Ping пингует сервер
+// @Description Пингует сервер
+// @Tags config
+// @Accept json
+// @Produce json
+// @Success 200 {string} Status
+// @Router /ping [get]
+func GetPing(c *gin.Context) {
+	c.JSON(http.StatusOK, Response{})
+}
+
+// GetConfig отдает базовуюинформацию о сервере
+// @Description Отдает базовую информацию о сервере
+// @Tags config
+// @Accept json
+// @Produce json
+// @Success 200 {string} Status
+// @Router /config [get]
+func GetConfig(c *gin.Context) {
+	response := NewResponse()
+
+	c.JSON(http.StatusOK, response)
+}
 
 // GetStatus отдает полную информацию о сервере
 // @Description Отдает полную информацию о сервере
@@ -454,6 +479,38 @@ func DeleteSignByThumbprint(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// func PostLicense(c *gin.Context) {
-// 	licenseKey := c.Param("licenseKey")
-// }
+type ChangePasswordRequest struct {
+	Snils string `json:"snils"`
+	Password string `json:"password"`
+}
+
+// PostChangePassword принимает снилс и пароль, меняет в базе пароль у всех пользователей с этимм снилсом
+// @Description Принимает снилс и пароль, меняет в базе пароль у всех пользователей с этимм снилсом
+// @Tags password
+// @Accept json
+// @Produce json
+// @Success 200 {string} Status
+// @Router /changepassword [post]
+func PostChangePassword(c *gin.Context) {
+	response := Response{} 
+
+	var request = ChangePasswordRequest{}
+
+	c.ShouldBindBodyWithJSON(&request)
+
+	db, err := databasehandler.NewHandler()
+	if err != nil {
+		response.Error = err.Error()
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	err = db.ChangePassword(request.Snils, request.Password)
+	if err != nil {
+		response.Error = err.Error()
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}

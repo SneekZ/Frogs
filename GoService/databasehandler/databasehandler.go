@@ -106,7 +106,21 @@ func (dh *DatabaseHandler) GetPersonPasswordsBySnils(snils string) ([]string, er
 	}
 
 	return unique, nil
-} 
+}
+
+func (dh *DatabaseHandler) ChangePassword(snils, password string) error {
+	query := "UPDATE Person SET ecp_password = ? where snils = ?"
+
+	encryptedPassword, err := EncryptPassword(password)
+	if err != nil {
+		return err
+	}
+
+	_, err = dh.dbPool.Exec(query, encryptedPassword, snils)
+
+	return err
+}
+
 
 func (dh *DatabaseHandler) getRows(query string, params ...any) (*sql.Rows, error) {
 	rows, err := dh.dbPool.Query(query, params...)
