@@ -5,6 +5,7 @@ import (
 	"GoService/errorcodes"
 	"GoService/handlers"
 	"GoService/parser"
+	"GoService/utils"
 	"fmt"
 	"net/http"
 	"os"
@@ -21,6 +22,15 @@ import (
 // @Success 200 {string} Status
 // @Router /ping [get]
 func GetPing(c *gin.Context) {
+	response := Response{}
+	authHeader := c.GetHeader("Authorization")
+
+	if utils.HashSHA256(authHeader) != Config.HashAuth {
+		response.Error = "неверный токен авторизации"
+		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		return
+	}
+
 	c.JSON(http.StatusOK, Response{})
 }
 
