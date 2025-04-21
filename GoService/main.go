@@ -52,6 +52,8 @@ func main() {
     os.MkdirAll("uploads", os.ModePerm)
 
 
+    r.GET("/ping", api.GetPing)
+    r.GET("/config", api.GetConfig)
     r.GET("/status", api.GetStatus)
 
     r.GET("/signs", api.GetSigns)
@@ -74,6 +76,8 @@ func main() {
     r.GET("/containers/install/foldername/:foldername", api.GetInstallContainerFolderName)
     r.GET("/containers/install/containername/:containername", api.GetInstallContainerName)
     r.GET("/containers/install/all", api.GetInstallAllContainers)
+
+    r.POST("/changepassword", api.PostChangePassword)
 
     r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
