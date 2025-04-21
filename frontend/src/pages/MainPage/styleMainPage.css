@@ -1,0 +1,20 @@
+:root {
+  --cols: 10;
+  --rows: 10;
+  --gutter-cols: 40px;
+  --gutter-rows: 20px;
+}
+
+.main-container {
+  width: 100%;
+  height: 100vh;
+
+  background-color: #202020;
+  padding: 40px;
+
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  column-gap: var(--gutter-cols);
+  grid-template-rows: repeat(var(--rows), 1fr);
+  row-gap: var(--gutter-rows);
+}

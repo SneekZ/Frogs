@@ -1,0 +1,110 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 2;
+  font-size: large;
+  font-weight: 400;
+
+  padding: 0;
+  margin: 0;
+
+  color: white;
+
+  --transition-lenght: 0.2s;
+  --hover-color: #eaeaea;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.default-hover {
+  background-color: #3b3b3b;
+  border-radius: 17px;
+
+  transition: background-color ease-in-out var(--transition-lenght);
+  transition: color ease-in-out var(--transition-lenght - 0.2s);
+}
+
+.default-hover:hover {
+  background-color: var(--hover-color);
+  color: black;
+}
+
+.default-button {
+  background-color: #3b3b3b;
+  border-radius: 17px;
+
+  justify-items: center;
+  align-content: center;
+
+  cursor: pointer;
+
+  transition: background-color ease-in-out var(--transition-lenght);
+  transition: color ease-in-out var(--transition-lenght - 0.2s);
+}
+
+.default-button:hover {
+  background-color: var(--hover-color);
+  color: black;
+}
+
+.default-button-disabled {
+  background-color: #3b3b3b;
+  border-radius: 17px;
+
+  justify-items: center;
+  align-content: center;
+  /* Отключаем любые клики/ховеры */
+  pointer-events: none;
+
+  /* Снижаем яркость */
+  opacity: 0.6;
+
+  /* Курсор показывать не‑кликабельным */
+  cursor: not-allowed;
+}
+
+.default-input {
+  background-color: #3b3b3b;
+  border-radius: 17px;
+
+  justify-items: center;
+  align-content: center;
+
+  cursor: pointer;
+
+  transition: background-color ease-in-out var(--transition-lenght);
+  transition: color ease-in-out var(--transition-lenght - 0.2s);
+}
+
+.default-input:hover {
+  background-color: var(--hover-color);
+}
+
+.default-container {
+  background-color: #3b3b3b;
+  border-radius: 17px;
+
+  overflow-y: scroll;
+
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
+
+  /* IE 10+ */
+  -ms-overflow-style: none;
+}
+
+/* WebKit (Chrome, Safari, Edge Chromium) */
+.default-container::-webkit-scrollbar {
+  display: none;
+}
