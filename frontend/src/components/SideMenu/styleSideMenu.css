@@ -40,14 +40,12 @@
   cursor: pointer;
 
   padding-left: 20px;
-  /* padding-right: 20px; */
 }
 
 .side-menu-list-item-button {
   margin-left: auto;
   margin-right: 10px;
 
-  /* вот тут резервируем место под «пилюлю» */
   padding: 0 10px;
   margin-top: 2px;
   margin-bottom: 2px;

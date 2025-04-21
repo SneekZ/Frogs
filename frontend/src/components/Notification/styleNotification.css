@@ -1,0 +1,43 @@
+.notification {
+  position: fixed;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  max-width: 300px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.notification.visible {
+  top: 20px;
+  opacity: 1;
+}
+
+.notification.expanded {
+  max-width: 500px;
+  white-space: normal;
+}
+
+.notification-message {
+  font-weight: bold;
+}
+
+.notification-details {
+  margin-top: 8px;
+  font-size: 0.9em;
+  opacity: 0.8;
+  display: none;
+}
+
+.notification.expanded .notification-details {
+  display: block;
+}
