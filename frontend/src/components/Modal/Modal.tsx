@@ -3,10 +3,10 @@ import ReactDOM from "react-dom";
 import "./Modal.css";
 
 interface ModalProps {
-  isOpen: boolean; // флаг, открыт ли модал
-  onClose: () => void; // функция для закрытия
+  isOpen: boolean;
+  onClose: () => void;
   title: string;
-  children: ReactNode; // любой JSX‑контент внутри модала
+  children: ReactNode;
 }
 
 const Modal: FC<ModalProps> = ({ isOpen, onClose, title, children }) => {

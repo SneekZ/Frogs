@@ -20,30 +20,6 @@
 
 .side-menu-search {
   grid-row: 2 / 3;
-
-  display: flex;
-}
-
-.side-menu-search-input {
-  flex: 1;
-  border: none;
-  outline: none;
-  background-color: transparent;
-  margin-left: 20px;
-  margin-right: 20px;
-
-  font-size: large;
-  color: white;
-
-  transition: color ease-in-out var(--transition-lenght);
-
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-.side-menu-search-input:hover {
-  color: black;
 }
 
 .side-menu-list-container {

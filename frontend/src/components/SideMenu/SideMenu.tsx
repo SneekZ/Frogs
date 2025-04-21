@@ -7,8 +7,10 @@ import {
   loadConnections,
   updateConnection,
 } from "../../api/ConnectionsHandler";
-import Modal from "../Utils/Modal";
+import Modal from "../Modal/Modal";
 import { PingError } from "../../api/handlers/Ping";
+import FrogsButton from "../Button/Button";
+import FrogsInput from "../Input/Input";
 
 export default function SideMenu() {
   const [serverConnections, setServerConnections] = useState<
@@ -40,11 +42,7 @@ export default function SideMenu() {
 }
 
 function SideMenuButton() {
-  return (
-    <div className="default-button side-menu-button">
-      <div>Список серверов</div>
-    </div>
-  );
+  return <FrogsButton label="Список серверов" className="side-menu-button" />;
 }
 
 interface SideMenuSearchProps {
@@ -69,13 +67,11 @@ const SideMenuSearch: FC<SideMenuSearchProps> = ({ allConns, setConns }) => {
   };
 
   return (
-    <div className="default-input side-menu-search">
-      <input
-        className="side-menu-search-input"
-        placeholder="Поиск по названию..."
-        onChange={(e) => search(e)}
-      />
-    </div>
+    <FrogsInput
+      className="side-menu-search"
+      placeholder="Поиск по названию..."
+      onChange={(e) => search(e)}
+    />
   );
 };
 
@@ -169,19 +165,14 @@ const SideMenuListItem: FC<SideMenuListItemProps> = ({ conn }) => {
             }}
           >
             <span>Название:</span>
-            <div
-              className="default-input"
-              style={{
-                marginLeft: "auto",
-              }}
-            >
-              <input
-                className="side-menu-search-input"
-                defaultValue={conn.name}
-                ref={nameRef}
-              />
-            </div>
+            <FrogsInput
+              defaultValue={conn.name}
+              ref={nameRef}
+              style={{ marginLeft: "auto" }}
+              placeholder="Введите название"
+            />
           </div>
+
           <div
             style={{
               display: "flex",
@@ -191,19 +182,14 @@ const SideMenuListItem: FC<SideMenuListItemProps> = ({ conn }) => {
             }}
           >
             <span>Адрес:</span>
-            <div
-              className="default-input"
-              style={{
-                marginLeft: "auto",
-              }}
-            >
-              <input
-                className="side-menu-search-input"
-                defaultValue={conn.host}
-                ref={hostRef}
-              />
-            </div>
+            <FrogsInput
+              defaultValue={conn.host}
+              ref={hostRef}
+              style={{ marginLeft: "auto" }}
+              placeholder="Введите адрес сервера"
+            />
           </div>
+
           <div
             style={{
               display: "flex",
@@ -213,19 +199,14 @@ const SideMenuListItem: FC<SideMenuListItemProps> = ({ conn }) => {
             }}
           >
             <span>Порт:</span>
-            <div
-              className="default-input"
-              style={{
-                marginLeft: "auto",
-              }}
-            >
-              <input
-                className="side-menu-search-input"
-                defaultValue={conn.port}
-                ref={portRef}
-              />
-            </div>
+            <FrogsInput
+              defaultValue={conn.port}
+              ref={portRef}
+              style={{ marginLeft: "auto" }}
+              placeholder="Введите порт сервиса"
+            />
           </div>
+
           <div
             style={{
               display: "flex",
@@ -235,19 +216,13 @@ const SideMenuListItem: FC<SideMenuListItemProps> = ({ conn }) => {
             }}
           >
             <span>Пароль:</span>
-            <div
-              className="default-input"
-              style={{
-                marginLeft: "auto",
-              }}
-            >
-              <input
-                className="side-menu-search-input"
-                type="password"
-                defaultValue={conn.password}
-                ref={passwordRef}
-              />
-            </div>
+            <FrogsInput
+              type="password"
+              defaultValue={conn.password}
+              ref={passwordRef}
+              style={{ marginLeft: "auto" }}
+              placeholder="Введите пароль сервиса"
+            />
           </div>
           <div
             style={{
@@ -257,31 +232,13 @@ const SideMenuListItem: FC<SideMenuListItemProps> = ({ conn }) => {
               gap: "8px",
             }}
           >
-            <div
-              className={loading ? "default-button-disabled" : "default-button"}
-              style={{
-                backgroundColor: checkColor,
-                color: "white",
-                fontSize: 16,
-                paddingLeft: "8px",
-                paddingRight: "8px",
-              }}
+            <FrogsButton
+              label="Проверить подключение"
+              loading={loading}
+              style={{ backgroundColor: checkColor }}
               onClick={() => checkConnection()}
-              aria-disabled={loading}
-            >
-              <div>Проверить подключение</div>
-            </div>
-            <div
-              className="default-button"
-              style={{
-                fontSize: 16,
-                paddingLeft: "8px",
-                paddingRight: "8px",
-              }}
-              onClick={() => saveConnection()}
-            >
-              <div>Сохранить</div>
-            </div>
+            />
+            <FrogsButton label="Сохранить" onClick={() => saveConnection()} />
           </div>
         </div>
       </Modal>

@@ -8,8 +8,9 @@
   margin: 0;
 
   color: white;
+  background-color: #202020;
 
-  --transition-lenght: 0.2s;
+  --transition-length: 0.2s;
   --hover-color: #eaeaea;
 }
 
@@ -31,64 +32,13 @@ body,
   background-color: #3b3b3b;
   border-radius: 17px;
 
-  transition: background-color ease-in-out var(--transition-lenght);
-  transition: color ease-in-out var(--transition-lenght - 0.2s);
+  transition: background-color ease-in-out var(--transition-length);
+  transition: color ease-in-out var(--transition-length - 0.2s);
 }
 
 .default-hover:hover {
   background-color: var(--hover-color);
   color: black;
-}
-
-.default-button {
-  background-color: #3b3b3b;
-  border-radius: 17px;
-
-  justify-items: center;
-  align-content: center;
-
-  cursor: pointer;
-
-  transition: background-color ease-in-out var(--transition-lenght);
-  transition: color ease-in-out var(--transition-lenght - 0.2s);
-}
-
-.default-button:hover {
-  background-color: var(--hover-color);
-  color: black;
-}
-
-.default-button-disabled {
-  background-color: #3b3b3b;
-  border-radius: 17px;
-
-  justify-items: center;
-  align-content: center;
-  /* Отключаем любые клики/ховеры */
-  pointer-events: none;
-
-  /* Снижаем яркость */
-  opacity: 0.6;
-
-  /* Курсор показывать не‑кликабельным */
-  cursor: not-allowed;
-}
-
-.default-input {
-  background-color: #3b3b3b;
-  border-radius: 17px;
-
-  justify-items: center;
-  align-content: center;
-
-  cursor: pointer;
-
-  transition: background-color ease-in-out var(--transition-lenght);
-  transition: color ease-in-out var(--transition-lenght - 0.2s);
-}
-
-.default-input:hover {
-  background-color: var(--hover-color);
 }
 
 .default-container {
