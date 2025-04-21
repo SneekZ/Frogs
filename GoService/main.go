@@ -38,13 +38,14 @@ func main() {
         gin.SetMode(gin.ReleaseMode)
     }
 
-    corsConfig := cors.Config{
-        AllowAllOrigins: true,
-        AllowMethods: []string{"GET", "POST", "DELETE"},
-        ExposeHeaders: []string{"Content-Length"},
+   corsConfig := cors.Config{
+        AllowOrigins:     []string{"*"},
+        AllowMethods:     []string{"GET", "POST", "DELETE", "OPTIONS"},
+        AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+        ExposeHeaders:    []string{"Content-Length"},
         AllowCredentials: true,
-        MaxAge: 12 * time.Hour,
-    }
+        MaxAge:           12 * time.Hour,
+    } 
 
     r.Use(cors.New(corsConfig))
     r.Use(api.MiddleWare)
