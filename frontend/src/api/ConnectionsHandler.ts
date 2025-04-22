@@ -40,11 +40,13 @@ export function deleteConnection(id: number): boolean {
 }
 
 interface ConnectionsContextType {
+  list: ServerConnection[];
   depend: number;
   changeDepend: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const ConnectionsContext = createContext<ConnectionsContextType>({
+  list: [],
   depend: 0,
   changeDepend: () => {},
 });

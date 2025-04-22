@@ -5,10 +5,11 @@ import { useState } from "react";
 
 export default function MainPage() {
   const [depend, changeDepend] = useState(0);
+  const [list, setList] = useState([]);
 
   return (
     <div className="main-container">
-      <ConnectionsContext.Provider value={{ depend, changeDepend }}>
+      <ConnectionsContext.Provider value={{ list, depend, changeDepend }}>
         <SideMenu />
       </ConnectionsContext.Provider>
     </div>
