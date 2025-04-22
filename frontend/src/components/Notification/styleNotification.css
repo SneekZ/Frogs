@@ -1,43 +1,195 @@
 .notification {
   position: fixed;
+  display: flex;
+  flex-direction: column;
   top: -100px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 12px 24px;
+  background-color: #272626;
+  padding: 12px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
+  box-shadow: 2px 6px 8px rgba(0, 0, 0, 0.35);
+  min-width: 300px;
+  min-height: 50px;
   opacity: 0;
-  transition: all 0.3s ease;
-  max-width: 300px;
+  align-items: center;
+  justify-content: center;
+  font-size: large;
+  font-weight: 600;
+}
+
+.show {
+  animation: showNotification 0.5s ease-in-out forwards;
+}
+
+.hide {
+  animation: hideNotification 0.3s ease-in-out forwards;
+}
+
+.message {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  font-size: medium;
+  font-weight: 200;
+  color: white;
+}
+.expanded {
+  animation: expandNotification 0.4s ease forwards;
 }
 
-.notification.visible {
-  top: 20px;
-  opacity: 1;
+.collapsed {
+  animation: collapseNotification 0.3s ease forwards;
 }
 
-.notification.expanded {
-  max-width: 500px;
-  white-space: normal;
+@keyframes showNotification {
+  0% {
+    opacity: 0;
+    top: -100px;
+  }
+  60% {
+    opacity: 0.8;
+    top: 35px;
+  }
+  75% {
+    opacity: 1;
+    top: 15px;
+  }
+  85% {
+    opacity: 1;
+    top: 25px;
+  }
+  95% {
+    opacity: 1;
+    top: 18px;
+  }
+  100% {
+    opacity: 1;
+    top: 20px;
+  }
 }
 
-.notification-message {
-  font-weight: bold;
+@keyframes hideNotification {
+  from {
+    opacity: 1;
+    top: 20px;
+  }
+  to {
+    opacity: 0;
+    top: -100px;
+  }
 }
 
-.notification-details {
-  margin-top: 8px;
-  font-size: 0.9em;
-  opacity: 0.8;
-  display: none;
+@keyframes expandNotification {
+  0% {
+    max-width: 0px;
+    max-height: 0px;
+    opacity: 0;
+    margin-top: 0px;
+  }
+  12.5% {
+    max-width: 125px;
+    max-height: 37.5px;
+    opacity: 0.125;
+    margin-top: 6px;
+  }
+  25% {
+    max-width: 250px;
+    max-height: 75px;
+    opacity: 0.25;
+    margin-top: 12px;
+  }
+  37.5% {
+    max-width: 375px;
+    max-height: 112.5px;
+    opacity: 0.375;
+    margin-top: 12px;
+  }
+  50% {
+    max-width: 500px;
+    max-height: 150px;
+    opacity: 0.5;
+    margin-top: 12px;
+  }
+  62.5% {
+    max-width: 625px;
+    max-height: 187.5px;
+    opacity: 0.625;
+    margin-top: 12px;
+  }
+  75% {
+    max-width: 750px;
+    max-height: 225px;
+    opacity: 0.75;
+    margin-top: 12px;
+  }
+  87.5% {
+    max-width: 875px;
+    max-height: 262.5px;
+    opacity: 0.875;
+    margin-top: 12px;
+  }
+  100% {
+    max-width: 1000px;
+    max-height: 300px;
+    opacity: 1;
+    margin-top: 12px;
+  }
 }
 
-.notification.expanded .notification-details {
-  display: block;
+@keyframes collapseNotification {
+  0% {
+    max-width: 1000px;
+    max-height: 300px;
+    opacity: 1;
+    margin-top: 12px;
+  }
+  12.5% {
+    max-width: 875px;
+    max-height: 262.5px;
+    opacity: 0.875;
+    margin-top: 12px;
+  }
+  25% {
+    max-width: 750px;
+    max-height: 225px;
+    opacity: 0.75;
+    margin-top: 12px;
+  }
+  37.5% {
+    max-width: 625px;
+    max-height: 187.5px;
+    opacity: 0.625;
+    margin-top: 12px;
+  }
+  50% {
+    max-width: 500px;
+    max-height: 150px;
+    opacity: 0.5;
+    margin-top: 12px;
+  }
+  62.5% {
+    max-width: 375px;
+    max-height: 112.5px;
+    opacity: 0.375;
+    margin-top: 12px;
+  }
+  75% {
+    max-width: 250px;
+    max-height: 75px;
+    opacity: 0.25;
+    margin-top: 12px;
+  }
+  87.5% {
+    max-width: 125px;
+    max-height: 37.5px;
+    opacity: 0.125;
+    margin-top: 6px;
+  }
+  100% {
+    max-width: 0px;
+    max-height: 0px;
+    opacity: 0;
+    margin-top: 0px;
+  }
 }

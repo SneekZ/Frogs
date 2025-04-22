@@ -1,5 +1,10 @@
 import MainPage from "./pages/MainPage/MainPage";
+import { NotificationContextProvider } from "./components/Notification/NotificationContextProvider";
 
 export default function App() {
-  return <MainPage />;
+  return (
+    <NotificationContextProvider>
+      <MainPage />
+    </NotificationContextProvider>
+  );
 }

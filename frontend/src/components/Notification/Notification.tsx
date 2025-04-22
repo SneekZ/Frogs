@@ -1,86 +1,81 @@
-import React, { useState, useEffect, useRef } from "react";
-import "./Notification.css";
+import "./styleNotification.css";
+import { FC, useState, useEffect, useRef } from "react";
+import { useNotificationTimer } from "../../utils/Timer";
 
 interface NotificationProps {
-  message: string;
-  details?: string;
-  duration?: number;
+  tick: boolean;
+  type?: string;
+  message?: string;
 }
 
-export const Notification: React.FC<NotificationProps> = ({
+export const Notification: FC<NotificationProps> = ({
+  tick,
+  type = "success",
   message,
-  details,
-  duration = 5000,
 }) => {
-  const [visible, setVisible] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout>(duration);
+  const [expanded, setExpanded] = useState(false);
+  const [hidden, setHidden] = useState(true);
+  const [title, setTitle] = useState("");
+  const [color, setColor] = useState("");
 
-  const show = () => {
-    setVisible(true);
-    startTimer();
-  };
+  const isFirstRender = useRef(true);
 
-  const hide = () => {
-    setVisible(false);
-  };
-
-  const startTimer = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    timerRef.current = setTimeout(hide, duration);
-  };
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    startTimer();
-  };
+  const { pause, resume, reset } = useNotificationTimer(3, () => {
+    setHidden(true);
+  });
 
   useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
+    switch (type) {
+      case "success":
+        setTitle("Success");
+        setColor("#70ff70");
+        break;
 
-  // Функция для внешнего вызова
-  const showNotification = () => {
-    show();
-  };
+      case "error":
+        setTitle("Error");
+        setColor("#ff7070");
+        break;
 
-  if (!visible) return null;
+      case "warning":
+        setTitle("Warning");
+        setColor("#ffff70");
+        break;
+
+      default:
+        setTitle("Message");
+        setColor("#ffffff");
+        break;
+    }
+  }, [type]);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    setHidden(false);
+    reset();
+  }, [tick, reset]);
 
   return (
     <div
-      className={`notification ${isHovered ? "expanded" : ""}`}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      className={`notification ${hidden ? "hide" : "show"}`}
+      style={{ color: color }}
+      onMouseOver={() => {
+        setExpanded(true);
+        pause();
+      }}
+      onMouseLeave={() => {
+        setExpanded(false);
+        resume();
+      }}
     >
-      <div className="notification-content">
-        <div className="notification-message">{message}</div>
-        {details && <div className="notification-details">{details}</div>}
+      <span style={{ marginBottom: "auto" }}>{title}</span>
+
+      <div className={`message ${expanded ? "expanded" : "collapsed"}`}>
+        {message}
       </div>
     </div>
   );
-};
-
-// Экспортируем функцию для вызова уведомления
-export const notify = (
-  message: string,
-  details?: string,
-  duration?: number
-) => {
-  // В реальном приложении здесь будет логика рендеринга Notification
-  // Например, через портал или глобальный state
-  console.log("Notification:", message, details);
-  // Это заглушка - в реальном коде нужно реализовать отображение
 };

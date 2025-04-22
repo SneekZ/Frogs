@@ -13,13 +13,16 @@
   border-radius: 17px;
   cursor: pointer;
 
+  padding-left: 10px;
+  padding-right: 10px;
+
   transition: background-color 0.3s ease-in-out, color 0.1s ease-in-out,
     font-size 0.3s ease-in-out;
 }
 
 .button:hover {
-  background-color: var(--hover-color);
-  color: black;
+  background-color: var(--hover-color) !important;
+  color: black !important;
 }
 
 .button:focus {
