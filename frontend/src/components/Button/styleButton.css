@@ -31,7 +31,7 @@
 }
 
 .loading {
-  font-size: small;
+  font-size: medium;
   pointer-events: none;
   cursor: not-allowed;
   animation: softBlink 2s ease-in-out infinite;

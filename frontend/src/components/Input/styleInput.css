@@ -14,7 +14,7 @@
   padding-top: 4px;
   padding-bottom: 4px;
 
-  transition: background-color ease-in-out 0.3s border-color ease-in-out 0.3s;
+  transition: background-color ease-in-out 0.3s, border-color ease-in-out 0.3s;
 }
 
 .input-container:hover {
@@ -40,7 +40,7 @@
   font-size: large;
   color: white;
 
-  transition: color ease-in-out 0.1s;
+  transition: color ease-in-out 0.3s;
 
   -webkit-appearance: none;
   -moz-appearance: none;

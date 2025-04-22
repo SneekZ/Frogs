@@ -11,7 +11,6 @@ import Modal from "../Modal/Modal";
 import { PingError } from "../../api/handlers/Ping";
 import FrogsButton from "../Button/Button";
 import FrogsInput from "../Input/Input";
-import { NotificationContext } from "../Notification/NotificationContext";
 
 export default function SideMenu() {
   const [serverConnections, setServerConnections] = useState<
@@ -43,14 +42,7 @@ export default function SideMenu() {
 }
 
 function SideMenuButton() {
-  const { Notify } = useContext(NotificationContext);
-  return (
-    <FrogsButton
-      label="Список серверов"
-      className="side-menu-button"
-      onClick={() => Notify({ type: "success", message: "hello" })}
-    />
-  );
+  return <FrogsButton label="Список серверов" className="side-menu-button" />;
 }
 
 interface SideMenuSearchProps {
