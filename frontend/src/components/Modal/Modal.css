@@ -15,7 +15,7 @@
   position: relative;
   background-color: #202020;
   border-radius: 17px;
-  padding: 16px;
+  padding: 24px;
   max-width: 500px;
   width: 90%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -23,7 +23,7 @@
 
 .modal-close {
   position: absolute;
-  color: white;
+  color: rgba(255, 255, 255, 0.8);
   top: 12px;
   right: 12px;
   background: transparent;
@@ -42,4 +42,23 @@
   border: none;
   font-size: 24px;
   line-height: 1;
+}
+
+.divider-container {
+  height: 52px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.divider {
+  border: none; /* Убираем стандартную рамку */
+  height: 1px; /* Толщина линии */
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #4d4d4d,
+    transparent
+  ); /* Градиент */
+  margin: 12px; /* Отступы */
 }

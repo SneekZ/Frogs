@@ -1,42 +1,24 @@
-import { FC, useState, useEffect, useRef, useContext } from "react";
+import { FC, useState, useRef, useContext } from "react";
 import "./styleSideMenu.css";
-import "../../api/ConnectionsHandler";
 import { ServerConnection } from "../../structures/ServerConnection";
-import {
-  ConnectionsContext,
-  loadConnections,
-  updateConnection,
-} from "../../api/ConnectionsHandler";
+import { ConnectionsContext } from "../../api/Connections/ConnectionsHandler";
 import Modal from "../Modal/Modal";
 import { PingError } from "../../api/handlers/Ping";
 import FrogsButton from "../Button/Button";
 import FrogsInput from "../Input/Input";
+import ConnectionModal from "../Modal/ConnectionModal/ConnectionModal";
 
 export default function SideMenu() {
-  const [serverConnections, setServerConnections] = useState<
-    ServerConnection[]
-  >([]);
-
   const [searchServerConnections, setSearchServerConnections] = useState<
     ServerConnection[]
   >([]);
 
-  const { depend } = useContext(ConnectionsContext);
-
-  useEffect(() => {
-    const conns = loadConnections();
-    setServerConnections(conns);
-    setSearchServerConnections(conns);
-  }, [depend]);
-
   return (
     <div className="side-menu-container">
       <SideMenuButton />
-      <SideMenuSearch
-        allConns={serverConnections}
-        setConns={setSearchServerConnections}
-      />
+      <SideMenuSearch setConns={setSearchServerConnections} />
       <SideMenuList conns={searchServerConnections} />
+      <SideMenuAddItem />
     </div>
   );
 }
@@ -46,20 +28,20 @@ function SideMenuButton() {
 }
 
 interface SideMenuSearchProps {
-  allConns: ServerConnection[];
   setConns: React.Dispatch<React.SetStateAction<ServerConnection[]>>;
 }
 
-const SideMenuSearch: FC<SideMenuSearchProps> = ({ allConns, setConns }) => {
+const SideMenuSearch: FC<SideMenuSearchProps> = ({ setConns }) => {
+  const { listConnections } = useContext(ConnectionsContext);
   const search = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value.toLowerCase();
 
     if (!term) {
-      setConns(allConns);
+      setConns(listConnections);
       return;
     }
 
-    const searchedConns = allConns.filter((item) =>
+    const searchedConns = listConnections.filter((item) =>
       item.name.toLowerCase().includes(term)
     );
 
@@ -104,7 +86,7 @@ const SideMenuListItem: FC<SideMenuListItemProps> = ({ conn }) => {
   const [checkColor, setCheckColor] = useState("#303030");
 
   const [loading, setLoading] = useState(false);
-  const { changeDepend } = useContext(ConnectionsContext);
+  const { updateConnection } = useContext(ConnectionsContext);
 
   const checkConnection = () => {
     const newConnection = {
@@ -113,6 +95,7 @@ const SideMenuListItem: FC<SideMenuListItemProps> = ({ conn }) => {
       port: portRef.current?.value ?? "",
       name: nameRef.current?.value ?? "",
       password: passwordRef.current?.value ?? "",
+      starred: false,
     };
 
     setLoading(true);
@@ -134,10 +117,10 @@ const SideMenuListItem: FC<SideMenuListItemProps> = ({ conn }) => {
       port: portRef.current?.value ?? "",
       name: nameRef.current?.value ?? "",
       password: passwordRef.current?.value ?? "",
+      starred: false,
     };
 
     updateConnection(newConnection);
-    changeDepend((t) => t + 1);
     setModalOpen(false);
   };
 
@@ -250,5 +233,20 @@ const SideMenuListItem: FC<SideMenuListItemProps> = ({ conn }) => {
         </div>
       </Modal>
     </div>
+  );
+};
+
+const SideMenuAddItem = () => {
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  return (
+    <>
+      <FrogsButton
+        label="Добавить сервер"
+        className="side-menu-add-item-button"
+        onClick={() => setModalOpen(true)}
+      />
+      <ConnectionModal isOpen={isModalOpen} setOpen={setModalOpen} />
+    </>
   );
 };

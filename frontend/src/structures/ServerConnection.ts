@@ -4,4 +4,5 @@ export interface ServerConnection {
   host: string;
   port: string;
   password: string;
+  starred: boolean;
 }

@@ -1,5 +1,5 @@
 import { ServerConnection } from "../structures/ServerConnection";
-import { loadConnections } from "./ConnectionsHandler";
+import { loadConnections } from "./Connections/ConnectionsHandler";
 import { Response } from "../structures/Response";
 import React from "react";
 

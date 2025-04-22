@@ -1,17 +1,13 @@
 import "./styleMainpage.css";
 import SideMenu from "../../components/SideMenu/SideMenu";
-import { ConnectionsContext } from "../../api/ConnectionsHandler";
-import { useState } from "react";
+import ConnectionsContextProvider from "../../api/Connections/ConnectionsContextProvider";
 
 export default function MainPage() {
-  const [depend, changeDepend] = useState(0);
-  const [list, setList] = useState([]);
-
   return (
     <div className="main-container">
-      <ConnectionsContext.Provider value={{ list, depend, changeDepend }}>
+      <ConnectionsContextProvider>
         <SideMenu />
-      </ConnectionsContext.Provider>
+      </ConnectionsContextProvider>
     </div>
   );
 }

@@ -1,15 +1,24 @@
-import { FC, ReactNode, useEffect } from "react";
+import { FC, ReactNode, useEffect, CSSProperties } from "react";
 import ReactDOM from "react-dom";
 import "./Modal.css";
 
-interface ModalProps {
+export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   children: ReactNode;
+  style?: CSSProperties;
+  className?: string;
 }
 
-const Modal: FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+const Modal: FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+  style,
+  className,
+}) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -29,7 +38,7 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
   return ReactDOM.createPortal(
     <div
       className="modal-overlay"
-      onClick={onClose}
+      // onClick={onClose}
       role="dialog"
       aria-modal="true"
     >
@@ -38,8 +47,12 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
         <button className="modal-close" onClick={onClose} aria-label="Закрыть">
           &times;
         </button>
-        <br />
-        {children}
+        <div className="divider-container">
+          <hr className="divider" />
+        </div>
+        <div className={className} style={style}>
+          {children}
+        </div>
       </div>
     </div>,
     document.body

@@ -67,3 +67,7 @@
   grid-template-rows: repeat(5, 1fr);
   row-gap: 16px;
 }
+
+.side-menu-add-item-button {
+  grid-row: -2 / -1;
+}

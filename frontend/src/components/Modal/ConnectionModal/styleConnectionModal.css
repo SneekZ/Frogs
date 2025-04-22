@@ -1,0 +1,19 @@
+.modal-container {
+  display: grid;
+  /* grid-template-columns: repeat(2, 1fr); */
+  /* column-gap: 16px; */
+  grid-template-rows: repeat(4, 1fr);
+  row-gap: 12px;
+}
+
+.item-container {
+  display: flex;
+  align-items: center;
+}
+
+.button-container {
+  display: flex;
+  gap: 8px;
+  justify-content: right;
+  margin-top: 12px;
+}
