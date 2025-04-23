@@ -30,7 +30,7 @@ body,
 
 .default-hover {
   background-color: #3b3b3b;
-  border-radius: 17px;
+  border-radius: 11px;
 
   transition: background-color ease-in-out var(--transition-length);
   transition: color ease-in-out var(--transition-length - 0.2s);
@@ -42,8 +42,11 @@ body,
 }
 
 .default-container {
-  background-color: #3b3b3b;
-  border-radius: 17px;
+  /* background-color: #3b3b3b; */
+  border-width: 2px;
+  border-style: solid;
+  border-color: #3b3b3b;
+  border-radius: 11px;
 
   overflow-y: scroll;
 

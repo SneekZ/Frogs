@@ -1,4 +1,5 @@
 .notification {
+  z-index: 2147483647;
   position: fixed;
   display: flex;
   flex-direction: column;
@@ -7,7 +8,7 @@
   transform: translateX(-50%);
   background-color: #272626;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 11px;
   box-shadow: 2px 6px 8px rgba(0, 0, 0, 0.35);
   min-width: 300px;
   min-height: 50px;
@@ -49,11 +50,11 @@
   }
   60% {
     opacity: 0.8;
-    top: 35px;
+    top: 30px;
   }
   75% {
     opacity: 1;
-    top: 15px;
+    top: 20px;
   }
   85% {
     opacity: 1;
@@ -61,7 +62,7 @@
   }
   95% {
     opacity: 1;
-    top: 18px;
+    top: 22px;
   }
   100% {
     opacity: 1;

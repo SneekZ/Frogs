@@ -33,7 +33,6 @@ const Input: FC<InputProps> = ({
   ref,
   type,
 }) => {
-  console.log(`input-container${error ? " error" : ""} ${className}`);
   return (
     <div
       className={`input-container${error ? " error" : ""} ${className}`}

@@ -1,17 +1,17 @@
-import { FC, useState, useRef, useContext } from "react";
+import { FC, useState, useContext, useEffect } from "react";
 import "./styleSideMenu.css";
 import { ServerConnection } from "../../structures/ServerConnection";
 import { ConnectionsContext } from "../../api/Connections/ConnectionsHandler";
-import Modal from "../Modal/Modal";
-import { PingError } from "../../api/handlers/Ping";
 import FrogsButton from "../Button/Button";
 import FrogsInput from "../Input/Input";
 import ConnectionModal from "../Modal/ConnectionModal/ConnectionModal";
+import { NotificationContext } from "../Notification/NotificationContext";
+import starFilled from "./../../assets/star_filled.png";
 
 export default function SideMenu() {
-  const [searchServerConnections, setSearchServerConnections] = useState<
-    ServerConnection[]
-  >([]);
+  const { listConnections } = useContext(ConnectionsContext);
+  const [searchServerConnections, setSearchServerConnections] =
+    useState<ServerConnection[]>(listConnections);
 
   return (
     <div className="side-menu-container">
@@ -24,7 +24,14 @@ export default function SideMenu() {
 }
 
 function SideMenuButton() {
-  return <FrogsButton label="Список серверов" className="side-menu-button" />;
+  const { Notify } = useContext(NotificationContext);
+  return (
+    <FrogsButton
+      label="Список серверов"
+      className="side-menu-button"
+      onClick={() => Notify({ type: "success", message: "helo" })}
+    />
+  );
 }
 
 interface SideMenuSearchProps {
@@ -33,26 +40,34 @@ interface SideMenuSearchProps {
 
 const SideMenuSearch: FC<SideMenuSearchProps> = ({ setConns }) => {
   const { listConnections } = useContext(ConnectionsContext);
-  const search = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value.toLowerCase();
+  const [findString, setFindString] = useState("");
 
-    if (!term) {
-      setConns(listConnections);
+  useEffect(() => {
+    if (!findString) {
+      setConns(
+        listConnections.sort((a, b) => {
+          if (a.starred === b.starred) return 0;
+          return a.starred ? -1 : 1;
+        })
+      );
       return;
     }
 
-    const searchedConns = listConnections.filter((item) =>
-      item.name.toLowerCase().includes(term)
+    setConns(
+      listConnections
+        .filter((item) => item.name.toLowerCase().includes(findString))
+        .sort((a, b) => {
+          if (a.starred === b.starred) return 0;
+          return a.starred ? -1 : 1;
+        })
     );
-
-    setConns(searchedConns);
-  };
+  }, [listConnections, findString, setConns]);
 
   return (
     <FrogsInput
       className="side-menu-search"
       placeholder="Поиск по названию..."
-      onChange={(e) => search(e)}
+      onChange={(e) => setFindString(e.target.value.toLocaleLowerCase())}
     />
   );
 };
@@ -78,160 +93,33 @@ interface SideMenuListItemProps {
 const SideMenuListItem: FC<SideMenuListItemProps> = ({ conn }) => {
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const nameRef = useRef<HTMLInputElement>(null);
-  const hostRef = useRef<HTMLInputElement>(null);
-  const portRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-
-  const [checkColor, setCheckColor] = useState("#303030");
-
-  const [loading, setLoading] = useState(false);
-  const { updateConnection } = useContext(ConnectionsContext);
-
-  const checkConnection = () => {
-    const newConnection = {
-      id: conn.id,
-      host: hostRef.current?.value ?? "",
-      port: portRef.current?.value ?? "",
-      name: nameRef.current?.value ?? "",
-      password: passwordRef.current?.value ?? "",
-      starred: false,
-    };
-
-    setLoading(true);
-    setCheckColor("#303030");
-    PingError(newConnection).then((result) => {
-      if (result == "") {
-        setCheckColor("green");
-      } else {
-        setCheckColor("red");
-      }
-      setLoading(false);
-    });
-  };
-
-  const saveConnection = () => {
-    const newConnection = {
-      id: conn.id,
-      host: hostRef.current?.value ?? "",
-      port: portRef.current?.value ?? "",
-      name: nameRef.current?.value ?? "",
-      password: passwordRef.current?.value ?? "",
-      starred: false,
-    };
-
-    updateConnection(newConnection);
-    setModalOpen(false);
-  };
+  const { pinConnection } = useContext(ConnectionsContext);
 
   return (
-    <div className="default-hover side-menu-list-item">
-      <div>{conn.name}</div>
-      <div
-        className="side-menu-list-item-button"
+    <div className="side-menu-list-item-container">
+      <FrogsButton
+        label={conn.name}
+        className="side-menu-list-item-button-main"
+      />
+      <FrogsButton
+        className="side-menu-list-item-button-starred"
+        onClick={() => {
+          pinConnection(conn);
+        }}
+      >
+        <img src="./../../assets/star_filled.png" />
+      </FrogsButton>
+      <FrogsButton
+        className="side-menu-list-item-button-settings"
         onClick={() => setModalOpen(true)}
       >
-        ...
-      </div>
-      <Modal
+        <img src={starFilled} height={24} width={24} />
+      </FrogsButton>
+      <ConnectionModal
         isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
-        title={"Настройка подключения"}
-      >
-        <div className="change-modal">
-          <div
-            style={{
-              display: "flex",
-              gridRow: "1",
-              gap: "16px",
-              alignContent: "center",
-            }}
-          >
-            <span>Название:</span>
-            <FrogsInput
-              defaultValue={conn.name}
-              ref={nameRef}
-              style={{ marginLeft: "auto" }}
-              placeholder="Введите название"
-            />
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              gridRow: "2",
-              gap: "16px",
-              alignContent: "center",
-            }}
-          >
-            <span>Адрес:</span>
-            <FrogsInput
-              defaultValue={conn.host}
-              ref={hostRef}
-              style={{ marginLeft: "auto" }}
-              placeholder="Введите адрес сервера"
-            />
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              gridRow: "3",
-              gap: "16px",
-              alignContent: "center",
-            }}
-          >
-            <span>Порт:</span>
-            <FrogsInput
-              defaultValue={conn.port}
-              ref={portRef}
-              style={{ marginLeft: "auto" }}
-              placeholder="Введите порт сервиса"
-            />
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              gridRow: "4",
-              gap: "16px",
-              alignContent: "center",
-            }}
-          >
-            <span>Пароль:</span>
-            <FrogsInput
-              type="password"
-              defaultValue={conn.password}
-              ref={passwordRef}
-              style={{ marginLeft: "auto" }}
-              placeholder="Введите пароль сервиса"
-            />
-          </div>
-          <div
-            style={{
-              gridRow: 5,
-              display: "flex",
-              justifyContent: "flex-end",
-              gap: "8px",
-            }}
-          >
-            <FrogsButton
-              label="Проверить подключение"
-              loading={loading}
-              style={{ backgroundColor: checkColor, fontSize: "medium" }}
-              onClick={() => checkConnection()}
-            />
-            <FrogsButton
-              label="Сохранить"
-              onClick={() => {
-                saveConnection();
-                setModalOpen(false);
-              }}
-              style={{ fontSize: "medium" }}
-            />
-          </div>
-        </div>
-      </Modal>
+        setOpen={setModalOpen}
+        conn={conn}
+      />
     </div>
   );
 };

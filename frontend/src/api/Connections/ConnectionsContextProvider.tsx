@@ -27,6 +27,10 @@ const ConnectionsContextProvider: FC<ConnectionsContextProviderProps> = ({
   };
 
   const updateConnection = (conn: ServerConnection) => {
+    if (conn.id >= listConnections.length || conn.id === -1) {
+      addConnection(conn);
+      return;
+    }
     setListConnections(
       listConnections.map((item) => (item.id === conn.id ? conn : item))
     );
@@ -34,6 +38,11 @@ const ConnectionsContextProvider: FC<ConnectionsContextProviderProps> = ({
 
   const deleteConnection = (conn: ServerConnection) => {
     setListConnections(listConnections.filter((item) => item.id !== conn.id));
+  };
+
+  const pinConnection = (conn: ServerConnection) => {
+    conn.starred = !conn.starred;
+    updateConnection(conn);
   };
 
   useEffect(() => {
@@ -47,6 +56,7 @@ const ConnectionsContextProvider: FC<ConnectionsContextProviderProps> = ({
         addConnection,
         updateConnection,
         deleteConnection,
+        pinConnection,
       }}
     >
       {children}

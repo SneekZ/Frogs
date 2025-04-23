@@ -10,7 +10,7 @@
 
   font-size: large;
   background-color: var(--color);
-  border-radius: 17px;
+  border-radius: 11px;
   cursor: pointer;
 
   padding-left: 10px;
@@ -31,7 +31,6 @@
 }
 
 .loading {
-  font-size: medium;
   pointer-events: none;
   cursor: not-allowed;
   animation: softBlink 2s ease-in-out infinite;
@@ -51,7 +50,6 @@
 }
 
 .disabled {
-  font-size: small;
   pointer-events: none;
   cursor: not-allowed;
   opacity: 0.7;

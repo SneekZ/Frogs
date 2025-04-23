@@ -4,7 +4,6 @@ export interface NotifyProps {
   type?: "success" | "error" | "warning";
   message?: string;
 }
-
 export interface NotificationContextProps {
   Notify: ({ ...NotifyProps }) => void;
 }

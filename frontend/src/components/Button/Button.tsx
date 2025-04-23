@@ -5,23 +5,26 @@ import {
   useEffect,
   MouseEventHandler,
   CSSProperties,
+  ReactNode,
 } from "react";
 
 interface ButtonProps extends React.HTMLAttributes<HTMLDivElement> {
-  label: string;
+  label?: string;
   onClick?: MouseEventHandler<HTMLDivElement>;
   loading?: boolean;
   disabled?: boolean;
   style?: CSSProperties;
+  children?: ReactNode;
 }
 
 const Button: FC<ButtonProps> = ({
-  label,
+  label = "",
   onClick,
   loading = false,
   disabled = false,
   className = "",
   style,
+  children,
 }) => {
   const [buttonClassName, setButtonClassName] = useState("");
 
@@ -35,7 +38,8 @@ const Button: FC<ButtonProps> = ({
 
   return (
     <div className={buttonClassName} onClick={onClick} style={style}>
-      <div>{label}</div>
+      {label !== "" && <div>{label}</div>}
+      {children}
     </div>
   );
 };

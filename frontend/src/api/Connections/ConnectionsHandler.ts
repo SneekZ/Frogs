@@ -6,6 +6,7 @@ interface ConnectionsContextType {
   addConnection: (arg0: ServerConnection) => void;
   updateConnection: (arg0: ServerConnection) => void;
   deleteConnection: (arg0: ServerConnection) => void;
+  pinConnection: (arg0: ServerConnection) => void;
 }
 
 export const ConnectionsContext = createContext<ConnectionsContextType>({
@@ -13,6 +14,7 @@ export const ConnectionsContext = createContext<ConnectionsContextType>({
   addConnection: () => {},
   updateConnection: () => {},
   deleteConnection: () => {},
+  pinConnection: () => {},
 });
 
 export const LS_KEY = "frogs.connections";
