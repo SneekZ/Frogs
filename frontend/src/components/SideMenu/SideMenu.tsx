@@ -35,8 +35,7 @@ function SideMenuButton() {
       onClick={() =>
         Notify({
           type: "success",
-          message:
-            "heloeoirgjnnirgirgirgirgirgirgirgnirgnirgnirgnirgnirgnirgnirgninrginrgirgnirgnirgnirgnirgnirgnirgnirgnirgnirgninrginrgirgnirgnirgnirgnirgnirgnirgninrginrgirgnirgnirgnirgnirgnirgnirgnirgnirgnirgninrginrgirgnirgnirgnirgnirgnirgn",
+          message: "halo",
         })
       }
     />

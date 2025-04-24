@@ -6,6 +6,7 @@ import { License, defaultLicense } from "../../structures/License";
 import { GetSigns } from "../../api/handlers/GetSigns";
 import { GetContainers } from "../../api/handlers/GetContainers";
 import { GetLicense } from "../../api/handlers/GetLicense";
+import { GetCheckSignByThumbprint } from "../../api/handlers/GetCheckSigns";
 
 const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [activeConnection, setActiveConnection] = useState({
@@ -39,6 +40,8 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const lic = GetLicense(activeConnection);
     setLicense(lic);
   };
+
+  const updateSign = (sign: Sign) => {};
 
   return (
     <SignsContext.Provider

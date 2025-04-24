@@ -4,7 +4,7 @@ import { Sign, defaultSign } from "../../structures/Sign";
 import { useContext } from "react";
 import { NotificationContext } from "../../components/Notification/NotificationContext";
 
-export function GetCheckSignsByThumbprint(
+export function GetCheckSignByThumbprint(
   connection: ServerConnection,
   signToCheck: Sign
 ): Sign {
