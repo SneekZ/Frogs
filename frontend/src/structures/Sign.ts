@@ -1,6 +1,6 @@
-import { Container } from "./Container";
+import { Container, defaultContainer } from "./Container";
 
-export interface Issuer {
+interface Issuer {
   e: string;
   s: string;
   inn: string;
@@ -13,12 +13,42 @@ export interface Issuer {
   cn: string;
 }
 
-export interface Subject extends Issuer {
+const defaultIssuer: Issuer = {
+  e: "",
+  s: "",
+  inn: "",
+  ogrn: "",
+  street: "",
+  l: "",
+  c: "",
+  ou: "",
+  o: "",
+  cn: "",
+};
+
+interface Subject extends Issuer {
   t: string;
   sn: string;
   g: string;
   snils: string;
 }
+
+const defaultSubject: Subject = {
+  e: "",
+  s: "",
+  inn: "",
+  ogrn: "",
+  street: "",
+  l: "",
+  c: "",
+  ou: "",
+  o: "",
+  cn: "",
+  t: "",
+  sn: "",
+  g: "",
+  snils: "",
+};
 
 export interface Sign {
   issuer: Issuer;
@@ -38,3 +68,22 @@ export interface Sign {
   password: string;
   databaseids: number[];
 }
+
+export const defaultSign: Sign = {
+  issuer: defaultIssuer,
+  subject: defaultSubject,
+  serial: "",
+  thumbprint: "",
+  subjkey: "",
+  signaturealgorithm: "",
+  publickeyalgorithm: "",
+  notvalidbefore: 0,
+  notvalidafter: 0,
+  container: defaultContainer,
+  providername: "",
+  checked: false,
+  valid: false,
+  checkerror: [],
+  password: "",
+  databaseids: [],
+};

@@ -4,3 +4,10 @@ export interface License {
   licenseactuality: string;
   licensetype: string;
 }
+
+export const defaultLicense: License = {
+  licensecode: "",
+  licenseactuality: "",
+  licenseerrorcode: 0,
+  licensetype: "",
+};

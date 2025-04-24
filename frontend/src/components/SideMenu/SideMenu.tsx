@@ -6,7 +6,10 @@ import FrogsButton from "../Button/Button";
 import FrogsInput from "../Input/Input";
 import ConnectionModal from "../Modal/ConnectionModal/ConnectionModal";
 import { NotificationContext } from "../Notification/NotificationContext";
-import starFilled from "./../../assets/star_filled.png";
+import { SignsContext } from "../SignsContext/SignsContext";
+import starFilledImg from "./../../assets/star_filled.png";
+import starUnfilledImg from "./../../assets/star_unfilled.png";
+import settingsImg from "./../../assets/setting.png";
 
 export default function SideMenu() {
   const { listConnections } = useContext(ConnectionsContext);
@@ -29,7 +32,13 @@ function SideMenuButton() {
     <FrogsButton
       label="Список серверов"
       className="side-menu-button"
-      onClick={() => Notify({ type: "success", message: "helo" })}
+      onClick={() =>
+        Notify({
+          type: "success",
+          message:
+            "heloeoirgjnnirgirgirgirgirgirgirgnirgnirgnirgnirgnirgnirgnirgninrginrgirgnirgnirgnirgnirgnirgnirgnirgnirgnirgninrginrgirgnirgnirgnirgnirgnirgnirgninrginrgirgnirgnirgnirgnirgnirgnirgnirgnirgnirgninrginrgirgnirgnirgnirgnirgnirgn",
+        })
+      }
     />
   );
 }
@@ -95,11 +104,14 @@ const SideMenuListItem: FC<SideMenuListItemProps> = ({ conn }) => {
 
   const { pinConnection } = useContext(ConnectionsContext);
 
+  const { setActiveConnection } = useContext(SignsContext);
+
   return (
     <div className="side-menu-list-item-container">
       <FrogsButton
         label={conn.name}
         className="side-menu-list-item-button-main"
+        onClick={() => setActiveConnection(conn)}
       />
       <FrogsButton
         className="side-menu-list-item-button-starred"
@@ -107,13 +119,17 @@ const SideMenuListItem: FC<SideMenuListItemProps> = ({ conn }) => {
           pinConnection(conn);
         }}
       >
-        <img src="./../../assets/star_filled.png" />
+        <img
+          src={conn.starred ? starFilledImg : starUnfilledImg}
+          height={24}
+          width={24}
+        />
       </FrogsButton>
       <FrogsButton
         className="side-menu-list-item-button-settings"
         onClick={() => setModalOpen(true)}
       >
-        <img src={starFilled} height={24} width={24} />
+        <img src={settingsImg} height={24} width={24} />
       </FrogsButton>
       <ConnectionModal
         isOpen={isModalOpen}

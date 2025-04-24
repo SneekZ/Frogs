@@ -28,9 +28,9 @@
 }
 
 .message {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
   font-size: medium;
   font-weight: 200;
   color: white;
