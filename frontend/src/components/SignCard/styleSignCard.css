@@ -1,0 +1,17 @@
+.card {
+  --hover-color: #eaeaea;
+
+  color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: large;
+  background-color: var(--color);
+  border-radius: 11px;
+  cursor: pointer;
+
+  padding-left: 10px;
+  padding-right: 10px;
+}

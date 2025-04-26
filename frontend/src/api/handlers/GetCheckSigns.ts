@@ -1,16 +1,15 @@
 import { ServerConnection } from "../../structures/ServerConnection";
 import { defaultRequest } from "../ApiHandler";
-import { Sign, defaultSign } from "../../structures/Sign";
-import { useContext } from "react";
-import { NotificationContext } from "../../components/Notification/NotificationContext";
+import { Sign } from "../../structures/Sign";
 
-export function GetCheckSignByThumbprint(
+export async function GetCheckSignByThumbprint(
   connection: ServerConnection,
   signToCheck: Sign
-): Sign {
-  const { Notify } = useContext(NotificationContext);
-
-  defaultRequest(connection, `/signscheck/thumbprint/${signToCheck.thumbprint}`)
+): Promise<Sign> {
+  const sign = defaultRequest(
+    connection,
+    `/signscheck/thumbprint/${signToCheck.thumbprint}`
+  )
     .then((response) => {
       if (
         response.signs.length == 1 &&
@@ -19,23 +18,33 @@ export function GetCheckSignByThumbprint(
         return response.signs[0];
       } else {
         if (response.signs.length == 1) {
-          Notify({
-            type: "error",
-            message: `после проверки пришло ${response.signs.length} подписей`,
-          });
+          throw new Error(
+            `после проверки пришло ${response.signs.length} подписей`
+          );
         } else {
-          Notify({
-            type: "error",
-            message: `отпечаток полученной подписи не совпадает: ожидался ${signToCheck.thumbprint}, пришло ${response.signs[0].thumbprint}`,
-          });
+          throw new Error(
+            `отпечаток полученной подписи не совпадает: ожидался ${signToCheck.thumbprint}, пришло ${response.signs[0].thumbprint}`
+          );
         }
-        return defaultSign;
       }
     })
     .catch((e) => {
-      Notify({ type: "error", message: e.message });
-      return defaultSign;
+      throw new Error(e.message);
     });
 
-  return defaultSign;
+  return sign;
+}
+
+export async function GetCheckAllSigns(
+  connection: ServerConnection
+): Promise<Sign[]> {
+  const sign = defaultRequest(connection, "/signscheck")
+    .then((response) => {
+      return response.signs;
+    })
+    .catch((e) => {
+      throw new Error(e.message);
+    });
+
+  return sign;
 }

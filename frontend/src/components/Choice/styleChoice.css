@@ -1,0 +1,56 @@
+.choice-container {
+  /* background-color: #3b3b3b; */
+  border-width: 2px;
+  border-style: solid;
+  border-color: #3b3b3b;
+  border-radius: 11px;
+
+  overflow-y: scroll;
+
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
+
+  /* IE 10+ */
+  -ms-overflow-style: none;
+}
+
+/* WebKit (Chrome, Safari, Edge Chromium) */
+.default-container::-webkit-scrollbar {
+  display: none;
+}
+
+.option {
+  --color: #3b3b3b;
+  --hover-color: #eaeaea;
+
+  color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: large;
+  background-color: transparent;
+  border-radius: 11px;
+  cursor: pointer;
+
+  padding-left: 8px;
+  padding-right: 8px;
+
+  transition: background-color 0.3s ease-in-out, color 0.1s ease-in-out;
+}
+
+.option.active {
+  background-color: var(--hover-color) !important;
+  color: black !important;
+}
+
+.option:hover {
+  background-color: var(--hover-color) !important;
+  color: black !important;
+}
+
+.option:focus {
+  background-color: var(--hover-color);
+  color: black;
+}

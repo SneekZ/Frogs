@@ -7,12 +7,17 @@ import { License, defaultLicense } from "../../structures/License";
 interface SignsContextProps {
   activeConnection: ServerConnection;
   setActiveConnection: (arg0: ServerConnection) => void;
-  signsList: Sign[];
-  refreshSignsList: () => void;
+  signsList: Map<string, Sign>;
+  filteredSignsList: Map<string, Sign>;
+  setFilter: (arg0: string) => void;
+  setFilterType: (arg0: "snils" | "name") => void;
+  refreshSignsList: (callback: () => void) => void;
+  checkSign: (arg0: Sign, callback: () => void) => void;
+  checkAllSigns: (callback: () => void) => void;
   containersList: Container[];
-  refreshContainersList: () => void;
+  refreshContainersList: (callback: () => void) => void;
   license: License;
-  refreshLicense: () => void;
+  refreshLicense: (callback: () => void) => void;
 }
 
 export const SignsContext = createContext<SignsContextProps>({
@@ -25,8 +30,13 @@ export const SignsContext = createContext<SignsContextProps>({
     starred: false,
   },
   setActiveConnection: () => {},
-  signsList: [],
+  signsList: new Map<string, Sign>(),
+  filteredSignsList: new Map<string, Sign>(),
+  setFilter: () => {},
+  setFilterType: () => {},
   refreshSignsList: () => {},
+  checkSign: () => {},
+  checkAllSigns: () => {},
   containersList: [],
   refreshContainersList: () => {},
   license: defaultLicense,
