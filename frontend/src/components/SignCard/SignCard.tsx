@@ -45,15 +45,23 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
         />
       </div>
       <div className="card-collapsed-cn">{sign.subject.cn.toUpperCase()}</div>
-      <SignCardModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <SignCardModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        sign={sign}
+      />
     </div>
   );
 };
 
-const SignCardModal: FC<ModalProps> = ({ isOpen, onClose }) => {
+interface SignCardModal extends ModalProps {
+  sign: Sign;
+}
+
+const SignCardModal: FC<SignCardModal> = ({ isOpen, onClose, sign }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Сертификат">
-      <div></div>
+      <div>{sign.subject.snils}</div>
     </Modal>
   );
 };
