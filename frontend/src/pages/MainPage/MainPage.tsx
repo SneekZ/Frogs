@@ -4,6 +4,7 @@ import ConnectionsContextProvider from "../../api/Connections/ConnectionsContext
 import SignsContextProvider from "../../components/SignsContext/SignsContextProvider";
 import SignsContainer from "../../components/SignsContainer/SignsContainer";
 import HeaderMenu from "../../components/HeaderMenu/HeaderMenu";
+import FooterMenu from "../../components/FooterMenu/FooterMenu";
 
 export default function MainPage() {
   return (
@@ -14,6 +15,7 @@ export default function MainPage() {
         </ConnectionsContextProvider>
         <HeaderMenu />
         <SignsContainer />
+        <FooterMenu />
       </SignsContextProvider>
     </div>
   );

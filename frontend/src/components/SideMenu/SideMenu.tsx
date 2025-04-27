@@ -1,7 +1,7 @@
 import { FC, useState, useContext, useEffect } from "react";
 import "./styleSideMenu.css";
 import { ServerConnection } from "../../structures/ServerConnection";
-import { ConnectionsContext } from "../../api/Connections/ConnectionsHandler";
+import { ConnectionsContext } from "../../api/Connections/ConnectionsContext";
 import FrogsButton from "../Button/Button";
 import FrogsInput from "../Input/Input";
 import ConnectionModal from "../Modal/ConnectionModal/ConnectionModal";
@@ -34,7 +34,7 @@ function SideMenuButton() {
       className="side-menu-button"
       onClick={() =>
         Notify({
-          type: "success",
+          type: "error",
           message: "halo",
         })
       }
@@ -100,16 +100,28 @@ interface SideMenuListItemProps {
 
 const SideMenuListItem: FC<SideMenuListItemProps> = ({ conn }) => {
   const [isModalOpen, setModalOpen] = useState(false);
+  const [active, setActive] = useState(false);
 
   const { pinConnection } = useContext(ConnectionsContext);
 
-  const { setActiveConnection } = useContext(SignsContext);
+  const { activeConnection, setActiveConnection } = useContext(SignsContext);
+
+  useEffect(() => {
+    if (
+      activeConnection.host === conn.host &&
+      activeConnection.port === conn.port
+    ) {
+      setActive(true);
+    } else {
+      setActive(false);
+    }
+  }, [activeConnection, conn]);
 
   return (
     <div className="side-menu-list-item-container">
       <FrogsButton
         label={conn.name}
-        className="side-menu-list-item-button-main"
+        className={`side-menu-list-item-button-main ${active ? "active" : ""}`}
         onClick={() => setActiveConnection(conn)}
       />
       <FrogsButton

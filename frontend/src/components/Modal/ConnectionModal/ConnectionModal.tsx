@@ -1,6 +1,6 @@
 import "./styleConnectionModal.css";
 import { ServerConnection } from "../../../structures/ServerConnection";
-import { ConnectionsContext } from "../../../api/Connections/ConnectionsHandler";
+import { ConnectionsContext } from "../../../api/Connections/ConnectionsContext";
 import Modal from "../Modal";
 import Input from "../../Input/Input";
 import Button from "../../Button/Button";

@@ -28,22 +28,22 @@ export const Notification: FC<NotificationProps> = ({
     switch (type) {
       case "success":
         setTitle("Success");
-        setColor("#70ff70");
+        setColor("#00bb00");
         break;
 
       case "error":
         setTitle("Error");
-        setColor("#ff7070");
+        setColor("#bb0000");
         break;
 
       case "warning":
         setTitle("Warning");
-        setColor("#ffff70");
+        setColor("#bbbb00");
         break;
 
       default:
         setTitle("Message");
-        setColor("#ffffff");
+        setColor("#000000");
         break;
     }
   }, [type]);

@@ -6,7 +6,8 @@
   top: -100px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #272626;
+  background-color: #eaeaea;
+  color: black;
   padding: 12px;
   border-radius: 11px;
   box-shadow: 2px 6px 8px rgba(0, 0, 0, 0.35);
@@ -33,7 +34,7 @@
   white-space: normal;
   font-size: medium;
   font-weight: 200;
-  color: white;
+  color: black;
 }
 .expanded {
   animation: expandNotification 0.4s ease forwards;

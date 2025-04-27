@@ -42,6 +42,11 @@
   grid-column: 1 / -2;
 }
 
+.side-menu-list-item-button-main.active {
+  background-color: #eaeaea;
+  color: black;
+}
+
 .side-menu-list-item-button-starred {
   grid-column: -2;
 }

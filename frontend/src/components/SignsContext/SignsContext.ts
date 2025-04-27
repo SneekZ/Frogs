@@ -3,10 +3,13 @@ import { ServerConnection } from "../../structures/ServerConnection";
 import { Sign } from "../../structures/Sign";
 import { Container } from "../../structures/Container";
 import { License, defaultLicense } from "../../structures/License";
+import { Response, defaultResponse } from "../../structures/Response";
 
 interface SignsContextProps {
   activeConnection: ServerConnection;
   setActiveConnection: (arg0: ServerConnection) => void;
+  activeConnectionStatus: Response;
+  refreshActiveConnectionStatus: (callback: () => void) => void;
   signsList: Map<string, Sign>;
   filteredSignsList: Map<string, Sign>;
   setFilter: (arg0: string) => void;
@@ -30,6 +33,8 @@ export const SignsContext = createContext<SignsContextProps>({
     starred: false,
   },
   setActiveConnection: () => {},
+  activeConnectionStatus: defaultResponse,
+  refreshActiveConnectionStatus: () => {},
   signsList: new Map<string, Sign>(),
   filteredSignsList: new Map<string, Sign>(),
   setFilter: () => {},

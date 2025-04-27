@@ -3,7 +3,7 @@ import {
   ConnectionsContext,
   loadConnections,
   LS_KEY,
-} from "./ConnectionsHandler";
+} from "./ConnectionsContext";
 import { ServerConnection } from "../../structures/ServerConnection";
 
 interface ConnectionsContextProviderProps {

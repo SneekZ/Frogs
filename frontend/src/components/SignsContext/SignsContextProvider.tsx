@@ -18,6 +18,8 @@ import {
   GetCheckAllSigns,
   GetCheckSignByThumbprint,
 } from "../../api/handlers/GetCheckSigns";
+import { defaultResponse, Response } from "../../structures/Response";
+import { GetStatus } from "../../api/handlers/GetStatus";
 
 const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { Notify } = useContext(NotificationContext);
@@ -30,6 +32,40 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     password: "",
     starred: false,
   });
+
+  const [activeConnectionStatus, setActiveConnectionStatus] =
+    useState<Response>(defaultResponse);
+
+  const refreshActiveConnectionStatus = useCallback(
+    async (callback: () => void) => {
+      if (activeConnection.id === -1) {
+        callback();
+        return;
+      }
+      GetStatus(activeConnection)
+        .then((response) => {
+          setActiveConnectionStatus(response);
+
+          const signsMap = new Map<string, Sign>();
+          response.signs.map((item) => signsMap.set(item.thumbprint, item));
+          setSignsList(signsMap);
+
+          setContainersList(response.containers);
+        })
+        .catch((e) =>
+          Notify({
+            type: "error",
+            message: e?.message,
+          })
+        )
+        .finally(callback);
+    },
+    [Notify, activeConnection]
+  );
+
+  useEffect(() => {
+    refreshActiveConnectionStatus(() => {});
+  }, [activeConnection, refreshActiveConnectionStatus]);
 
   const [signsList, setSignsList] = useState<Map<string, Sign>>(
     new Map<string, Sign>()
@@ -127,6 +163,8 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
           signs.map((item) => {
             signsMap.set(item.thumbprint, item);
+
+            setSignsList(signsMap);
           });
         })
         .catch((e) =>
@@ -179,6 +217,8 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       value={{
         activeConnection,
         setActiveConnection,
+        activeConnectionStatus,
+        refreshActiveConnectionStatus,
         signsList,
         filteredSignsList,
         setFilter,

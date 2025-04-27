@@ -10,13 +10,17 @@
 }
 
 .filter-input {
-  grid-column: 1 / 7;
+  grid-column: 1 / 5;
 }
 
 .filter-type {
-  grid-column: 7 / -3;
+  grid-column: 5 / 7;
 }
 
 .update-button {
-  grid-column: -3 / -1;
+  grid-column: 7 / 9;
+}
+
+.check-all-button {
+  grid-column: 9 / -1;
 }

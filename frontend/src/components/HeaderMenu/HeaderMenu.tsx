@@ -11,6 +11,7 @@ const HeaderMenu: FC = () => {
       <FilterInput />
       <FilterChoice />
       <UpdateButton />
+      <CheckAllButton />
     </div>
   );
 };
@@ -50,19 +51,38 @@ const FilterChoice: FC = () => {
 };
 
 const UpdateButton: FC = () => {
-  const { refreshSignsList } = useContext(SignsContext);
+  const { refreshActiveConnectionStatus } = useContext(SignsContext);
   const [loading, setLoading] = useState(false);
 
   const handleClick = useCallback(async () => {
     setLoading(true);
-    refreshSignsList(() => setLoading(false));
-  }, [refreshSignsList]);
+    refreshActiveConnectionStatus(() => setLoading(false));
+  }, [refreshActiveConnectionStatus]);
 
   return (
     <FrogsButton
       label="Обновить"
       onClick={handleClick}
       className="update-button"
+      loading={loading}
+    />
+  );
+};
+
+const CheckAllButton: FC = () => {
+  const { checkAllSigns } = useContext(SignsContext);
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = useCallback(async () => {
+    setLoading(true);
+    checkAllSigns(() => setLoading(false));
+  }, [checkAllSigns]);
+
+  return (
+    <FrogsButton
+      label="Проверить все"
+      onClick={handleClick}
+      className="check-all-button"
       loading={loading}
     />
   );

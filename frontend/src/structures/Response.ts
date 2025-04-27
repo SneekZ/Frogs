@@ -1,7 +1,7 @@
-import { Info } from "./Info";
+import { Info, defaultInfo } from "./Info";
 import { Sign } from "./Sign";
 import { Container } from "./Container";
-import { License } from "./License";
+import { License, defaultLicense } from "./License";
 
 export interface Response {
   error: string;
@@ -10,3 +10,11 @@ export interface Response {
   containers: Container[];
   license: License;
 }
+
+export const defaultResponse = {
+  error: "",
+  info: defaultInfo,
+  signs: [],
+  containers: [],
+  license: defaultLicense,
+};
