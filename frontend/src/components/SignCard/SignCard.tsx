@@ -2,6 +2,7 @@ import "./styleSignCard.css";
 import { FC, useContext, useState, useEffect } from "react";
 import { SignsContext } from "../SignsContext/SignsContext";
 import { Sign, defaultSign } from "../../structures/Sign";
+import Modal, { ModalProps } from "../Modal/Modal";
 
 interface SignCardProps {
   inputThumbprint: string;
@@ -13,6 +14,8 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
   const [sign, setSign] = useState<Sign>(defaultSign);
 
   const [statusColor, setStatusColor] = useState("#3b3b3b");
+
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (sign.checked) {
@@ -33,7 +36,7 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
   }, [signsList, thumbprint]);
 
   return (
-    <div className="card-collapsed">
+    <div className="card-collapsed" onClick={() => setModalOpen(true)}>
       <div className="card-collapsed-snils">{sign.subject.snils}</div>
       <div className="state-circle-container">
         <div
@@ -42,7 +45,16 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
         />
       </div>
       <div className="card-collapsed-cn">{sign.subject.cn.toUpperCase()}</div>
+      <SignCardModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
+  );
+};
+
+const SignCardModal: FC<ModalProps> = ({ isOpen, onClose }) => {
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Сертификат">
+      <div></div>
+    </Modal>
   );
 };
 

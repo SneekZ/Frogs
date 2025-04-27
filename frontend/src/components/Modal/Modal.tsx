@@ -5,8 +5,8 @@ import "./Modal.css";
 export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
-  children: ReactNode;
+  title?: string;
+  children?: ReactNode;
   style?: CSSProperties;
   className?: string;
 }
