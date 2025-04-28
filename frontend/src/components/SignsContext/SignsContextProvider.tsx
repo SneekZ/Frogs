@@ -21,7 +21,8 @@ import {
 import { defaultResponse, Response } from "../../structures/Response";
 import { GetStatus } from "../../api/Handlers/GetStatus";
 import SignDocument from "../../api/Handlers/SignDocument";
-import { DeleteSign } from "../../api/handlers/DeleteSign";
+import { DeleteSign } from "../../api/Handlers/DeleteSign";
+import { GetInstallContainer } from "../../api/Handlers/GetInstallContainer";
 
 const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { Notify } = useContext(NotificationContext);
@@ -84,6 +85,7 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [filter, setFilter] = useState<string>("");
   const [filterType, setFilterType] = useState<"snils" | "name">("snils");
   const [containersList, setContainersList] = useState<Container[]>([]);
+  const [installedSignsList, setInstalledSignsList] = useState<Sign[]>([]);
   const [license, setLicense] = useState<License>(defaultLicense);
 
   const refreshSignsList = useCallback(
@@ -108,7 +110,7 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   );
 
   const refreshContainersList = useCallback(
-    (callback: () => void) => {
+    async (callback: () => void) => {
       GetContainers(activeConnection)
         .then((containers) => {
           setContainersList(containers);
@@ -146,6 +148,39 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setSignsList(signsMap);
     },
     [signsList]
+  );
+
+  const installContainer = useCallback(
+    async (
+      container: Container,
+      callback: () => void,
+      callbackError?: () => void
+    ) => {
+      GetInstallContainer(activeConnection, container)
+        .then((sign) => {
+          updateSignInList(sign);
+          setInstalledSignsList((prev) => [...prev, sign]);
+        })
+        .catch((e) => {
+          Notify({ type: "error", message: e?.message });
+
+          if (callbackError) {
+            callbackError();
+          }
+        })
+        .finally(callback);
+    },
+    [Notify, activeConnection, updateSignInList]
+  );
+
+  const deleteInstalledSign = useCallback(
+    (sign: Sign, callback: () => void) => {
+      setInstalledSignsList((prev) =>
+        prev.filter((item) => item.thumbprint != sign.thumbprint)
+      );
+      callback();
+    },
+    []
   );
 
   const checkSign = useCallback(
@@ -299,6 +334,9 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
         checkAllSigns,
         containersList,
         refreshContainersList,
+        installContainer,
+        installedSignsList,
+        deleteInstalledSign,
         license,
         refreshLicense,
         signDocument,

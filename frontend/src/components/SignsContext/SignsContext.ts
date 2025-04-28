@@ -15,14 +15,21 @@ interface SignsContextProps {
   setFilter: (arg0: string) => void;
   setFilterType: (arg0: "snils" | "name") => void;
   refreshSignsList: (callback: () => void) => void;
-  checkSign: (arg0: Sign, callback: () => void) => void;
+  checkSign: (sign: Sign, callback: () => void) => void;
   checkAllSigns: (callback: () => void) => void;
   containersList: Container[];
   refreshContainersList: (callback: () => void) => void;
+  installContainer: (
+    container: Container,
+    callback: () => void,
+    callbackError?: () => void
+  ) => void;
+  installedSignsList: Sign[];
+  deleteInstalledSign: (sign: Sign, callback: () => void) => void;
   license: License;
   refreshLicense: (callback: () => void) => void;
-  signDocument: (arg0: Sign, file: File | null, callback: () => void) => void;
-  deleteSign: (arg0: Sign, callback: () => void) => void;
+  signDocument: (sign: Sign, file: File | null, callback: () => void) => void;
+  deleteSign: (sign: Sign, callback: () => void) => void;
 }
 
 export const SignsContext = createContext<SignsContextProps>({
@@ -46,6 +53,9 @@ export const SignsContext = createContext<SignsContextProps>({
   checkAllSigns: () => {},
   containersList: [],
   refreshContainersList: () => {},
+  installContainer: () => {},
+  installedSignsList: [],
+  deleteInstalledSign: () => {},
   license: defaultLicense,
   refreshLicense: () => {},
   signDocument: () => {},

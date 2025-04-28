@@ -1,0 +1,13 @@
+.containers-modal-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 8px;
+}
+
+.items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+}

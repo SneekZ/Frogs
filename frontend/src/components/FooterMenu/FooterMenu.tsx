@@ -1,7 +1,8 @@
 import "./styleFooterMenu.css";
-import { FC, useContext } from "react";
+import { FC, useContext, useState } from "react";
 import { SignsContext } from "../SignsContext/SignsContext";
 import FrogsButton from "../Button/Button";
+import ContainersModal from "../ContainersModal/ContainersModal";
 
 const FooterMenu: FC = () => {
   return (
@@ -49,11 +50,17 @@ const ContainersNumber: FC = () => {
 };
 
 const InstallContainersButton: FC = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
-    <FrogsButton
-      label="Установка контейнеров"
-      className="install-containers-button"
-    />
+    <>
+      <FrogsButton
+        label="Установка контейнеров"
+        className="install-containers-button"
+        onClick={() => setModalOpen(true)}
+      />
+      <ContainersModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+    </>
   );
 };
 
