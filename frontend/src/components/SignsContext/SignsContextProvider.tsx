@@ -11,15 +11,16 @@ import {
 import { Sign } from "../../structures/Sign";
 import { Container } from "../../structures/Container";
 import { License, defaultLicense } from "../../structures/License";
-import { GetSigns } from "../../api/handlers/GetSigns";
-import { GetContainers } from "../../api/handlers/GetContainers";
-import { GetLicense } from "../../api/handlers/GetLicense";
+import { GetSigns } from "../../api/Handlers/GetSigns";
+import { GetContainers } from "../../api/Handlers/GetContainers";
+import { GetLicense } from "../../api/Handlers/GetLicense";
 import {
   GetCheckAllSigns,
   GetCheckSignByThumbprint,
-} from "../../api/handlers/GetCheckSigns";
+} from "../../api/Handlers/GetCheckSigns";
 import { defaultResponse, Response } from "../../structures/Response";
-import { GetStatus } from "../../api/handlers/GetStatus";
+import { GetStatus } from "../../api/Handlers/GetStatus";
+import SignDocument from "../../api/Handlers/SignDocument";
 
 const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { Notify } = useContext(NotificationContext);
@@ -36,8 +37,14 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [activeConnectionStatus, setActiveConnectionStatus] =
     useState<Response>(defaultResponse);
 
+  const clearConnectionStatus = useCallback(() => {
+    setActiveConnectionStatus(defaultResponse);
+    setSignsList(new Map<string, Sign>());
+  }, []);
+
   const refreshActiveConnectionStatus = useCallback(
     async (callback: () => void) => {
+      clearConnectionStatus();
       if (activeConnection.id === -1) {
         callback();
         return;
@@ -60,7 +67,7 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
         )
         .finally(callback);
     },
-    [Notify, activeConnection]
+    [Notify, activeConnection, clearConnectionStatus]
   );
 
   useEffect(() => {
@@ -133,7 +140,7 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const updateSignInList = useCallback(
     (sign: Sign) => {
-      const signsMap = signsList;
+      const signsMap = new Map<string, Sign>(signsList);
       signsMap.set(sign.thumbprint, sign);
       setSignsList(signsMap);
     },
@@ -143,7 +150,9 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const checkSign = useCallback(
     (sign: Sign, callback: () => void) => {
       GetCheckSignByThumbprint(activeConnection, sign)
-        .then((item) => updateSignInList(item))
+        .then((item) => {
+          updateSignInList(item);
+        })
         .catch((e) =>
           Notify({
             type: "error",
@@ -156,7 +165,7 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   );
 
   const checkAllSigns = useCallback(
-    (callback: () => void) => {
+    async (callback: () => void) => {
       GetCheckAllSigns(activeConnection)
         .then((signs) => {
           const signsMap = new Map<string, Sign>();
@@ -177,6 +186,14 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     },
     [Notify, activeConnection]
   );
+
+  useEffect(() => {
+    if (/^\d+$/.test(filter)) {
+      setFilterType("snils");
+    } else {
+      setFilterType("name");
+    }
+  }, [filter]);
 
   useEffect(() => {
     switch (filter) {
@@ -212,6 +229,40 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [filter, filterType, signsList]);
 
+  const signDocument = useCallback(
+    async (sign: Sign, file: File | null, callback: () => void) => {
+      if (file === null) {
+        Notify({
+          type: "error",
+          message: "Сначала надо выбрать файл",
+        });
+        return;
+      }
+      SignDocument(
+        activeConnection,
+        sign.thumbprint,
+        false,
+        sign.password,
+        file
+      )
+        .then((blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `${file.name}.sgn`;
+          a.click();
+        })
+        .catch((e) =>
+          Notify({
+            type: "error",
+            message: e?.message,
+          })
+        )
+        .finally(callback);
+    },
+    [Notify, activeConnection]
+  );
+
   return (
     <SignsContext.Provider
       value={{
@@ -230,6 +281,7 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
         refreshContainersList,
         license,
         refreshLicense,
+        signDocument,
       }}
     >
       {children}

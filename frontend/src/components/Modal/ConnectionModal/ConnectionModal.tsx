@@ -4,7 +4,7 @@ import { ConnectionsContext } from "../../../api/Connections/ConnectionsContext"
 import Modal from "../Modal";
 import Input from "../../Input/Input";
 import Button from "../../Button/Button";
-import { PingError } from "../../../api/handlers/Ping";
+import { PingError } from "../../../api/Handlers/Ping";
 import { FC, useContext, useState } from "react";
 import { NotificationContext } from "../../Notification/NotificationContext";
 

@@ -1,0 +1,31 @@
+.dropdown-container {
+  background-color: transparent;
+
+  border-width: 2px;
+  border-style: solid;
+  border-color: #3b3b3b;
+  border-radius: 11px;
+
+  padding: 8px;
+
+  transition: background-color 0.3s ease-in-out, color 0.1s ease-in-out,
+    border-color 0.3s ease-in-out;
+}
+
+.dropdown-container:hover {
+  background-color: #eaeaea !important;
+  color: black !important;
+  border-color: #eaeaea !important;
+}
+
+.dropdown-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #4d4d4d, transparent);
+}

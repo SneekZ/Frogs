@@ -10,11 +10,7 @@
 }
 
 .filter-input {
-  grid-column: 1 / 5;
-}
-
-.filter-type {
-  grid-column: 5 / 7;
+  grid-column: 1 / 7;
 }
 
 .update-button {

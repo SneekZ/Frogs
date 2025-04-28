@@ -3,7 +3,10 @@ import { loadConnections } from "./Connections/ConnectionsContext";
 import { Response } from "../structures/Response";
 import React from "react";
 
-function buildErrorMessage(res: globalThis.Response, body: unknown): string {
+export function buildErrorMessage(
+  res: globalThis.Response,
+  body: unknown
+): string {
   if (typeof body === "object" && body !== null && "error" in body) {
     const { error } = body as { error: string };
     if (error) return error;

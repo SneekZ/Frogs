@@ -60,3 +60,27 @@
   width: var(--circle-size);
   height: var(--circle-size);
 }
+
+.sign-card-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sign-card-modal-row {
+  display: grid;
+  grid-template-columns: 20% 80%;
+  gap: 12px;
+}
+
+.sign-card-modal-buttons-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sign-card-modal-button {
+  width: 100%;
+
+  padding: 8px;
+}

@@ -19,6 +19,7 @@ interface InputProps extends React.HTMLAttributes<HTMLInputElement> {
   style?: CSSProperties;
   ref?: Ref<HTMLInputElement>;
   type?: HTMLInputTypeAttribute;
+  id?: string;
 }
 
 const Input: FC<InputProps> = ({
@@ -32,6 +33,7 @@ const Input: FC<InputProps> = ({
   style,
   ref,
   type,
+  id,
 }) => {
   return (
     <div
@@ -47,6 +49,7 @@ const Input: FC<InputProps> = ({
         onChange={onChange}
         ref={ref}
         type={type}
+        id={id}
       />
     </div>
   );

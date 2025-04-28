@@ -12,7 +12,7 @@ export async function GetCheckSignByThumbprint(
   )
     .then((response) => {
       if (
-        response.signs.length == 1 &&
+        response.signs.length === 1 &&
         response.signs[0].thumbprint === signToCheck.thumbprint
       ) {
         return response.signs[0];

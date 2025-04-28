@@ -21,6 +21,7 @@ interface SignsContextProps {
   refreshContainersList: (callback: () => void) => void;
   license: License;
   refreshLicense: (callback: () => void) => void;
+  signDocument: (arg0: Sign, file: File | null, callback: () => void) => void;
 }
 
 export const SignsContext = createContext<SignsContextProps>({
@@ -46,4 +47,5 @@ export const SignsContext = createContext<SignsContextProps>({
   refreshContainersList: () => {},
   license: defaultLicense,
   refreshLicense: () => {},
+  signDocument: () => {},
 });

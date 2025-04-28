@@ -1,8 +1,18 @@
 import "./styleSignCard.css";
-import { FC, useContext, useState, useEffect } from "react";
+import {
+  FC,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+  ChangeEvent,
+} from "react";
 import { SignsContext } from "../SignsContext/SignsContext";
 import { Sign, defaultSign } from "../../structures/Sign";
-import Modal, { ModalProps } from "../Modal/Modal";
+import Modal from "../Modal/Modal";
+import CopyTextField from "../../utils/CopyFieldComponent";
+import DropdownDiv from "../Dropdown/DropdownDiv";
+import FrogsButton from "../Button/Button";
 
 interface SignCardProps {
   inputThumbprint: string;
@@ -10,12 +20,37 @@ interface SignCardProps {
 
 const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
   const [thumbprint] = useState<string>(inputThumbprint);
-  const { signsList } = useContext(SignsContext);
+  const { signsList, checkSign, signDocument } = useContext(SignsContext);
   const [sign, setSign] = useState<Sign>(defaultSign);
 
   const [statusColor, setStatusColor] = useState("#3b3b3b");
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [loadingCheck, setLoadingCheck] = useState(false);
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [loadingSign, setLoadingSign] = useState(false);
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+
+      setSelectedFile(file);
+    }
+  };
+
+  const handleSignDocument = () => {
+    fileInputRef.current?.click();
+    setLoadingSign(true);
+    signDocument(sign, selectedFile, () => setLoadingSign(false));
+  };
+
+  useEffect(() => {
+    if (signsList.has(thumbprint)) {
+      setSign(signsList.get(thumbprint) || defaultSign);
+    }
+  }, [signsList, thumbprint]);
 
   useEffect(() => {
     if (sign.checked) {
@@ -29,41 +64,101 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
     }
   }, [sign]);
 
-  useEffect(() => {
-    if (signsList.has(thumbprint)) {
-      setSign(signsList.get(thumbprint) || defaultSign);
-    }
-  }, [signsList, thumbprint]);
-
   return (
-    <div className="card-collapsed" onClick={() => setModalOpen(true)}>
-      <div className="card-collapsed-snils">{sign.subject.snils}</div>
-      <div className="state-circle-container">
-        <div
-          className="state-circle"
-          style={{ backgroundColor: statusColor }}
-        />
+    <>
+      <div className="card-collapsed" onClick={() => setModalOpen(true)}>
+        <div className="card-collapsed-snils">{sign.subject.snils}</div>
+        <div className="state-circle-container">
+          <div
+            className="state-circle"
+            style={{ backgroundColor: statusColor }}
+          />
+        </div>
+        <div className="card-collapsed-cn">{sign.subject.cn.toUpperCase()}</div>
       </div>
-      <div className="card-collapsed-cn">{sign.subject.cn.toUpperCase()}</div>
-      <SignCardModal
+      <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        sign={sign}
-      />
-    </div>
+        title={`Сертификат ${capitalizeFirstLetter(sign.subject.sn)}`}
+      >
+        <div className="sign-card-modal">
+          <div className="sign-card-modal-row">
+            <span>Отпечаток:</span>
+            <CopyTextField inputText={sign.thumbprint} />
+          </div>
+          <div className="sign-card-modal-row">
+            <span>СНИЛС:</span>
+            <CopyTextField inputText={sign.subject.snils} />
+          </div>
+          <div className="sign-card-modal-row">
+            <span>Валидна с:</span>
+            <span>{timestampToTime(sign.notvalidbefore)}</span>
+          </div>
+          <div className="sign-card-modal-row">
+            <span>Валидна до:</span>
+            <span>{timestampToTime(sign.notvalidafter)}</span>
+          </div>
+          <div className="sign-card-modal-row">
+            <span>Проверялась:</span>
+            <span>{sign.checked ? "Да" : "Нет"}</span>
+          </div>
+          <div className="sign-card-modal-row">
+            <span>Валидна:</span>
+            <span>{sign.valid ? "Да" : "Нет"}</span>
+          </div>
+          {sign.valid && (
+            <div className="sign-card-modal-row">
+              <span>Пароль:</span>
+              <CopyTextField inputText={sign.password} />
+            </div>
+          )}
+          {sign.checked && !sign.valid && (
+            <DropdownDiv label="Ошибки" style={{ borderColor: "#994444" }}>
+              {sign.checkerror.map((item) => (
+                <div style={{ margin: "4px" }}>{item}</div>
+              ))}
+            </DropdownDiv>
+          )}
+          <div className="sign-card-modal-buttons-container">
+            <FrogsButton
+              label="Проверить"
+              onClick={() => {
+                setLoadingCheck(true);
+                checkSign(sign, () => setLoadingCheck(false));
+              }}
+              loading={loadingCheck}
+              className="sign-card-modal-button"
+            />
+            <FrogsButton
+              label="Подписать документ"
+              className="sign-card-modal-button"
+              disabled={!sign.valid}
+              onClick={handleSignDocument}
+              loading={loadingSign}
+            />
+            <input
+              type="file"
+              id="fileInput"
+              style={{ display: "none" }}
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept=".pdf"
+            />
+          </div>
+        </div>
+      </Modal>
+    </>
   );
 };
 
-interface SignCardModal extends ModalProps {
-  sign: Sign;
+function capitalizeFirstLetter(str: string): string {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
-const SignCardModal: FC<SignCardModal> = ({ isOpen, onClose, sign }) => {
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Сертификат">
-      <div>{sign.subject.snils}</div>
-    </Modal>
-  );
+const timestampToTime = (timestamp: number): string => {
+  const date = new Date(timestamp * 1000);
+  return date.toLocaleString();
 };
 
 export default SignCard;

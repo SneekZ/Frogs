@@ -1,6 +1,6 @@
 import { FC, ReactNode, useEffect, CSSProperties } from "react";
 import ReactDOM from "react-dom";
-import "./Modal.css";
+import "./styleModal.css";
 
 export interface ModalProps {
   isOpen: boolean;
@@ -36,12 +36,7 @@ const Modal: FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <div
-      className="modal-overlay"
-      // onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-    >
+    <div className="modal-overlay" role="dialog" aria-modal="true">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <span className="modal-title">{title}</span>
         <button className="modal-close" onClick={onClose} aria-label="Закрыть">

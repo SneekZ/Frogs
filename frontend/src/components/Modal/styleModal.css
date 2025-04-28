@@ -16,7 +16,7 @@
   background-color: #202020;
   border-radius: 11px;
   padding: 24px;
-  max-width: 500px;
+  max-width: 700px;
   width: 90%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
@@ -52,13 +52,8 @@
 }
 
 .divider {
-  border: none; /* Убираем стандартную рамку */
-  height: 1px; /* Толщина линии */
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #4d4d4d,
-    transparent
-  ); /* Градиент */
-  margin: 12px; /* Отступы */
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #4d4d4d, transparent);
+  margin: 12px;
 }

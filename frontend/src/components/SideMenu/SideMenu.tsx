@@ -71,8 +71,28 @@ const SideMenuSearch: FC<SideMenuSearchProps> = ({ setConns }) => {
     );
   }, [listConnections, findString, setConns]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        e.shiftKey &&
+        (e.key === "f" || e.key === "F")
+      ) {
+        e.preventDefault();
+        const input = document.getElementById(
+          "connectionsSearch"
+        ) as HTMLInputElement;
+        input?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <FrogsInput
+      id="connectionsSearch"
       className="side-menu-search"
       placeholder="Поиск по названию..."
       onChange={(e) => setFindString(e.target.value.toLocaleLowerCase())}

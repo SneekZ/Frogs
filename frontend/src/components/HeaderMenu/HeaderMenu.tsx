@@ -1,15 +1,14 @@
 import "./styleHeaderMenu.css";
-import { FC, useContext, useCallback, useState } from "react";
+import { FC, useContext, useCallback, useState, useEffect } from "react";
 import { SignsContext } from "../SignsContext/SignsContext";
 import FrogsInput from "../Input/Input";
 import FrogsButton from "../Button/Button";
-import FrogsChoice from "../Choice/Choice";
+import { NotificationContext } from "../Notification/NotificationContext";
 
 const HeaderMenu: FC = () => {
   return (
     <div className="header-container">
       <FilterInput />
-      <FilterChoice />
       <UpdateButton />
       <CheckAllButton />
     </div>
@@ -18,34 +17,28 @@ const HeaderMenu: FC = () => {
 
 const FilterInput: FC = () => {
   const { setFilter } = useContext(SignsContext);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "f") {
+        e.preventDefault();
+        const input = document.getElementById(
+          "signsSearch"
+        ) as HTMLInputElement;
+        input?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <FrogsInput
+      id="signsSearch"
       className="filter-input"
       placeholder="Поиск сертификатов..."
       onChange={(e) => setFilter(e.target.value)}
-    />
-  );
-};
-
-const FilterChoice: FC = () => {
-  const { setFilterType } = useContext(SignsContext);
-
-  const changeHandler = useCallback(
-    (value: string) => {
-      setFilterType(value === "snils" || value === "name" ? value : "snils");
-    },
-    [setFilterType]
-  );
-
-  return (
-    <FrogsChoice
-      options={[
-        { value: "snils", label: "СНИЛС" },
-        { value: "name", label: "Имя" },
-      ]}
-      defaultOption={0}
-      className="filter-type"
-      onChange={changeHandler}
     />
   );
 };
@@ -70,13 +63,15 @@ const UpdateButton: FC = () => {
 };
 
 const CheckAllButton: FC = () => {
+  const { Notify } = useContext(NotificationContext);
   const { checkAllSigns } = useContext(SignsContext);
   const [loading, setLoading] = useState(false);
 
   const handleClick = useCallback(async () => {
+    Notify({ type: "warning", message: "Это может занять до полутора минут" });
     setLoading(true);
     checkAllSigns(() => setLoading(false));
-  }, [checkAllSigns]);
+  }, [Notify, checkAllSigns]);
 
   return (
     <FrogsButton
