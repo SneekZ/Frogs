@@ -25,6 +25,9 @@ async function SignDocument(
   const response = await fetch(url, {
     method: "POST",
     body: formData,
+    headers: {
+      Authorization: conn.password,
+    },
   });
 
   if (!response.ok) {

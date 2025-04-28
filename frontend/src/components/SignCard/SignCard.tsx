@@ -20,7 +20,8 @@ interface SignCardProps {
 
 const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
   const [thumbprint] = useState<string>(inputThumbprint);
-  const { signsList, checkSign, signDocument } = useContext(SignsContext);
+  const { signsList, checkSign, signDocument, deleteSign } =
+    useContext(SignsContext);
   const [sign, setSign] = useState<Sign>(defaultSign);
 
   const [statusColor, setStatusColor] = useState("#3b3b3b");
@@ -32,18 +33,23 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loadingSign, setLoadingSign] = useState(false);
 
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-
       setSelectedFile(file);
     }
   };
 
   const handleSignDocument = () => {
-    fileInputRef.current?.click();
     setLoadingSign(true);
     signDocument(sign, selectedFile, () => setLoadingSign(false));
+  };
+
+  const handleDeleteSign = () => {
+    setLoadingDelete(true);
+    deleteSign(sign, () => setLoadingDelete(false));
   };
 
   useEffect(() => {
@@ -130,10 +136,17 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
               className="sign-card-modal-button"
             />
             <FrogsButton
-              label="Подписать документ"
+              label="Подписать"
               className="sign-card-modal-button"
               disabled={!sign.valid}
               onClick={handleSignDocument}
+              loading={loadingSign}
+            />
+            <FrogsButton
+              label={selectedFile?.name ?? "Выбрать файл"}
+              className="sign-card-modal-button"
+              disabled={!sign.valid}
+              onClick={() => fileInputRef.current?.click()}
               loading={loadingSign}
             />
             <input
@@ -143,6 +156,13 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
               ref={fileInputRef}
               onChange={handleFileChange}
               accept=".pdf"
+            />
+            <FrogsButton
+              label="Удалить"
+              className="sign-card-modal-button"
+              onClick={handleDeleteSign}
+              loading={loadingDelete}
+              style={{ backgroundColor: "#994444" }}
             />
           </div>
         </div>

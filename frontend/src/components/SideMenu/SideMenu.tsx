@@ -76,7 +76,7 @@ const SideMenuSearch: FC<SideMenuSearchProps> = ({ setConns }) => {
       if (
         (e.ctrlKey || e.metaKey) &&
         e.shiftKey &&
-        (e.key === "f" || e.key === "F")
+        (e.key === "f" || e.key === "F" || e.key === "а" || e.key === "А")
       ) {
         e.preventDefault();
         const input = document.getElementById(

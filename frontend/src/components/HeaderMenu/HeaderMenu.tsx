@@ -20,7 +20,7 @@ const FilterInput: FC = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "f") {
+      if ((e.ctrlKey || e.metaKey) && (e.key === "f" || e.key === "а")) {
         e.preventDefault();
         const input = document.getElementById(
           "signsSearch"

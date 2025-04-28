@@ -22,6 +22,7 @@ interface SignsContextProps {
   license: License;
   refreshLicense: (callback: () => void) => void;
   signDocument: (arg0: Sign, file: File | null, callback: () => void) => void;
+  deleteSign: (arg0: Sign, callback: () => void) => void;
 }
 
 export const SignsContext = createContext<SignsContextProps>({
@@ -48,4 +49,5 @@ export const SignsContext = createContext<SignsContextProps>({
   license: defaultLicense,
   refreshLicense: () => {},
   signDocument: () => {},
+  deleteSign: () => {},
 });

@@ -21,6 +21,7 @@ import {
 import { defaultResponse, Response } from "../../structures/Response";
 import { GetStatus } from "../../api/Handlers/GetStatus";
 import SignDocument from "../../api/Handlers/SignDocument";
+import { DeleteSign } from "../../api/handlers/DeleteSign";
 
 const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { Notify } = useContext(NotificationContext);
@@ -263,6 +264,25 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [Notify, activeConnection]
   );
 
+  const deleteSign = useCallback(
+    async (sign: Sign, callback: () => void) => {
+      const signsMap = new Map<string, Sign>(signsList);
+      DeleteSign(activeConnection, sign)
+        .then(() => {
+          signsMap.delete(sign.thumbprint);
+          setSignsList(signsMap);
+        })
+        .catch((e) =>
+          Notify({
+            type: "error",
+            message: e?.message,
+          })
+        )
+        .finally(callback);
+    },
+    [Notify, activeConnection, signsList]
+  );
+
   return (
     <SignsContext.Provider
       value={{
@@ -282,6 +302,7 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
         license,
         refreshLicense,
         signDocument,
+        deleteSign,
       }}
     >
       {children}
