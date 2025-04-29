@@ -112,6 +112,12 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
             <span>Валидна:</span>
             <span>{sign.valid ? "Да" : "Нет"}</span>
           </div>
+          {sign.databaseids && (
+            <div className="sign-card-modal-row">
+              <span>ID в БД:</span>
+              <CopyTextField inputText={sign.databaseids?.join(", ")} />
+            </div>
+          )}
           {sign.valid && (
             <div className="sign-card-modal-row">
               <span>Пароль:</span>

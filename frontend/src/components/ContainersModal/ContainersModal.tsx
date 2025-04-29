@@ -41,14 +41,20 @@ const ContainersModal: FC<ModalProps> = ({ isOpen, onClose }) => {
         style={{ gridRow: "1 / 2" }}
         onChange={(e) => setFilter(e.target.value)}
       />
-      <div className="default-container" style={{ gridRow: "2 / -1" }}>
+      <div
+        className="default-container"
+        style={{ gridRow: "2 / -1", width: "100%" }}
+      >
         {filteredContainers.map((item) => (
           <div style={{ margin: "8px" }}>
             <ContainersListItem container={item} />
           </div>
         ))}
       </div>
-      <div className="default-container" style={{ gridRow: "1 / -1" }}>
+      <div
+        className="default-container"
+        style={{ gridRow: "1 / -1", width: "100%" }}
+      >
         {installedSignsList.map((item) => (
           <div style={{ margin: "8px" }}>
             <SignListItem sign={item} />
