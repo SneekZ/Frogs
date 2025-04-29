@@ -96,7 +96,7 @@ func InstallContainerByName(containerName string) (parser.Sign, error) {
 		return parser.Sign{}, err
 	}
 
-	commandInstall := fmt.Sprintf("%s -inst -cont \"\\\\.\\HDIMAGE\\%s\"", Config.CertmgrPath, containerName)
+	commandInstall := fmt.Sprintf("%s -install -container '\\\\.\\HDIMAGE\\%s'", Config.CertmgrPath, containerName)
 	out, err := h.Exec(commandInstall)
 	if err != nil {
 		return parser.Sign{}, err

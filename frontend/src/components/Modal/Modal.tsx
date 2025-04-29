@@ -45,7 +45,10 @@ const Modal: FC<ModalProps> = ({
         <div className="divider-container">
           <hr className="divider" />
         </div>
-        <div className={className} style={style}>
+        <div
+          className={`modal-content-children ${className}`}
+          style={{ ...style }}
+        >
           {children}
         </div>
       </div>

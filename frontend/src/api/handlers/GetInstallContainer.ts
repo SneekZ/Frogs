@@ -12,12 +12,10 @@ export async function GetInstallContainer(
     `/containers/install/containername/${container.name}`
   )
     .then((response) => {
-      if (response.signs.length == 1) {
-        return response.signs[0];
+      if (response.error != "") {
+        throw new Error(response.error);
       } else {
-        throw new Error(
-          `При установке было получено ${response.signs.length} подписей, надо 1`
-        );
+        return response.signs[0];
       }
     })
     .catch((e) => {
