@@ -23,6 +23,7 @@ import { GetStatus } from "../../api/Handlers/GetStatus";
 import SignDocument from "../../api/Handlers/SignDocument";
 import { DeleteSign } from "../../api/Handlers/DeleteSign";
 import { GetInstallContainer } from "../../api/Handlers/GetInstallContainer";
+import { ChangePassword } from "../../api/Handlers/ChangePassword";
 
 const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { Notify } = useContext(NotificationContext);
@@ -318,6 +319,21 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [Notify, activeConnection, signsList]
   );
 
+  const changePassword = useCallback(
+    async (sign: Sign, newPassword: string, callback: () => void) => {
+      ChangePassword(activeConnection, sign, newPassword)
+        .then(() => {})
+        .catch((e) =>
+          Notify({
+            type: "error",
+            message: e?.message,
+          })
+        )
+        .finally(callback);
+    },
+    [Notify, activeConnection]
+  );
+
   return (
     <SignsContext.Provider
       value={{
@@ -341,6 +357,7 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
         refreshLicense,
         signDocument,
         deleteSign,
+        changePassword,
       }}
     >
       {children}

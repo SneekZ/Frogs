@@ -13,6 +13,7 @@ import Modal from "../Modal/Modal";
 import CopyTextField from "../../utils/CopyFieldComponent";
 import DropdownDiv from "../Dropdown/DropdownDiv";
 import FrogsButton from "../Button/Button";
+import FrogsInput from "../Input/Input";
 
 interface SignCardProps {
   inputThumbprint: string;
@@ -133,15 +134,6 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
           )}
           <div className="sign-card-modal-buttons-container">
             <FrogsButton
-              label="Проверить"
-              onClick={() => {
-                setLoadingCheck(true);
-                checkSign(sign, () => setLoadingCheck(false));
-              }}
-              loading={loadingCheck}
-              className="sign-card-modal-button"
-            />
-            <FrogsButton
               label="Подписать"
               className="sign-card-modal-button"
               disabled={!sign.valid}
@@ -163,6 +155,21 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
               onChange={handleFileChange}
               accept=".pdf"
             />
+          </div>
+          <div className="sign-card-modal-buttons-container">
+            <FrogsButton
+              label="Проверить"
+              onClick={() => {
+                setLoadingCheck(true);
+                checkSign(sign, () => setLoadingCheck(false));
+              }}
+              loading={loadingCheck}
+              className="sign-card-modal-button"
+            />
+            <ChangePasswordButton
+              sign={sign}
+              className="sign-card-modal-button"
+            />
             <FrogsButton
               label="Удалить"
               className="sign-card-modal-button"
@@ -177,10 +184,64 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
   );
 };
 
-function capitalizeFirstLetter(str: string): string {
+const ChangePasswordButton: FC<{ sign: Sign; className: string }> = ({
+  sign,
+  className,
+}) => {
+  const { changePassword } = useContext(SignsContext);
+
+  const [openModal, setOpenModal] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  const handleChangePassword = () => {
+    setLoading(true);
+    changePassword(sign, newPassword, () => {
+      setLoading(false);
+      setOpenModal(false);
+    });
+  };
+
+  return (
+    <>
+      <FrogsButton
+        label="Сменить пароль в БД"
+        onClick={() => setOpenModal(true)}
+        loading={loading}
+        className={className}
+      />
+      <Modal
+        title="Смена пароля подписи"
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+      >
+        <div
+          style={{
+            display: "flex",
+            gap: "16px",
+            justifyContent: "space-between",
+          }}
+        >
+          <FrogsInput
+            placeholder="Введите новый пароль..."
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+          <FrogsButton
+            label="Сменить пароль"
+            onClick={handleChangePassword}
+            loading={loading}
+          />
+        </div>
+      </Modal>
+    </>
+  );
+};
+
+const capitalizeFirstLetter = (str: string) => {
   if (!str) return str;
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-}
+};
 
 const timestampToTime = (timestamp: number): string => {
   const date = new Date(timestamp * 1000);

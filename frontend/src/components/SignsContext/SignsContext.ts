@@ -30,6 +30,11 @@ interface SignsContextProps {
   refreshLicense: (callback: () => void) => void;
   signDocument: (sign: Sign, file: File | null, callback: () => void) => void;
   deleteSign: (sign: Sign, callback: () => void) => void;
+  changePassword: (
+    sign: Sign,
+    newPassword: string,
+    callback: () => void
+  ) => void;
 }
 
 export const SignsContext = createContext<SignsContextProps>({
@@ -60,4 +65,5 @@ export const SignsContext = createContext<SignsContextProps>({
   refreshLicense: () => {},
   signDocument: () => {},
   deleteSign: () => {},
+  changePassword: () => {},
 });
