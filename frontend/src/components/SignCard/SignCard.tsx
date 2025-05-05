@@ -136,13 +136,14 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
             <FrogsButton
               label="Подписать"
               className="sign-card-modal-button"
-              disabled={!sign.valid}
+              disabled={!sign.valid || selectedFile === null}
               onClick={handleSignDocument}
               loading={loadingSign}
             />
             <FrogsButton
               label={selectedFile?.name ?? "Выбрать файл"}
               className="sign-card-modal-button"
+              style={{ maxWidth: "330px" }}
               disabled={!sign.valid}
               onClick={() => fileInputRef.current?.click()}
               loading={loadingSign}

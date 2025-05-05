@@ -38,7 +38,7 @@ const Button: FC<ButtonProps> = ({
 
   return (
     <div className={buttonClassName} onClick={onClick} style={style}>
-      {label !== "" && <div>{label}</div>}
+      {label !== "" && <div className="button-label">{label}</div>}
       {children}
     </div>
   );
