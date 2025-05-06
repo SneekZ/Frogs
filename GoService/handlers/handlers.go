@@ -183,6 +183,7 @@ func checkSign(sign parser.Sign, password string) (string, error) {
 
 func checkSignAuto(dh *databasehandler.DatabaseHandler, ch chan parser.Sign, sign parser.Sign) {
 	sign.DatabaseIds, _ = dh.GetPersonIdsBySnils(sign.Subject.SNILS)
+
 	if sign.Checked {
 		ch <- sign
 		return
