@@ -1,0 +1,38 @@
+{
+  "name": "",
+  "tags": [],
+  "hashname": "",
+  "hashauth": "",
+  "certmgrpath": "",
+  "csptestpath": "",
+  "keyspath": "",
+  "cryptcppath": "",
+  "cpconfigpath": "",
+  "bashtype": "ssh",
+  "sshconnection": {
+    "host": "",
+    "port": "",
+    "user": "",
+    "password": ""
+  },
+  "useredis": false,
+  "redisconnection": {
+    "host": "",
+    "port": "",
+    "password": "",
+    "db": 0
+  },
+  "connectiondata": {
+    "host": "localhost",
+    "port": "6007"
+  },
+  "databaseconnection": {
+    "host": "",
+    "port": "",
+    "user": "",
+    "password": "",
+    "database": ""
+  },
+  "maxflows": 1,
+  "env": "debug"
+}
