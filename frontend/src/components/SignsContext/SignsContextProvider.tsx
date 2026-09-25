@@ -11,19 +11,19 @@ import {
 import { Sign } from "../../structures/Sign";
 import { Container } from "../../structures/Container";
 import { License, defaultLicense } from "../../structures/License";
-import { GetSigns } from "../../api/Handlers/GetSigns";
-import { GetContainers } from "../../api/Handlers/GetContainers";
-import { GetLicense } from "../../api/Handlers/GetLicense";
+import { GetSigns } from "../../api/handlers/GetSigns";
+import { GetContainers } from "../../api/handlers/GetContainers";
+import { GetLicense } from "../../api/handlers/GetLicense";
 import {
   GetCheckAllSigns,
   GetCheckSignByThumbprint,
-} from "../../api/Handlers/GetCheckSigns";
+} from "../../api/handlers/GetCheckSigns";
 import { defaultResponse, Response } from "../../structures/Response";
-import { GetStatus } from "../../api/Handlers/GetStatus";
-import SignDocument from "../../api/Handlers/SignDocument";
-import { DeleteSign } from "../../api/Handlers/DeleteSign";
-import { GetInstallContainer } from "../../api/Handlers/GetInstallContainer";
-import { ChangePassword } from "../../api/Handlers/ChangePassword";
+import { GetStatus } from "../../api/handlers/GetStatus";
+import SignDocument from "../../api/handlers/SignDocument";
+import { DeleteSign } from "../../api/handlers/DeleteSign";
+import { GetInstallContainer } from "../../api/handlers/GetInstallContainer";
+import { ChangePassword } from "../../api/handlers/ChangePassword";
 
 const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { Notify } = useContext(NotificationContext);

@@ -1,4 +1,4 @@
-import "./styleMainpage.css";
+import "./styleMainPage.css";
 import SideMenu from "../../components/SideMenu/SideMenu";
 import ConnectionsContextProvider from "../../api/Connections/ConnectionsContextProvider";
 import SignsContextProvider from "../../components/SignsContext/SignsContextProvider";
