@@ -1,17 +1,104 @@
+/* Системная палитра macOS: светлая тема по умолчанию, тёмная — по prefers-color-scheme */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 2;
-  font-size: large;
+  color-scheme: light dark;
+
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui,
+    "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+
+  --bg: #ffffff;
+  --bg-window: #f5f5f7;
+  --bg-sidebar: rgba(236, 236, 240, 0.82);
+  --bg-elevated: #ffffff;
+  --bg-grouped: #f2f2f7;
+  --bg-grouped-row: #ffffff;
+  --bg-overlay: rgba(0, 0, 0, 0.22);
+  --bg-glass: rgba(250, 250, 252, 0.78);
+
+  --label: #1d1d1f;
+  --label-secondary: rgba(60, 60, 67, 0.62);
+  --label-tertiary: rgba(60, 60, 67, 0.32);
+  --separator: rgba(60, 60, 67, 0.14);
+  --fill: rgba(120, 120, 128, 0.12);
+  --fill-hover: rgba(120, 120, 128, 0.2);
+  --fill-pressed: rgba(120, 120, 128, 0.28);
+
+  --accent: #007aff;
+  --accent-hover: #0070eb;
+  --green: #34c759;
+  --red: #ff3b30;
+  --red-fill: rgba(255, 59, 48, 0.12);
+  --orange: #ff9500;
+  --gray: #aeaeb2;
+
+  --shadow-card: 0 0 0 var(--hairline) rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.06),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 0 0 var(--hairline) rgba(0, 0, 0, 0.06),
+    0 4px 12px rgba(0, 0, 0, 0.08), 0 12px 32px rgba(0, 0, 0, 0.06);
+  --shadow-sheet: 0 0 0 var(--hairline) rgba(0, 0, 0, 0.1), 0 24px 64px rgba(0, 0, 0, 0.22);
+  --focus-ring: 0 0 0 3px rgba(0, 122, 255, 0.4);
+  --sheet-highlight: rgba(255, 255, 255, 0.7);
+
+  --hairline: 1px;
+
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --spring: cubic-bezier(0.32, 0.72, 0, 1);
+
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.4;
   font-weight: 400;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
-  padding: 0;
-  margin: 0;
+  color: var(--label);
+  background-color: var(--bg-window);
+}
 
-  color: white;
-  background-color: #202020;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1e1e1e;
+    --bg-window: #1e1e1e;
+    --bg-sidebar: rgba(40, 40, 42, 0.86);
+    --bg-elevated: #2c2c2e;
+    --bg-grouped: #1c1c1e;
+    --bg-grouped-row: #2c2c2e;
+    --bg-overlay: rgba(0, 0, 0, 0.45);
+    --bg-glass: rgba(44, 44, 46, 0.78);
 
-  --transition-length: 0.2s;
-  --hover-color: #eaeaea;
+    --label: #f5f5f7;
+    --label-secondary: rgba(235, 235, 245, 0.6);
+    --label-tertiary: rgba(235, 235, 245, 0.3);
+    --separator: rgba(84, 84, 88, 0.55);
+    --fill: rgba(120, 120, 128, 0.24);
+    --fill-hover: rgba(120, 120, 128, 0.32);
+    --fill-pressed: rgba(120, 120, 128, 0.4);
+
+    --accent: #0a84ff;
+    --accent-hover: #2690ff;
+    --green: #30d158;
+    --red: #ff453a;
+    --red-fill: rgba(255, 69, 58, 0.16);
+    --orange: #ff9f0a;
+    --gray: #636366;
+
+    --shadow-card: 0 0 0 var(--hairline) rgba(255, 255, 255, 0.08),
+      0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-card-hover: 0 0 0 var(--hairline) rgba(255, 255, 255, 0.12),
+      0 8px 24px rgba(0, 0, 0, 0.4);
+    --shadow-sheet: 0 0 0 var(--hairline) rgba(255, 255, 255, 0.12),
+      0 24px 64px rgba(0, 0, 0, 0.6);
+    --focus-ring: 0 0 0 3px rgba(10, 132, 255, 0.5);
+    --sheet-highlight: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Retina: волосяные линии в полпикселя */
+@media (min-resolution: 2dppx) {
+  :root {
+    --hairline: 0.5px;
+  }
 }
 
 html,
@@ -28,36 +115,69 @@ body,
   box-sizing: border-box;
 }
 
-.default-hover {
-  background-color: #3b3b3b;
-  border-radius: 11px;
-
-  transition: background-color ease-in-out var(--transition-length);
-  transition: color ease-in-out var(--transition-length - 0.2s);
-}
-
-.default-hover:hover {
-  background-color: var(--hover-color);
-  color: black;
+::selection {
+  background-color: color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
 .default-container {
-  /* background-color: #3b3b3b; */
-  border-width: 2px;
-  border-style: solid;
-  border-color: #3b3b3b;
-  border-radius: 11px;
-
-  overflow-y: scroll;
-
-  scrollbar-width: none;
-  scrollbar-color: transparent transparent;
-
-  /* IE 10+ */
-  -ms-overflow-style: none;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--fill-pressed) transparent;
 }
 
-/* WebKit (Chrome, Safari, Edge Chromium) */
-.default-container::-webkit-scrollbar {
-  display: none;
+.divider {
+  border: none;
+  height: var(--hairline);
+  margin: 0;
+  background: var(--separator);
+}
+
+/* Сгруппированный список как в «Настройках»: строки с разделителями в скруглённом блоке */
+.grouped-list {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-grouped-row);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.grouped-list > * + * {
+  box-shadow: inset 0 var(--hairline) 0 var(--separator);
+}
+
+.grouped-title {
+  margin: 0 0 8px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--label-secondary);
+}
+
+/* Строка-действие: синий текст на всю ширину, как в iOS */
+.grouped-action {
+  justify-content: flex-start;
+  height: 50px;
+  padding: 0 18px;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--accent);
+  background-color: transparent;
+  border-radius: 0;
+}
+
+.grouped-action:hover {
+  background-color: var(--fill);
+}
+
+.grouped-action.button-destructive {
+  color: var(--red);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

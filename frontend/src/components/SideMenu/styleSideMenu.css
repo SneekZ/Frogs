@@ -1,60 +1,129 @@
-:root {
-  --rows: 12;
-  --gutter-rows: 20px;
-  --transition-lenght: 0.2s;
-}
-
 .side-menu-container {
-  width: 100%;
-  display: grid;
-  grid-template-rows: repeat(var(--rows), 1fr);
-  row-gap: var(--gutter-rows);
-
-  grid-column: 1 / 3;
+  grid-column: 1 / 2;
   grid-row: 1 / -1;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  padding: 16px 12px 12px;
+
+  background-color: var(--bg-sidebar);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-right: var(--hairline) solid var(--separator);
 }
 
-.side-menu-button {
-  grid-row: 1 / 2;
-}
-
-.side-menu-search {
-  grid-row: 2 / 3;
+.side-menu-section-title {
+  padding: 10px 12px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--label-secondary);
 }
 
 .side-menu-list-container {
-  grid-row: 3 / -2;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  /* gap: 4px; */
+  gap: 2px;
+  min-height: 0;
+}
 
-  overflow-y: scroll;
+.side-menu-empty {
+  padding: 8px 12px;
+  color: var(--label-tertiary);
 }
 
 .side-menu-list-item-container {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  padding: 8px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 6px;
+  border-radius: 10px;
+  transition: background-color 0.12s var(--ease);
+}
+
+.side-menu-list-item-container:hover {
+  background-color: var(--fill);
+}
+
+.side-menu-list-item-container.active {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+:where(.side-menu-list-item-container) .button {
+  color: inherit;
+  background-color: transparent;
 }
 
 .side-menu-list-item-button-main {
-  grid-column: 1 / -2;
+  flex: 1;
+  justify-content: flex-start;
+  height: 40px;
+  padding: 0 12px;
+  font-size: 15px;
+  font-weight: 400;
 }
 
-.side-menu-list-item-button-main.active {
-  background-color: #eaeaea;
-  color: black;
+.side-menu-list-item-button-main:active {
+  transform: none;
 }
 
-.side-menu-list-item-button-starred {
-  grid-column: -2;
+.side-menu-list-item-container.active .side-menu-list-item-button-main {
+  font-weight: 500;
 }
 
-.side-menu-list-item-button-settings {
-  grid-column: -1;
+.side-menu-icon-button {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 7px;
+  color: var(--label-secondary);
+  opacity: 0;
+}
+
+.side-menu-icon-button:hover {
+  background-color: var(--fill-hover);
+}
+
+/* Иконки появляются по наведению; закреплённая звезда видна всегда */
+.side-menu-list-item-container:hover .side-menu-icon-button,
+.side-menu-list-item-container:focus-within .side-menu-icon-button,
+.side-menu-list-item-container.starred .side-menu-list-item-button-starred {
+  opacity: 1;
+}
+
+.side-menu-list-item-container.starred .side-menu-list-item-button-starred {
+  color: var(--orange);
+}
+
+.side-menu-list-item-container.active .side-menu-icon-button {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.side-menu-list-item-container.active .side-menu-icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .side-menu-add-item-button {
-  grid-row: -2 / -1;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 0 12px;
+  color: var(--label-secondary);
+  background-color: transparent;
+}
+
+.side-menu-add-item-button:hover {
+  color: var(--label);
+}
+
+@media (max-width: 760px) {
+  .side-menu-container {
+    grid-row: 1 / 2;
+    max-height: 40vh;
+    border-right: none;
+    border-bottom: var(--hairline) solid var(--separator);
+  }
 }

@@ -36,31 +36,31 @@ const ContainersModal: FC<ModalProps> = ({ isOpen, onClose }) => {
       title="Установка контейнеров"
       className="containers-modal-container"
     >
-      <Input
-        placeholder="Поиск..."
-        style={{ gridRow: "1 / 2" }}
-        onChange={(e) => setFilter(e.target.value)}
-      />
-      <div
-        className="default-container"
-        style={{ gridRow: "2 / -1", width: "100%" }}
-      >
-        {filteredContainers.map((item) => (
-          <div style={{ margin: "8px" }}>
-            <ContainersListItem container={item} />
-          </div>
-        ))}
-      </div>
-      <div
-        className="default-container"
-        style={{ gridRow: "1 / -1", width: "100%" }}
-      >
-        {installedSignsList.map((item) => (
-          <div style={{ margin: "8px" }}>
-            <SignListItem sign={item} />
-          </div>
-        ))}
-      </div>
+      <section className="containers-column">
+        <h2>Контейнеры на сервере</h2>
+        <Input
+          placeholder="Поиск"
+          className="input-search"
+          onChange={(e) => setFilter(e.target.value)}
+        />
+        <div className="default-container containers-list">
+          {filteredContainers.map((item) => (
+            <ContainersListItem key={item.foldername} container={item} />
+          ))}
+        </div>
+      </section>
+      <section className="containers-column">
+        <h2>Установленные</h2>
+        <p className="containers-hint">Нажмите, чтобы скопировать СНИЛС</p>
+        <div className="default-container containers-list">
+          {installedSignsList.map((item) => (
+            <SignListItem key={item.thumbprint} sign={item} />
+          ))}
+          {installedSignsList.length === 0 && (
+            <div className="containers-empty">Пока ничего не установлено</div>
+          )}
+        </div>
+      </section>
     </Modal>
   );
 };
@@ -68,14 +68,14 @@ const ContainersModal: FC<ModalProps> = ({ isOpen, onClose }) => {
 const ContainersListItem: FC<{ container: Container }> = ({ container }) => {
   const { installContainer } = useContext(SignsContext);
   const [loading, setLoading] = useState(false);
-  const [buttonColor, setButtonColor] = useState("transparent");
+  const [failed, setFailed] = useState(false);
 
   const handleInstallContainer = useCallback(() => {
     setLoading(true);
     installContainer(
       container,
       () => setLoading(false),
-      () => setButtonColor("#994444")
+      () => setFailed(true)
     );
   }, [container, installContainer]);
 
@@ -84,8 +84,7 @@ const ContainersListItem: FC<{ container: Container }> = ({ container }) => {
       label={container.foldername}
       onClick={handleInstallContainer}
       loading={loading}
-      className="default-container"
-      style={{ backgroundColor: buttonColor }}
+      className={`list-row${failed ? " list-row-failed" : ""}`}
     />
   );
 };
@@ -105,10 +104,9 @@ const SignListItem: FC<{ sign: Sign }> = ({ sign }) => {
   return (
     <Button
       label={sign.subject.snils}
-      className="default-container"
+      className="list-row"
       onClick={handleDeleteSignFromList}
       loading={loading}
-      style={{ backgroundColor: "transparent" }}
     />
   );
 };

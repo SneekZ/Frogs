@@ -1,58 +1,99 @@
-.button {
-  --color: #3b3b3b;
-  --hover-color: #eaeaea;
+/* Базовые стили с нулевой специфичностью — классы компонентов их перекрывают */
+:where(.button) {
+  position: relative;
 
-  color: white;
-
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
+  gap: 8px;
 
-  font-size: large;
-  background-color: var(--color);
-  border-radius: 11px;
+  min-width: 0;
+  height: 40px;
+  padding: 0 18px;
+
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--label);
+  background-color: var(--fill);
+  border: none;
+  border-radius: 10px;
   cursor: pointer;
+  user-select: none;
 
-  padding-left: 10px;
-  padding-right: 10px;
-
-  transition: background-color 0.3s ease-in-out, color 0.1s ease-in-out,
-    font-size 0.3s ease-in-out;
+  transition: background-color 0.15s var(--ease), transform 0.1s var(--ease),
+    opacity 0.15s var(--ease);
 }
 
-.button:hover {
-  background-color: var(--hover-color) !important;
-  color: black !important;
+:where(.button:hover) {
+  background-color: var(--fill-hover);
 }
 
-.button:focus {
-  background-color: var(--hover-color);
-  color: black;
+:where(.button:active) {
+  background-color: var(--fill-pressed);
+  transform: scale(0.98);
 }
 
-.loading {
+.button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.button:disabled {
+  cursor: default;
+  opacity: 0.4;
+  transform: none;
+}
+
+.button-primary {
+  color: #fff;
+  background-color: var(--accent);
+}
+
+.button-primary:hover {
+  background-color: var(--accent-hover);
+}
+
+.button-primary:active {
+  background-color: var(--accent);
+  filter: brightness(0.92);
+}
+
+.button-destructive {
+  color: var(--red);
+}
+
+.button-destructive:hover {
+  background-color: var(--red-fill);
+}
+
+/* Лейбл прячется, на его месте крутится системный спиннер */
+.button.loading {
   pointer-events: none;
-  cursor: not-allowed;
-  animation: softBlink 2s ease-in-out infinite;
 }
 
-@keyframes softBlink {
-  0%,
-  100% {
-    background-color: var(--color);
-    opacity: 1;
-  }
-  50% {
-    background-color: var(--hover-color);
-    opacity: 0.7;
-    color: black;
-  }
+.button.loading > * {
+  visibility: hidden;
 }
 
-.disabled {
-  pointer-events: none;
-  cursor: not-allowed;
+.button.loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
   opacity: 0.7;
+  animation: buttonSpin 0.7s linear infinite;
+}
+
+@keyframes buttonSpin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .button-label {

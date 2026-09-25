@@ -2,7 +2,8 @@ import { useEffect, useRef, useState, useCallback } from "react";
 
 export function useNotificationTimer(duration: number, onFinish: () => void) {
   const [isPaused, setIsPaused] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(duration);
+  // 0 = таймер стоит, пока его не запустят через reset()
+  const [timeLeft, setTimeLeft] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const pause = () => setIsPaused(true);

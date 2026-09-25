@@ -25,8 +25,6 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
     useContext(SignsContext);
   const [sign, setSign] = useState<Sign>(defaultSign);
 
-  const [statusColor, setStatusColor] = useState("#3b3b3b");
-
   const [modalOpen, setModalOpen] = useState(false);
   const [loadingCheck, setLoadingCheck] = useState(false);
 
@@ -59,124 +57,123 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
     }
   }, [signsList, thumbprint]);
 
-  useEffect(() => {
-    if (sign.checked) {
-      if (sign.valid) {
-        setStatusColor("#009900");
-      } else {
-        setStatusColor("#990000");
-      }
-    } else {
-      setStatusColor("#3b3b3b");
-    }
-  }, [sign]);
+  const status = !sign.checked ? "unchecked" : sign.valid ? "valid" : "invalid";
 
   return (
     <>
-      <div className="card-collapsed" onClick={() => setModalOpen(true)}>
-        <div className="card-collapsed-snils">{sign.subject.snils}</div>
-        <div className="state-circle-container">
-          <div
-            className="state-circle"
-            style={{ backgroundColor: statusColor }}
-          />
-        </div>
-        <div className="card-collapsed-cn">{sign.subject.cn.toUpperCase()}</div>
-      </div>
+      <button
+        type="button"
+        className="card-collapsed"
+        onClick={() => setModalOpen(true)}
+      >
+        <span className="card-collapsed-cn">{sign.subject.cn}</span>
+        <span className="card-collapsed-snils">
+          {formatSnils(sign.subject.snils)}
+        </span>
+        <span className={`card-status ${status}`}>{statusLabels[status]}</span>
+      </button>
       <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         title={`Сертификат ${capitalizeFirstLetter(sign.subject.sn)}`}
+        hideTitle
       >
         <div className="sign-card-modal">
-          <div className="sign-card-modal-row">
-            <span>Отпечаток:</span>
-            <CopyTextField inputText={sign.thumbprint} />
-          </div>
-          <div className="sign-card-modal-row">
-            <span>СНИЛС:</span>
-            <CopyTextField inputText={sign.subject.snils} />
-          </div>
-          <div className="sign-card-modal-row">
-            <span>Валидна с:</span>
-            <span>{timestampToTime(sign.notvalidbefore)}</span>
-          </div>
-          <div className="sign-card-modal-row">
-            <span>Валидна до:</span>
-            <span>{timestampToTime(sign.notvalidafter)}</span>
-          </div>
-          <div className="sign-card-modal-row">
-            <span>Проверялась:</span>
-            <span>{sign.checked ? "Да" : "Нет"}</span>
-          </div>
-          <div className="sign-card-modal-row">
-            <span>Валидна:</span>
-            <span>{sign.valid ? "Да" : "Нет"}</span>
-          </div>
-          {sign.databaseids && (
-            <div className="sign-card-modal-row">
-              <span>ID в БД:</span>
-              <CopyTextField inputText={sign.databaseids?.join(", ")} />
+          <div className={`sign-hero ${status}`}>
+            <div className="sign-avatar" aria-hidden="true">
+              {initials(sign.subject.cn)}
             </div>
-          )}
-          {sign.valid && (
+            <h2>{sign.subject.cn}</h2>
+            <span className="sign-hero-status">{statusLabels[status]}</span>
+          </div>
+
+          <div className="grouped-list">
             <div className="sign-card-modal-row">
-              <span>Пароль:</span>
-              <CopyTextField inputText={sign.password} />
+              <span>Отпечаток</span>
+              <CopyTextField inputText={sign.thumbprint} />
             </div>
-          )}
+            <div className="sign-card-modal-row">
+              <span>СНИЛС</span>
+              <CopyTextField inputText={sign.subject.snils} />
+            </div>
+            <div className="sign-card-modal-row">
+              <span>Действует с</span>
+              <span>{timestampToTime(sign.notvalidbefore)}</span>
+            </div>
+            <div className="sign-card-modal-row">
+              <span>Действует до</span>
+              <span>{timestampToTime(sign.notvalidafter)}</span>
+            </div>
+            {sign.databaseids && (
+              <div className="sign-card-modal-row">
+                <span>ID в БД</span>
+                <CopyTextField inputText={sign.databaseids?.join(", ")} />
+              </div>
+            )}
+            {sign.valid && (
+              <div className="sign-card-modal-row">
+                <span>Пароль</span>
+                <CopyTextField inputText={sign.password} />
+              </div>
+            )}
+          </div>
+
           {sign.checked && !sign.valid && (
-            <DropdownDiv label="Ошибки" style={{ borderColor: "#994444" }}>
-              {sign.checkerror.map((item) => (
-                <div style={{ margin: "4px" }}>{item}</div>
+            <DropdownDiv
+              label={`Ошибки проверки: ${sign.checkerror.length}`}
+              className="dropdown-danger"
+            >
+              {sign.checkerror.map((item, i) => (
+                <div key={i} className="dropdown-item">
+                  {item}
+                </div>
               ))}
             </DropdownDiv>
           )}
-          <div className="sign-card-modal-buttons-container">
+
+          <section>
+            <h3 className="grouped-title">Подписание документа</h3>
+            <div className="modal-actions">
+              <FrogsButton
+                label={selectedFile?.name ?? "Выбрать PDF…"}
+                className="sign-card-file-button"
+                disabled={!sign.valid}
+                onClick={() => fileInputRef.current?.click()}
+              />
+              <FrogsButton
+                label="Подписать"
+                className="button-primary"
+                disabled={!sign.valid || selectedFile === null}
+                onClick={handleSignDocument}
+                loading={loadingSign}
+              />
+              <input
+                type="file"
+                id="fileInput"
+                style={{ display: "none" }}
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept=".pdf"
+              />
+            </div>
+          </section>
+
+          <div className="grouped-list">
             <FrogsButton
-              label="Подписать"
-              className="sign-card-modal-button"
-              disabled={!sign.valid || selectedFile === null}
-              onClick={handleSignDocument}
-              loading={loadingSign}
-            />
-            <FrogsButton
-              label={selectedFile?.name ?? "Выбрать файл"}
-              className="sign-card-modal-button"
-              style={{ maxWidth: "330px" }}
-              disabled={!sign.valid}
-              onClick={() => fileInputRef.current?.click()}
-              loading={loadingSign}
-            />
-            <input
-              type="file"
-              id="fileInput"
-              style={{ display: "none" }}
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept=".pdf"
-            />
-          </div>
-          <div className="sign-card-modal-buttons-container">
-            <FrogsButton
-              label="Проверить"
+              label="Проверить подпись"
               onClick={() => {
                 setLoadingCheck(true);
                 checkSign(sign, () => setLoadingCheck(false));
               }}
               loading={loadingCheck}
-              className="sign-card-modal-button"
+              className="grouped-action"
             />
-            <ChangePasswordButton
-              sign={sign}
-              className="sign-card-modal-button"
-            />
+            <ChangePasswordButton sign={sign} className="grouped-action" />
             <FrogsButton
-              label="Удалить"
-              className="sign-card-modal-button"
+              label="Удалить сертификат"
+              className="grouped-action button-destructive"
               onClick={handleDeleteSign}
               loading={loadingDelete}
-              style={{ backgroundColor: "#994444" }}
             />
           </div>
         </div>
@@ -217,27 +214,48 @@ const ChangePasswordButton: FC<{ sign: Sign; className: string }> = ({
         isOpen={openModal}
         onClose={() => setOpenModal(false)}
       >
-        <div
-          style={{
-            display: "flex",
-            gap: "16px",
-            justifyContent: "space-between",
-          }}
-        >
+        <div className="change-password-form">
+          <p className="modal-description">
+            Новый пароль сохранится в базе данных для этой подписи.
+          </p>
           <FrogsInput
-            placeholder="Введите новый пароль..."
+            placeholder="Новый пароль"
             onChange={(e) => setNewPassword(e.target.value)}
           />
-          <FrogsButton
-            label="Сменить пароль"
-            onClick={handleChangePassword}
-            loading={loading}
-          />
+          <div className="modal-actions">
+            <FrogsButton label="Отменить" onClick={() => setOpenModal(false)} />
+            <FrogsButton
+              label="Сменить пароль"
+              className="button-primary"
+              onClick={handleChangePassword}
+              loading={loading}
+            />
+          </div>
         </div>
       </Modal>
     </>
   );
 };
+
+const statusLabels = {
+  valid: "Действительна",
+  invalid: "Недействительна",
+  unchecked: "Не проверена",
+};
+
+// 14523496259 → 145-234-962 59
+const formatSnils = (snils: string) =>
+  /^\d{11}$/.test(snils)
+    ? `${snils.slice(0, 3)}-${snils.slice(3, 6)}-${snils.slice(6, 9)} ${snils.slice(9)}`
+    : snils;
+
+// «Иванов Алексей Сергеевич» → «ИА», как аватар в «Контактах»
+const initials = (cn: string) =>
+  cn
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w.charAt(0).toUpperCase())
+    .join("");
 
 const capitalizeFirstLetter = (str: string) => {
   if (!str) return str;
@@ -246,7 +264,7 @@ const capitalizeFirstLetter = (str: string) => {
 
 const timestampToTime = (timestamp: number): string => {
   const date = new Date(timestamp * 1000);
-  return date.toLocaleString();
+  return date.toLocaleString("ru-RU");
 };
 
 export default SignCard;

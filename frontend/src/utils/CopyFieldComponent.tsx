@@ -1,6 +1,6 @@
 import "./styleCopyFieldComponent.css";
 import copy from "copy-to-clipboard";
-import { FC, CSSProperties } from "react";
+import { FC, CSSProperties, useState } from "react";
 
 interface CopyTextFieldProps {
   inputText: string;
@@ -10,24 +10,29 @@ interface CopyTextFieldProps {
 
 const CopyTextField: FC<CopyTextFieldProps> = ({
   inputText,
-  className,
+  className = "",
   style,
 }) => {
+  const [copied, setCopied] = useState(false);
+
   if (inputText == "" || inputText == undefined) {
     return <></>;
   }
 
   return (
-    <>
-      <div
-        className={`copy-text-div ${className}`}
-        style={style}
-        onClick={() => copy(inputText)}
-      >
-        <span style={{ marginRight: "6px" }}>{inputText}</span>
-        <span className="copy-icon">📋</span>
-      </div>
-    </>
+    <button
+      type="button"
+      className={`copy-text-div${copied ? " copied" : ""} ${className}`}
+      style={style}
+      title="Скопировать"
+      onClick={() => {
+        copy(inputText);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1200);
+      }}
+    >
+      {inputText}
+    </button>
   );
 };
 

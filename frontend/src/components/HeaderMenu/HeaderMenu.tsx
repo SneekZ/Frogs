@@ -7,10 +7,24 @@ import { NotificationContext } from "../Notification/NotificationContext";
 
 const HeaderMenu: FC = () => {
   return (
-    <div className="header-container">
+    <header className="header-container">
+      <ToolbarTitle />
       <FilterInput />
       <UpdateButton />
       <CheckAllButton />
+    </header>
+  );
+};
+
+const ToolbarTitle: FC = () => {
+  const { activeConnection, activeConnectionStatus } = useContext(SignsContext);
+
+  return (
+    <div className="toolbar-title">
+      <h1>{activeConnection.name || "Frogs"}</h1>
+      {activeConnectionStatus.info.name && (
+        <span>{activeConnectionStatus.info.name}</span>
+      )}
     </div>
   );
 };
@@ -36,8 +50,8 @@ const FilterInput: FC = () => {
   return (
     <FrogsInput
       id="signsSearch"
-      className="filter-input"
-      placeholder="Поиск сертификатов..."
+      className="filter-input input-search"
+      placeholder="ФИО или СНИЛС"
       onChange={(e) => setFilter(e.target.value)}
     />
   );

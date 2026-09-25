@@ -1,31 +1,54 @@
 .dropdown-container {
-  background-color: transparent;
-
-  border-width: 2px;
-  border-style: solid;
-  border-color: #3b3b3b;
-  border-radius: 11px;
-
-  padding: 8px;
-
-  transition: background-color 0.3s ease-in-out, color 0.1s ease-in-out,
-    border-color 0.3s ease-in-out;
-}
-
-.dropdown-container:hover {
-  background-color: #eaeaea !important;
-  color: black !important;
-  border-color: #eaeaea !important;
+  background-color: var(--bg-grouped-row);
+  border-radius: 14px;
 }
 
 .dropdown-title {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 18px;
+
+  font: inherit;
+  font-weight: 500;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
 }
 
-.divider {
-  border: none;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #4d4d4d, transparent);
+.dropdown-title:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Шеврон раскрытия как у NSDisclosureButton */
+.dropdown-title::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 1.6px solid currentColor;
+  border-bottom: 1.6px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.2s var(--ease);
+}
+
+.dropdown-container.open .dropdown-title::before {
+  transform: rotate(45deg);
+}
+
+.dropdown-body {
+  padding: 0 18px 16px 34px;
+}
+
+.dropdown-item {
+  padding: 2px 0;
+}
+
+.dropdown-danger {
+  color: var(--red);
+  background-color: var(--red-fill);
 }

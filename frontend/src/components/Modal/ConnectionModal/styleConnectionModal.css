@@ -1,19 +1,38 @@
-.modal-container {
-  display: grid;
-  /* grid-template-columns: repeat(2, 1fr); */
-  /* column-gap: 16px; */
-  grid-template-rows: repeat(4, 1fr);
-  row-gap: 12px;
+.connection-form {
+  gap: 24px;
 }
 
+/* Строка формы: подпись слева, поле справа */
 .item-container {
-  display: flex;
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
   align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 6px 8px 6px 18px;
 }
 
-.button-container {
-  display: flex;
-  gap: 8px;
-  justify-content: right;
-  margin-top: 12px;
+.item-container > span {
+  color: var(--label-secondary);
+}
+
+.item-container .input-container {
+  background-color: transparent;
+}
+
+.item-container .input-container:focus-within {
+  background-color: var(--fill);
+  box-shadow: none;
+}
+
+.connection-delete-button {
+  margin-right: auto;
+}
+
+.check-ok {
+  color: var(--green);
+}
+
+.check-fail {
+  color: var(--red);
 }

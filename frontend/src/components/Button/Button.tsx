@@ -1,19 +1,14 @@
 import "./styleButton.css";
-import {
-  FC,
-  useState,
-  useEffect,
-  MouseEventHandler,
-  CSSProperties,
-  ReactNode,
-} from "react";
+import { FC, MouseEventHandler, CSSProperties, ReactNode } from "react";
 
-interface ButtonProps extends React.HTMLAttributes<HTMLDivElement> {
+interface ButtonProps {
   label?: string;
-  onClick?: MouseEventHandler<HTMLDivElement>;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
   loading?: boolean;
   disabled?: boolean;
+  className?: string;
   style?: CSSProperties;
+  title?: string;
   children?: ReactNode;
 }
 
@@ -24,23 +19,23 @@ const Button: FC<ButtonProps> = ({
   disabled = false,
   className = "",
   style,
+  title,
   children,
 }) => {
-  const [buttonClassName, setButtonClassName] = useState("");
-
-  useEffect(() => {
-    setButtonClassName(
-      `button${disabled ? " disabled" : ""}${
-        !disabled && loading ? " loading" : ""
-      } ${className}`
-    );
-  }, [loading, disabled, className]);
-
   return (
-    <div className={buttonClassName} onClick={onClick} style={style}>
-      {label !== "" && <div className="button-label">{label}</div>}
+    <button
+      type="button"
+      className={`button${!disabled && loading ? " loading" : ""} ${className}`}
+      onClick={onClick}
+      style={style}
+      disabled={disabled}
+      aria-busy={loading}
+      aria-label={title}
+      title={title}
+    >
+      {label !== "" && <span className="button-label">{label}</span>}
       {children}
-    </div>
+    </button>
   );
 };
 

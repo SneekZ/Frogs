@@ -21,13 +21,18 @@ const DropdownDiv: FC<DropdownDiv> = ({
   return (
     <div
       className={`dropdown-container ${open ? "open" : "closed"} ${className}`}
-      onClick={() => setOpen((prev) => !prev)}
       style={style}
-      aria-disabled={disabled}
     >
-      <div className="dropdown-title">{label}</div>
-      {open && <hr className="divider open" />}
-      {open && children}
+      <button
+        type="button"
+        className="dropdown-title"
+        onClick={() => setOpen((prev) => !prev)}
+        aria-expanded={open}
+        disabled={disabled}
+      >
+        {label}
+      </button>
+      {open && <div className="dropdown-body">{children}</div>}
     </div>
   );
 };

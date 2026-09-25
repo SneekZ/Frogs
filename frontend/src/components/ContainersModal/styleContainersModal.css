@@ -1,7 +1,74 @@
 .containers-modal-container {
   display: grid;
-  grid-template-rows: repeat(8, 1fr);
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  padding: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  height: 520px;
+}
+
+.containers-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+
+.containers-column h2 {
+  margin: 0;
+  padding: 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.containers-hint,
+.containers-empty {
+  margin: 0;
+  padding: 0 6px;
+  font-size: 14px;
+  color: var(--label-secondary);
+}
+
+.containers-empty {
+  padding: 12px 14px;
+}
+
+.containers-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 6px;
+
+  background-color: var(--bg-grouped-row);
+  border-radius: 14px;
+}
+
+.list-row {
+  flex: none;
+  justify-content: flex-start;
+  height: 40px;
+  padding: 0 12px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  background-color: transparent;
+  border-radius: 9px;
+}
+
+.list-row:hover {
+  background-color: var(--fill);
+}
+
+.list-row-failed {
+  color: var(--red);
+  background-color: var(--red-fill);
+}
+
+@media (max-width: 560px) {
+  .containers-modal-container {
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+  }
+
+  .containers-list {
+    max-height: 240px;
+  }
 }

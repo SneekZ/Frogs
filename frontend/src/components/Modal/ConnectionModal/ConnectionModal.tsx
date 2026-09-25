@@ -49,10 +49,10 @@ const ConnectionModal: FC<ConnectionModalProps> = ({
     PingError(getConnection()).then((result) => {
       if (result === "") {
         setLoading(false);
-        setCheckColor("#40dd40");
+        setCheckColor("check-ok");
       } else {
         setLoading(false);
-        setCheckColor("#dd4040");
+        setCheckColor("check-fail");
         Notify({ type: "error", message: result });
       }
     });
@@ -63,59 +63,60 @@ const ConnectionModal: FC<ConnectionModalProps> = ({
       isOpen={isOpen}
       onClose={() => setOpen(false)}
       title="Настройка подключения"
-      className="modal-container"
+      className="connection-form"
     >
-      <div className="item-container">
-        <span style={{ flex: 1, fontWeight: 600 }}>Название:</span>
-        <Input
-          placeholder="Введите название"
-          style={{ flex: 1 }}
-          onChange={(e) => setName(e.target.value)}
-          defaultValue={conn?.name ?? ""}
-        />
+      <div className="grouped-list">
+        <label className="item-container">
+          <span>Название</span>
+          <Input
+            placeholder="Введите название"
+            onChange={(e) => setName(e.target.value)}
+            defaultValue={conn?.name ?? ""}
+          />
+        </label>
+        <label className="item-container">
+          <span>Адрес</span>
+          <Input
+            placeholder="Введите адрес"
+            onChange={(e) => setHost(e.target.value)}
+            defaultValue={conn?.host ?? ""}
+          />
+        </label>
+        <label className="item-container">
+          <span>Порт</span>
+          <Input
+            placeholder="Введите порт"
+            onChange={(e) => setPort(e.target.value)}
+            defaultValue={conn?.port ?? ""}
+          />
+        </label>
+        <label className="item-container">
+          <span>Пароль</span>
+          <Input
+            placeholder="Введите пароль"
+            onChange={(e) => setPassword(e.target.value)}
+            defaultValue={conn?.password ?? ""}
+            type="password"
+          />
+        </label>
       </div>
-      <div className="item-container">
-        <span style={{ flex: 1, fontWeight: 600 }}>Адрес:</span>
-        <Input
-          placeholder="Введите адрес"
-          style={{ flex: 1 }}
-          onChange={(e) => setHost(e.target.value)}
-          defaultValue={conn?.host ?? ""}
-        />
-      </div>
-      <div className="item-container">
-        <span style={{ flex: 1, fontWeight: 600 }}>Порт:</span>
-        <Input
-          placeholder="Введите порт"
-          style={{ flex: 1 }}
-          onChange={(e) => setPort(e.target.value)}
-          defaultValue={conn?.port ?? ""}
-        />
-      </div>
-      <div className="item-container">
-        <span style={{ flex: 1, fontWeight: 600 }}>Пароль:</span>
-        <Input
-          placeholder="Введите пароль"
-          style={{ flex: 1 }}
-          onChange={(e) => setPassword(e.target.value)}
-          defaultValue={conn?.password ?? ""}
-          type="password"
-        />
-      </div>
-      <div className="button-container">
-        <Button
-          label="Удалить"
-          style={{ backgroundColor: "#dd4040" }}
-          onClick={() => deleteConnection(getConnection())}
-        />
+      <div className="modal-actions">
+        {conn && (
+          <Button
+            label="Удалить"
+            className="button-destructive connection-delete-button"
+            onClick={() => deleteConnection(getConnection())}
+          />
+        )}
         <Button
           label="Проверить соединение"
           loading={loading}
           onClick={() => checkConnection()}
-          style={{ backgroundColor: checkColor }}
+          className={checkColor}
         />
         <Button
           label="Сохранить"
+          className="button-primary"
           onClick={() => {
             if (name !== "") {
               updateConnection(getConnection());

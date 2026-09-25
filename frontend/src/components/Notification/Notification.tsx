@@ -1,5 +1,5 @@
 import "./styleNotification.css";
-import { FC, useState, useEffect, useRef } from "react";
+import { FC, useState, useEffect, useRef, CSSProperties } from "react";
 import { useNotificationTimer } from "../../utils/Timer";
 
 interface NotificationProps {
@@ -28,23 +28,23 @@ export const Notification: FC<NotificationProps> = ({
   useEffect(() => {
     switch (type) {
       case "success":
-        setTitle("Success");
-        setColor("#00bb00");
+        setTitle("Готово");
+        setColor("var(--green)");
         break;
 
       case "error":
-        setTitle("Error");
-        setColor("#bb0000");
+        setTitle("Ошибка");
+        setColor("var(--red)");
         break;
 
       case "warning":
-        setTitle("Warning");
-        setColor("#bbbb00");
+        setTitle("Внимание");
+        setColor("var(--orange)");
         break;
 
       default:
-        setTitle("Message");
-        setColor("#000000");
+        setTitle("Сообщение");
+        setColor("var(--accent)");
         break;
     }
   }, [type]);
@@ -62,7 +62,9 @@ export const Notification: FC<NotificationProps> = ({
   return (
     <div
       className={`notification ${hidden === null ? "" : hidden ? "hide" : "show"}`}
-      style={{ color: color }}
+      style={{ "--tint": color } as CSSProperties}
+      role="status"
+      aria-live="polite"
       onMouseOver={() => {
         setExpanded(true);
         pause();
@@ -72,7 +74,7 @@ export const Notification: FC<NotificationProps> = ({
         resume();
       }}
     >
-      <span style={{ marginBottom: "auto" }}>{title}</span>
+      <span className="notification-title">{title}</span>
 
       <div className={`message ${expanded ? "expanded" : "collapsed"}`}>
         {message}

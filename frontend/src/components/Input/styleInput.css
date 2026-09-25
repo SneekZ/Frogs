@@ -1,56 +1,52 @@
 .input-container {
-  --hover-color: #eaeaea;
-
-  background-color: #3b3b3b;
-  border-radius: 11px;
-
   display: flex;
-  justify-items: center;
-  align-content: center;
+  align-items: center;
 
-  cursor: pointer;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
 
-  border: 0px solid transparent;
-  padding-top: 4px;
-  padding-bottom: 4px;
+  background-color: var(--fill);
+  border-radius: 10px;
 
-  transition: background-color ease-in-out 0.3s, border-color ease-in-out 0.3s;
-}
-
-.input-container:hover {
-  background-color: var(--hover-color);
+  transition: background-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
 }
 
 .input-container:focus-within {
-  background-color: var(--hover-color);
+  background-color: var(--bg-elevated);
+  box-shadow: var(--focus-ring);
 }
 
-.error {
-  border: 2px solid #ec4444;
+.input-container.error {
+  box-shadow: 0 0 0 2px var(--red);
+}
+
+/* Лупа как у NSSearchField */
+.input-search {
+  padding-left: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 14 14' fill='none' stroke='%238e8e93' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='6' cy='6' r='4.6'/%3E%3Cpath d='m9.5 9.5 3.4 3.4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 12px center;
 }
 
 .input {
   flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
   border: none;
   outline: none;
   background-color: transparent;
-  margin-left: 20px;
-  margin-right: 20px;
 
-  font-size: large;
-  color: white;
-
-  transition: color ease-in-out 0.3s;
+  font: inherit;
+  font-size: 15px;
+  color: var(--label);
 
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 }
 
-.input:hover {
-  color: black;
-}
-
-.input:focus {
-  color: black;
+.input::placeholder {
+  color: var(--label-secondary);
 }

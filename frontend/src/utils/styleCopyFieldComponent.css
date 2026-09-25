@@ -1,33 +1,54 @@
 .copy-text-div {
-  display: inline-block;
-  position: relative;
-  width: fit-content;
-  height: fit-content;
-  cursor: pointer;
-  margin: 0;
-  padding-left: 4px;
-  padding-right: 0px;
-  background-color: rgba(110 110, 110, 0.8);
-  border-radius: 4px;
-  transition: background-color 0.15s ease-in-out,
-    padding-right 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: start;
+  max-width: 100%;
+  margin: 0 -6px;
+  padding: 2px 6px;
 
-  box-shadow: 2px 2px 8px rgba(30, 30, 30, 0.3);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  text-align: left;
+  overflow-wrap: anywhere;
+  color: var(--label);
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+  transition: background-color 0.15s var(--ease);
+}
+
+/* Иконка doc.on.doc, после копирования — галочка */
+.copy-text-div::after {
+  content: "";
+  flex: none;
+  width: 15px;
+  height: 15px;
+  background-color: var(--label-secondary);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='black' stroke-width='1.4'%3E%3Crect x='4.5' y='4.5' width='8' height='8' rx='2'/%3E%3Cpath d='M9.5 2.5a1.5 1.5 0 0 0-1.5-1H3A1.5 1.5 0 0 0 1.5 3v5a1.5 1.5 0 0 0 1 1.4'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  opacity: 0;
+  transition: opacity 0.15s var(--ease);
 }
 
 .copy-text-div:hover {
-  background-color: rgba(170, 170, 170, 0.8);
-  padding-right: 24px;
-
-  box-shadow: 2px 2px 8px rgba(30, 30, 30, 0.8);
+  background-color: var(--fill);
 }
 
-.copy-icon {
-  position: absolute;
-  opacity: 0;
-  transition: opacity 0.15s ease-in-out;
-}
-
-.copy-text-div:hover .copy-icon {
+.copy-text-div:hover::after,
+.copy-text-div:focus-visible::after,
+.copy-text-div.copied::after {
   opacity: 1;
+}
+
+.copy-text-div.copied::after {
+  background-color: var(--green);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m2.5 7.5 3 3 6-7'/%3E%3C/svg%3E");
+}
+
+.copy-text-div:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }

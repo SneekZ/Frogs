@@ -6,22 +6,11 @@ import ContainersModal from "../ContainersModal/ContainersModal";
 
 const FooterMenu: FC = () => {
   return (
-    <div className="footer-container">
-      <ConnectionName />
+    <footer className="footer-container">
       <SignsNumber />
       <ContainersNumber />
       <InstallContainersButton />
-    </div>
-  );
-};
-
-const ConnectionName: FC = () => {
-  const { activeConnectionStatus } = useContext(SignsContext);
-
-  return (
-    <div className="default-container connection-name-container">
-      <span className="text-container">{activeConnectionStatus.info.name}</span>
-    </div>
+    </footer>
   );
 };
 
@@ -29,11 +18,7 @@ const SignsNumber: FC = () => {
   const { activeConnectionStatus } = useContext(SignsContext);
 
   return (
-    <div className="default-container signs-number-container">
-      <span className="text-container">
-        Подписей на сервере: {activeConnectionStatus.info.signsnumber}
-      </span>
-    </div>
+    <span>Подписей на сервере: {activeConnectionStatus.info.signsnumber}</span>
   );
 };
 
@@ -41,11 +26,9 @@ const ContainersNumber: FC = () => {
   const { activeConnectionStatus } = useContext(SignsContext);
 
   return (
-    <div className="default-container containers-number-container">
-      <span className="text-container">
-        Контейнеров на сервере: {activeConnectionStatus.info.containersnumber}
-      </span>
-    </div>
+    <span>
+      Контейнеров на сервере: {activeConnectionStatus.info.containersnumber}
+    </span>
   );
 };
 
@@ -55,7 +38,7 @@ const InstallContainersButton: FC = () => {
   return (
     <>
       <FrogsButton
-        label="Установка контейнеров"
+        label="Установить контейнеры…"
         className="install-containers-button"
         onClick={() => setModalOpen(true)}
       />
