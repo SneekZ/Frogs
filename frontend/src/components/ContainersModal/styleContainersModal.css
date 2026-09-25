@@ -29,6 +29,7 @@
 
 .containers-empty {
   padding: 12px 14px;
+  user-select: none;
 }
 
 .containers-list {

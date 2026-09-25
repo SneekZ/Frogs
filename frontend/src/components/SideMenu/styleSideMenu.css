@@ -38,6 +38,7 @@
 .side-menu-empty {
   padding: 8px 12px;
   color: var(--label-tertiary);
+  user-select: none;
 }
 
 .side-menu-list-item-container {
