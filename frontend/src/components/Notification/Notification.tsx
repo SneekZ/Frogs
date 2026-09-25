@@ -14,7 +14,8 @@ export const Notification: FC<NotificationProps> = ({
   message,
 }) => {
   const [expanded, setExpanded] = useState(false);
-  const [hidden, setHidden] = useState(true);
+  // null = ещё не показывали, без класса анимации (иначе hide проигрывается при загрузке)
+  const [hidden, setHidden] = useState<boolean | null>(null);
   const [title, setTitle] = useState("");
   const [color, setColor] = useState("");
 
@@ -60,7 +61,7 @@ export const Notification: FC<NotificationProps> = ({
 
   return (
     <div
-      className={`notification ${hidden ? "hide" : "show"}`}
+      className={`notification ${hidden === null ? "" : hidden ? "hide" : "show"}`}
       style={{ color: color }}
       onMouseOver={() => {
         setExpanded(true);
