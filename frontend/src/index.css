@@ -1,4 +1,4 @@
-/* Палитра «Liquid Glass»: стеклянные панели над тёплым однотонным фоном.
+/* Палитра «Liquid Glass»: стеклянные панели над нейтральным серым фоном.
    Светлая тема по умолчанию, тёмная — по prefers-color-scheme */
 :root {
   color-scheme: light dark;
@@ -7,48 +7,48 @@
     "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
 
-  --bg-base: #f4ebe2;
-  --dot: rgba(140, 88, 50, 0.22);
+  --bg-base: #f2f2f2;
+  --dot: rgba(0, 0, 0, 0.14);
 
   /* Стекло разной плотности: панели, карточки, листы */
-  --glass: rgba(255, 250, 246, 0.56);
-  --glass-strong: rgba(253, 248, 244, 0.84);
-  --bg-elevated: rgba(255, 252, 249, 0.92);
+  --glass: rgba(255, 255, 255, 0.56);
+  --glass-strong: rgba(250, 250, 250, 0.84);
+  --bg-elevated: rgba(252, 252, 252, 0.92);
   --bg-grouped-row: rgba(255, 255, 255, 0.74);
-  --control: rgba(255, 253, 251, 0.66);
+  --control: rgba(255, 255, 255, 0.66);
   --control-hover: rgba(255, 255, 255, 0.9);
-  --bg-overlay: rgba(80, 40, 15, 0.16);
+  --bg-overlay: rgba(0, 0, 0, 0.18);
 
-  --label: #2a211c;
-  --label-secondary: rgba(74, 52, 38, 0.68);
-  --label-tertiary: rgba(74, 52, 38, 0.36);
-  --separator: rgba(100, 62, 38, 0.13);
-  --fill: rgba(130, 82, 50, 0.08);
-  --fill-hover: rgba(130, 82, 50, 0.13);
-  --fill-pressed: rgba(130, 82, 50, 0.2);
+  --label: #1d1d1f;
+  --label-secondary: rgba(0, 0, 0, 0.6);
+  --label-tertiary: rgba(0, 0, 0, 0.3);
+  --separator: rgba(0, 0, 0, 0.1);
+  --fill: rgba(0, 0, 0, 0.05);
+  --fill-hover: rgba(0, 0, 0, 0.08);
+  --fill-pressed: rgba(0, 0, 0, 0.13);
 
-  /* Индиго Apple (systemIndigo): холодный акцент на тёплом фоне.
+  /* Монохромный акцент: почти чёрный в светлой теме, почти белый в тёмной.
      --accent — текст, --accent-fill — заливка, --on-accent — текст на ней (контраст ≥ 4.5) */
-  --accent: #5856d6;
-  --accent-fill: #5856d6;
+  --accent: #1d1d1f;
+  --accent-fill: #1d1d1f;
   --on-accent: #fff;
   --green: #28a745;
   --red: #e5352b;
   --red-fill: rgba(229, 53, 43, 0.1);
   --orange: #f59e0b;
-  --gray: #b3a597;
+  --gray: #8e8e93;
 
-  /* Кромка стекла: блик сверху + тонкий тёплый контур */
-  --rim: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 0 var(--hairline) rgba(110, 62, 30, 0.12);
-  --shadow-control: var(--rim), 0 1px 2px rgba(110, 55, 20, 0.08),
-    0 4px 12px -4px rgba(110, 55, 20, 0.12);
-  --shadow-card: var(--rim), 0 1px 2px rgba(110, 55, 20, 0.06),
-    0 8px 24px -8px rgba(110, 55, 20, 0.16);
-  --shadow-card-hover: var(--rim), 0 2px 4px rgba(110, 55, 20, 0.06),
-    0 20px 44px -14px rgba(110, 55, 20, 0.3);
-  --shadow-panel: var(--rim), 0 24px 60px -24px rgba(110, 55, 20, 0.28);
-  --shadow-sheet: var(--rim), 0 32px 80px -16px rgba(90, 40, 10, 0.34);
-  --focus-ring: 0 0 0 3px rgba(88, 86, 214, 0.35);
+  /* Кромка стекла: блик сверху + тонкий контур */
+  --rim: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 0 var(--hairline) rgba(0, 0, 0, 0.1);
+  --shadow-control: var(--rim), 0 1px 2px rgba(0, 0, 0, 0.06),
+    0 4px 12px -4px rgba(0, 0, 0, 0.1);
+  --shadow-card: var(--rim), 0 1px 2px rgba(0, 0, 0, 0.05),
+    0 8px 24px -8px rgba(0, 0, 0, 0.14);
+  --shadow-card-hover: var(--rim), 0 2px 4px rgba(0, 0, 0, 0.05),
+    0 20px 44px -14px rgba(0, 0, 0, 0.26);
+  --shadow-panel: var(--rim), 0 24px 60px -24px rgba(0, 0, 0, 0.24);
+  --shadow-sheet: var(--rim), 0 32px 80px -16px rgba(0, 0, 0, 0.3);
+  --focus-ring: 0 0 0 3px rgba(0, 0, 0, 0.25);
 
   --hairline: 1px;
 
@@ -72,41 +72,42 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-base: #17110d;
-    --dot: rgba(255, 220, 190, 0.11);
+    --bg-base: #121212;
+    --dot: rgba(255, 255, 255, 0.1);
 
-    --glass: rgba(46, 36, 30, 0.56);
-    --glass-strong: rgba(38, 30, 25, 0.86);
-    --bg-elevated: rgba(46, 37, 31, 0.94);
-    --bg-grouped-row: rgba(255, 238, 225, 0.06);
-    --control: rgba(255, 236, 220, 0.09);
-    --control-hover: rgba(255, 236, 220, 0.15);
-    --bg-overlay: rgba(10, 5, 2, 0.45);
+    --glass: rgba(40, 40, 40, 0.56);
+    --glass-strong: rgba(32, 32, 32, 0.86);
+    --bg-elevated: rgba(40, 40, 40, 0.94);
+    --bg-grouped-row: rgba(255, 255, 255, 0.06);
+    --control: rgba(255, 255, 255, 0.09);
+    --control-hover: rgba(255, 255, 255, 0.15);
+    --bg-overlay: rgba(0, 0, 0, 0.45);
 
-    --label: #f8f0ea;
-    --label-secondary: rgba(248, 236, 226, 0.64);
-    --label-tertiary: rgba(248, 236, 226, 0.32);
-    --separator: rgba(255, 225, 200, 0.1);
-    --fill: rgba(255, 220, 190, 0.08);
-    --fill-hover: rgba(255, 220, 190, 0.13);
-    --fill-pressed: rgba(255, 220, 190, 0.18);
+    --label: #f5f5f5;
+    --label-secondary: rgba(255, 255, 255, 0.64);
+    --label-tertiary: rgba(255, 255, 255, 0.32);
+    --separator: rgba(255, 255, 255, 0.1);
+    --fill: rgba(255, 255, 255, 0.08);
+    --fill-hover: rgba(255, 255, 255, 0.13);
+    --fill-pressed: rgba(255, 255, 255, 0.18);
 
-    --accent: #8e8cff;
-    --accent-fill: #5e5ce6;
+    --accent: #f5f5f5;
+    --accent-fill: #e5e5e5;
+    --on-accent: #1c1c1e;
     --green: #30d158;
     --red: #ff5a4f;
     --red-fill: rgba(255, 90, 79, 0.16);
     --orange: #ffb340;
-    --gray: #8c7c6f;
+    --gray: #8e8e93;
 
-    --rim: inset 0 1px 0 rgba(255, 240, 225, 0.12),
-      0 0 0 var(--hairline) rgba(255, 220, 190, 0.1);
+    --rim: inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 0 0 var(--hairline) rgba(255, 255, 255, 0.1);
     --shadow-control: var(--rim), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
     --shadow-card: var(--rim), 0 8px 24px -8px rgba(0, 0, 0, 0.5);
     --shadow-card-hover: var(--rim), 0 20px 44px -14px rgba(0, 0, 0, 0.7);
     --shadow-panel: var(--rim), 0 24px 60px -24px rgba(0, 0, 0, 0.7);
     --shadow-sheet: var(--rim), 0 32px 80px -16px rgba(0, 0, 0, 0.75);
-    --focus-ring: 0 0 0 3px rgba(142, 140, 255, 0.5);
+    --focus-ring: 0 0 0 3px rgba(255, 255, 255, 0.4);
   }
 }
 
@@ -178,7 +179,7 @@ body {
   color: var(--label-secondary);
 }
 
-/* Строка-действие: синий текст на всю ширину, как в iOS */
+/* Строка-действие: акцентный текст на всю ширину, как в iOS */
 .grouped-action {
   justify-content: flex-start;
   height: 50px;
