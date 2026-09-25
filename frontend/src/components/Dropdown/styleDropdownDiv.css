@@ -1,6 +1,7 @@
 .dropdown-container {
   background-color: var(--bg-grouped-row);
-  border-radius: 14px;
+  border-radius: 16px;
+  box-shadow: var(--rim);
 }
 
 .dropdown-title {
@@ -33,15 +34,48 @@
   border-right: 1.6px solid currentColor;
   border-bottom: 1.6px solid currentColor;
   transform: rotate(-45deg);
-  transition: transform 0.2s var(--ease);
+  transition: transform 0.45s var(--spring);
 }
 
 .dropdown-container.open .dropdown-title::before {
   transform: rotate(45deg);
 }
 
+/* Высота 0fr → 1fr: раскрытие по реальной высоте содержимого без замеров в JS.
+   Закрытие чуть быстрее открытия, как у раскрывающихся списков в macOS */
 .dropdown-body {
-  padding: 0 18px 16px 34px;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s var(--ease);
+}
+
+.dropdown-container.open .dropdown-body {
+  grid-template-rows: 1fr;
+  transition-duration: 0.5s;
+  transition-timing-function: var(--spring);
+}
+
+.dropdown-body-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 18px 0 34px;
+
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.2s var(--ease), transform 0.3s var(--ease);
+}
+
+/* Нижний отступ псевдоэлементом: padding не даёт сжаться до нуля */
+.dropdown-body-inner::after {
+  content: "";
+  display: block;
+  height: 16px;
+}
+
+.dropdown-container.open .dropdown-body-inner {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.4s var(--ease) 0.05s, transform 0.5s var(--spring);
 }
 
 .dropdown-item {

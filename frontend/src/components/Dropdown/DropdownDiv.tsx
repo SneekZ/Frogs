@@ -32,7 +32,10 @@ const DropdownDiv: FC<DropdownDiv> = ({
       >
         {label}
       </button>
-      {open && <div className="dropdown-body">{children}</div>}
+      {/* Тело всегда в DOM, чтобы плавно анимировать высоту; свёрнутое — inert */}
+      <div className="dropdown-body" inert={!open}>
+        <div className="dropdown-body-inner">{children}</div>
+      </div>
     </div>
   );
 };

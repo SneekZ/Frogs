@@ -63,7 +63,7 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
     <>
       <button
         type="button"
-        className="card-collapsed"
+        className={`card-collapsed ${status}`}
         onClick={() => setModalOpen(true)}
       >
         <span className="card-collapsed-cn">{sign.subject.cn}</span>
@@ -80,9 +80,6 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
       >
         <div className="sign-card-modal">
           <div className={`sign-hero ${status}`}>
-            <div className="sign-avatar" aria-hidden="true">
-              {initials(sign.subject.cn)}
-            </div>
             <h2>{sign.subject.cn}</h2>
             <span className="sign-hero-status">{statusLabels[status]}</span>
           </div>
@@ -248,14 +245,6 @@ const formatSnils = (snils: string) =>
   /^\d{11}$/.test(snils)
     ? `${snils.slice(0, 3)}-${snils.slice(3, 6)}-${snils.slice(6, 9)} ${snils.slice(9)}`
     : snils;
-
-// «Иванов Алексей Сергеевич» → «ИА», как аватар в «Контактах»
-const initials = (cn: string) =>
-  cn
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w.charAt(0).toUpperCase())
-    .join("");
 
 const capitalizeFirstLetter = (str: string) => {
   if (!str) return str;

@@ -6,12 +6,18 @@
   flex-direction: column;
   gap: 10px;
   min-height: 0;
-  padding: 16px 12px 12px;
+  padding: 14px 10px 10px;
 
-  background-color: var(--bg-sidebar);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-right: var(--hairline) solid var(--separator);
+  /* Парящая стеклянная панель, как сайдбар в macOS Tahoe */
+  background-color: var(--glass);
+  backdrop-filter: saturate(180%) blur(30px);
+  -webkit-backdrop-filter: saturate(180%) blur(30px);
+  border-radius: 24px;
+  box-shadow: var(--shadow-panel);
+}
+
+.side-menu-container .input-container {
+  flex: none;
 }
 
 .side-menu-section-title {
@@ -39,17 +45,21 @@
   align-items: center;
   gap: 2px;
   padding-right: 6px;
-  border-radius: 10px;
-  transition: background-color 0.12s var(--ease);
+  border-radius: 12px;
+  transition: background-color 0.12s var(--ease), box-shadow 0.2s var(--ease);
 }
 
 .side-menu-list-item-container:hover {
   background-color: var(--fill);
 }
 
+/* Выбранный сервер — выпуклая капсула с бликом и цветной тенью */
 .side-menu-list-item-container.active {
-  background-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent 60%),
+    var(--accent-fill);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 6px 16px -6px color-mix(in srgb, var(--accent-fill) 70%, transparent);
 }
 
 :where(.side-menu-list-item-container) .button {
@@ -100,11 +110,11 @@
 }
 
 .side-menu-list-item-container.active .side-menu-icon-button {
-  color: rgba(255, 255, 255, 0.85);
+  color: color-mix(in srgb, var(--on-accent) 80%, transparent);
 }
 
 .side-menu-list-item-container.active .side-menu-icon-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: color-mix(in srgb, var(--on-accent) 20%, transparent);
 }
 
 .side-menu-add-item-button {
@@ -123,7 +133,6 @@
   .side-menu-container {
     grid-row: 1 / 2;
     max-height: 40vh;
-    border-right: none;
-    border-bottom: var(--hairline) solid var(--separator);
+    border-radius: 20px;
   }
 }

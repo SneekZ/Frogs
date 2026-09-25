@@ -1,4 +1,5 @@
-/* Системная палитра macOS: светлая тема по умолчанию, тёмная — по prefers-color-scheme */
+/* Палитра «Liquid Glass»: стеклянные панели над тёплым однотонным фоном.
+   Светлая тема по умолчанию, тёмная — по prefers-color-scheme */
 :root {
   color-scheme: light dark;
 
@@ -6,91 +7,106 @@
     "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
 
-  --bg: #ffffff;
-  --bg-window: #f5f5f7;
-  --bg-sidebar: rgba(236, 236, 240, 0.82);
-  --bg-elevated: #ffffff;
-  --bg-grouped: #f2f2f7;
-  --bg-grouped-row: #ffffff;
-  --bg-overlay: rgba(0, 0, 0, 0.22);
-  --bg-glass: rgba(250, 250, 252, 0.78);
+  --bg-base: #f4ebe2;
+  --dot: rgba(140, 88, 50, 0.22);
 
-  --label: #1d1d1f;
-  --label-secondary: rgba(60, 60, 67, 0.62);
-  --label-tertiary: rgba(60, 60, 67, 0.32);
-  --separator: rgba(60, 60, 67, 0.14);
-  --fill: rgba(120, 120, 128, 0.12);
-  --fill-hover: rgba(120, 120, 128, 0.2);
-  --fill-pressed: rgba(120, 120, 128, 0.28);
+  /* Стекло разной плотности: панели, карточки, листы */
+  --glass: rgba(255, 250, 246, 0.56);
+  --glass-strong: rgba(253, 248, 244, 0.84);
+  --bg-elevated: rgba(255, 252, 249, 0.92);
+  --bg-grouped-row: rgba(255, 255, 255, 0.74);
+  --control: rgba(255, 253, 251, 0.66);
+  --control-hover: rgba(255, 255, 255, 0.9);
+  --bg-overlay: rgba(80, 40, 15, 0.16);
 
-  --accent: #007aff;
-  --accent-hover: #0070eb;
-  --green: #34c759;
-  --red: #ff3b30;
-  --red-fill: rgba(255, 59, 48, 0.12);
-  --orange: #ff9500;
-  --gray: #aeaeb2;
+  --label: #2a211c;
+  --label-secondary: rgba(74, 52, 38, 0.68);
+  --label-tertiary: rgba(74, 52, 38, 0.36);
+  --separator: rgba(100, 62, 38, 0.13);
+  --fill: rgba(130, 82, 50, 0.08);
+  --fill-hover: rgba(130, 82, 50, 0.13);
+  --fill-pressed: rgba(130, 82, 50, 0.2);
 
-  --shadow-card: 0 0 0 var(--hairline) rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.06),
-    0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-card-hover: 0 0 0 var(--hairline) rgba(0, 0, 0, 0.06),
-    0 4px 12px rgba(0, 0, 0, 0.08), 0 12px 32px rgba(0, 0, 0, 0.06);
-  --shadow-sheet: 0 0 0 var(--hairline) rgba(0, 0, 0, 0.1), 0 24px 64px rgba(0, 0, 0, 0.22);
-  --focus-ring: 0 0 0 3px rgba(0, 122, 255, 0.4);
-  --sheet-highlight: rgba(255, 255, 255, 0.7);
+  /* Индиго Apple (systemIndigo): холодный акцент на тёплом фоне.
+     --accent — текст, --accent-fill — заливка, --on-accent — текст на ней (контраст ≥ 4.5) */
+  --accent: #5856d6;
+  --accent-fill: #5856d6;
+  --on-accent: #fff;
+  --green: #28a745;
+  --red: #e5352b;
+  --red-fill: rgba(229, 53, 43, 0.1);
+  --orange: #f59e0b;
+  --gray: #b3a597;
+
+  /* Кромка стекла: блик сверху + тонкий тёплый контур */
+  --rim: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 0 var(--hairline) rgba(110, 62, 30, 0.12);
+  --shadow-control: var(--rim), 0 1px 2px rgba(110, 55, 20, 0.08),
+    0 4px 12px -4px rgba(110, 55, 20, 0.12);
+  --shadow-card: var(--rim), 0 1px 2px rgba(110, 55, 20, 0.06),
+    0 8px 24px -8px rgba(110, 55, 20, 0.16);
+  --shadow-card-hover: var(--rim), 0 2px 4px rgba(110, 55, 20, 0.06),
+    0 20px 44px -14px rgba(110, 55, 20, 0.3);
+  --shadow-panel: var(--rim), 0 24px 60px -24px rgba(110, 55, 20, 0.28);
+  --shadow-sheet: var(--rim), 0 32px 80px -16px rgba(90, 40, 10, 0.34);
+  --focus-ring: 0 0 0 3px rgba(88, 86, 214, 0.35);
 
   --hairline: 1px;
 
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   --spring: cubic-bezier(0.32, 0.72, 0, 1);
+  /* Отпускание кнопки с лёгким перелётом, как пружина в iOS */
+  --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   font-family: var(--font);
   font-size: 16px;
   line-height: 1.4;
   font-weight: 400;
   letter-spacing: -0.01em;
+  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
   color: var(--label);
-  background-color: var(--bg-window);
+  background-color: var(--bg-base);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #1e1e1e;
-    --bg-window: #1e1e1e;
-    --bg-sidebar: rgba(40, 40, 42, 0.86);
-    --bg-elevated: #2c2c2e;
-    --bg-grouped: #1c1c1e;
-    --bg-grouped-row: #2c2c2e;
-    --bg-overlay: rgba(0, 0, 0, 0.45);
-    --bg-glass: rgba(44, 44, 46, 0.78);
+    --bg-base: #17110d;
+    --dot: rgba(255, 220, 190, 0.11);
 
-    --label: #f5f5f7;
-    --label-secondary: rgba(235, 235, 245, 0.6);
-    --label-tertiary: rgba(235, 235, 245, 0.3);
-    --separator: rgba(84, 84, 88, 0.55);
-    --fill: rgba(120, 120, 128, 0.24);
-    --fill-hover: rgba(120, 120, 128, 0.32);
-    --fill-pressed: rgba(120, 120, 128, 0.4);
+    --glass: rgba(46, 36, 30, 0.56);
+    --glass-strong: rgba(38, 30, 25, 0.86);
+    --bg-elevated: rgba(46, 37, 31, 0.94);
+    --bg-grouped-row: rgba(255, 238, 225, 0.06);
+    --control: rgba(255, 236, 220, 0.09);
+    --control-hover: rgba(255, 236, 220, 0.15);
+    --bg-overlay: rgba(10, 5, 2, 0.45);
 
-    --accent: #0a84ff;
-    --accent-hover: #2690ff;
+    --label: #f8f0ea;
+    --label-secondary: rgba(248, 236, 226, 0.64);
+    --label-tertiary: rgba(248, 236, 226, 0.32);
+    --separator: rgba(255, 225, 200, 0.1);
+    --fill: rgba(255, 220, 190, 0.08);
+    --fill-hover: rgba(255, 220, 190, 0.13);
+    --fill-pressed: rgba(255, 220, 190, 0.18);
+
+    --accent: #8e8cff;
+    --accent-fill: #5e5ce6;
     --green: #30d158;
-    --red: #ff453a;
-    --red-fill: rgba(255, 69, 58, 0.16);
-    --orange: #ff9f0a;
-    --gray: #636366;
+    --red: #ff5a4f;
+    --red-fill: rgba(255, 90, 79, 0.16);
+    --orange: #ffb340;
+    --gray: #8c7c6f;
 
-    --shadow-card: 0 0 0 var(--hairline) rgba(255, 255, 255, 0.08),
-      0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-card-hover: 0 0 0 var(--hairline) rgba(255, 255, 255, 0.12),
-      0 8px 24px rgba(0, 0, 0, 0.4);
-    --shadow-sheet: 0 0 0 var(--hairline) rgba(255, 255, 255, 0.12),
-      0 24px 64px rgba(0, 0, 0, 0.6);
-    --focus-ring: 0 0 0 3px rgba(10, 132, 255, 0.5);
-    --sheet-highlight: rgba(255, 255, 255, 0.08);
+    --rim: inset 0 1px 0 rgba(255, 240, 225, 0.12),
+      0 0 0 var(--hairline) rgba(255, 220, 190, 0.1);
+    --shadow-control: var(--rim), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
+    --shadow-card: var(--rim), 0 8px 24px -8px rgba(0, 0, 0, 0.5);
+    --shadow-card-hover: var(--rim), 0 20px 44px -14px rgba(0, 0, 0, 0.7);
+    --shadow-panel: var(--rim), 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+    --shadow-sheet: var(--rim), 0 32px 80px -16px rgba(0, 0, 0, 0.75);
+    --focus-ring: 0 0 0 3px rgba(142, 140, 255, 0.5);
   }
 }
 
@@ -107,6 +123,14 @@ body,
   margin: 0;
   padding: 0;
   height: 100%;
+}
+
+/* Точечная сетка как холст во Freeform: под стеклом она размывается и выдаёт глубину */
+body {
+  background-color: var(--bg-base);
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.6px);
+  background-size: 22px 22px;
+  background-attachment: fixed;
 }
 
 *,
@@ -137,7 +161,8 @@ body,
   display: flex;
   flex-direction: column;
   background-color: var(--bg-grouped-row);
-  border-radius: 14px;
+  border-radius: 16px;
+  box-shadow: var(--rim);
   overflow: hidden;
 }
 
@@ -171,6 +196,23 @@ body,
 
 .grouped-action.button-destructive {
   color: var(--red);
+}
+
+/* Строка не сжимается, а подсвечивается как ячейка iOS: мгновенно при нажатии,
+   плавно гаснет после отпускания */
+.grouped-action {
+  transition: background-color 0.45s var(--ease);
+}
+
+.grouped-action:active,
+.grouped-action.button-destructive:active {
+  transform: none;
+  background-color: var(--fill-pressed);
+  transition-duration: 0s;
+}
+
+.grouped-action.button-destructive:active {
+  background-color: color-mix(in srgb, var(--red) 20%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {

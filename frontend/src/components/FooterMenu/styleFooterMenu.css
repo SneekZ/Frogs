@@ -6,23 +6,27 @@
   align-items: center;
   gap: 24px;
   min-width: 0;
-  padding: 0 16px 0 28px;
+  padding: 0 8px 0 12px;
 
   font-size: 13px;
   color: var(--label-secondary);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
-
-  border-top: var(--hairline) solid var(--separator);
 }
 
 .install-containers-button {
   margin-left: auto;
   height: 32px;
-  padding: 0 12px;
+  padding: 0 16px;
   font-size: 14px;
   color: var(--accent);
-  background-color: transparent;
+  background-color: var(--control);
+  border-radius: 999px;
+  box-shadow: var(--shadow-control);
+}
+
+.install-containers-button:hover {
+  background-color: var(--control-hover);
 }
 
 @media (max-width: 760px) {
@@ -31,6 +35,6 @@
     grid-row: 4 / 5;
     flex-wrap: wrap;
     gap: 4px 16px;
-    padding: 8px 16px;
+    padding: 8px 4px;
   }
 }

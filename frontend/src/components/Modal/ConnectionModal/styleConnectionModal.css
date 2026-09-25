@@ -18,6 +18,7 @@
 
 .item-container .input-container {
   background-color: transparent;
+  box-shadow: none;
 }
 
 .item-container .input-container:focus-within {

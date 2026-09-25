@@ -1,54 +1,66 @@
-.copy-text-div {
-  display: inline-flex;
+.copy-field {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  justify-self: start;
-  max-width: 100%;
-  margin: 0 -6px;
-  padding: 2px 6px;
+  gap: 12px;
+  min-width: 0;
+}
 
+.copy-field-text {
+  flex: 1;
+  min-width: 0;
   font-family: var(--font-mono);
   font-size: 14px;
-  text-align: left;
   overflow-wrap: anywhere;
-  color: var(--label);
+  user-select: text;
+}
+
+.copy-field-button {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+
+  color: var(--label-secondary);
   background: none;
   border: none;
-  border-radius: 6px;
+  border-radius: 9px;
   cursor: pointer;
 
-  transition: background-color 0.15s var(--ease);
+  transition: background-color 0.15s var(--ease), color 0.15s var(--ease),
+    transform 0.4s var(--bounce);
 }
 
-/* Иконка doc.on.doc, после копирования — галочка */
-.copy-text-div::after {
+/* Иконка doc.on.doc, после копирования — зелёная галочка */
+.copy-field-button::before {
   content: "";
-  flex: none;
-  width: 15px;
-  height: 15px;
-  background-color: var(--label-secondary);
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='black' stroke-width='1.4'%3E%3Crect x='4.5' y='4.5' width='8' height='8' rx='2'/%3E%3Cpath d='M9.5 2.5a1.5 1.5 0 0 0-1.5-1H3A1.5 1.5 0 0 0 1.5 3v5a1.5 1.5 0 0 0 1 1.4'/%3E%3C/svg%3E")
     center / contain no-repeat;
-  opacity: 0;
-  transition: opacity 0.15s var(--ease);
 }
 
-.copy-text-div:hover {
+.copy-field-button:hover {
+  color: var(--accent);
   background-color: var(--fill);
 }
 
-.copy-text-div:hover::after,
-.copy-text-div:focus-visible::after,
-.copy-text-div.copied::after {
-  opacity: 1;
+.copy-field-button:active {
+  transform: scale(0.88);
+  transition-duration: 0.1s;
 }
 
-.copy-text-div.copied::after {
-  background-color: var(--green);
+.copy-field-button.copied {
+  color: var(--green);
+}
+
+.copy-field-button.copied::before {
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m2.5 7.5 3 3 6-7'/%3E%3C/svg%3E");
 }
 
-.copy-text-div:focus-visible {
+.copy-field-button:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }

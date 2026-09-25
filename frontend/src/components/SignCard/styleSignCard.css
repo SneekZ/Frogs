@@ -1,8 +1,24 @@
+/* Цвет статуса задаёт точку и плашку */
+.card-collapsed,
+.sign-hero {
+  --tint: var(--gray);
+}
+
+.card-collapsed.valid,
+.sign-hero.valid {
+  --tint: var(--green);
+}
+
+.card-collapsed.invalid,
+.sign-hero.invalid {
+  --tint: var(--red);
+}
+
 .card-collapsed {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  gap: 3px;
   min-width: 0;
   padding: 18px 20px;
 
@@ -11,20 +27,22 @@
   color: var(--label);
   background-color: var(--bg-elevated);
   border: none;
-  border-radius: 16px;
+  border-radius: 20px;
   box-shadow: var(--shadow-card);
   cursor: pointer;
 
-  transition: box-shadow 0.2s var(--ease), transform 0.2s var(--ease);
+  transition: box-shadow 0.3s var(--ease), transform 0.3s var(--spring),
+    background-color 0.2s var(--ease);
 }
 
 .card-collapsed:hover {
   box-shadow: var(--shadow-card-hover);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .card-collapsed:active {
-  transform: scale(0.99);
+  transform: scale(0.985);
+  transition-duration: 0.1s;
 }
 
 .card-collapsed:focus-visible {
@@ -41,6 +59,7 @@
   font-size: 17px;
   font-weight: 600;
   line-height: 1.3;
+  letter-spacing: -0.02em;
 }
 
 .card-collapsed-snils {
@@ -50,10 +69,10 @@
 }
 
 .card-collapsed .card-status {
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
-/* Статус: точка + текст, чтобы не полагаться только на цвет */
+/* Статус: светящаяся точка + текст, чтобы не полагаться только на цвет */
 .card-status {
   display: inline-flex;
   align-items: center;
@@ -64,25 +83,18 @@
 
 .card-status::before {
   content: "";
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background-color: var(--gray);
-}
-
-.card-status.valid::before {
-  background-color: var(--green);
+  background-color: var(--tint);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tint) 18%, transparent);
 }
 
 .card-status.invalid {
   color: var(--red);
 }
 
-.card-status.invalid::before {
-  background-color: var(--red);
-}
-
-/* Окно сертификата: «герой» как в «Контактах» + сгруппированные списки */
+/* Окно сертификата: крупное ФИО со статусом + сгруппированные списки */
 .sign-card-modal {
   display: flex;
   flex-direction: column;
@@ -90,50 +102,22 @@
 }
 
 .sign-hero {
-  --tint: var(--gray);
-
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 12px 24px 0;
+  gap: 10px;
+  /* Боковые поля оставляют место плавающему крестику */
+  padding: 8px 48px 0;
   text-align: center;
 }
 
-.sign-hero.valid {
-  --tint: var(--green);
-}
-
-.sign-hero.invalid {
-  --tint: var(--red);
-}
-
-.sign-avatar {
-  display: grid;
-  place-items: center;
-  width: 88px;
-  height: 88px;
-  margin-bottom: 6px;
-
-  font-size: 34px;
-  font-weight: 600;
-  letter-spacing: 0;
-  color: #fff;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--tint) 65%, #fff),
-    var(--tint)
-  );
-  border-radius: 50%;
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--tint) 35%, transparent);
-}
 
 .sign-hero h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 30px;
   font-weight: 700;
   line-height: 1.2;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
 }
 
 .sign-hero-status {
@@ -163,6 +147,11 @@
   color: var(--label-secondary);
 }
 
+/* Строки с копированием: кнопка ближе к краю */
+.sign-card-modal-row:has(.copy-field) {
+  padding-right: 10px;
+}
+
 .sign-card-file-button {
   flex: 1;
   justify-content: flex-start;
@@ -178,16 +167,16 @@
   margin-top: 8px;
 }
 
+.change-password-form .input-container {
+  height: 50px;
+  padding: 0 18px;
+  background-color: var(--bg-grouped-row);
+  border-radius: 16px;
+}
+
 @media (max-width: 560px) {
   .sign-card-modal-row {
     grid-template-columns: minmax(0, 1fr);
     gap: 2px;
   }
-}
-
-.change-password-form .input-container {
-  height: 50px;
-  padding: 0 18px;
-  background-color: var(--bg-grouped-row);
-  border-radius: 14px;
 }

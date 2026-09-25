@@ -10,8 +10,8 @@
   padding: 24px;
 
   background: var(--bg-overlay);
-  backdrop-filter: blur(10px) saturate(140%);
-  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
   animation: modalFade 0.25s var(--ease);
 }
 
@@ -24,9 +24,11 @@
   max-width: 640px;
   max-height: min(880px, calc(100vh - 48px));
 
-  background-color: var(--bg-grouped);
-  border-radius: 26px;
-  box-shadow: var(--shadow-sheet), inset 0 1px 0 var(--sheet-highlight);
+  background-color: var(--glass-strong);
+  backdrop-filter: saturate(180%) blur(40px);
+  -webkit-backdrop-filter: saturate(180%) blur(40px);
+  border-radius: 30px;
+  box-shadow: var(--shadow-sheet);
   overflow: hidden;
 
   animation: modalIn 0.45s var(--spring);
@@ -81,16 +83,18 @@
   padding: 0;
 
   color: var(--label-secondary);
-  background-color: var(--fill);
+  background-color: var(--control);
   border: none;
   border-radius: 50%;
+  box-shadow: var(--shadow-control);
   cursor: pointer;
 
   transition: background-color 0.15s var(--ease), transform 0.15s var(--ease);
 }
 
 .modal-close:hover {
-  background-color: var(--fill-hover);
+  color: var(--label);
+  background-color: var(--control-hover);
 }
 
 .modal-close:active {
@@ -131,6 +135,16 @@
   height: 44px;
   padding: 0 24px;
   border-radius: 999px;
+  /* Отпускание — пружина с перелётом */
+  transition: background-color 0.2s var(--ease), box-shadow 0.2s var(--ease),
+    filter 0.2s var(--ease), transform 0.5s var(--bounce);
+}
+
+/* Нажатие — быстрое сжатие капсулы */
+.modal-actions .button:active:not(:disabled) {
+  transform: scale(0.94);
+  transition-duration: 0.12s;
+  transition-timing-function: var(--ease);
 }
 
 @keyframes modalFade {

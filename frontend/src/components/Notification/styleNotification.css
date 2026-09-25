@@ -9,13 +9,13 @@
   flex-direction: column;
   gap: 2px;
   width: min(400px, calc(100vw - 32px));
-  padding: 14px 18px 14px 46px;
+  padding: 14px 48px 22px 46px;
 
   color: var(--label);
-  background-color: var(--bg-glass);
-  backdrop-filter: saturate(180%) blur(24px);
-  -webkit-backdrop-filter: saturate(180%) blur(24px);
-  border-radius: 16px;
+  background-color: var(--glass-strong);
+  backdrop-filter: saturate(180%) blur(30px);
+  -webkit-backdrop-filter: saturate(180%) blur(30px);
+  border-radius: 20px;
   box-shadow: var(--shadow-sheet);
 
   opacity: 0;
@@ -33,6 +33,7 @@
   height: 14px;
   border-radius: 50%;
   background-color: var(--tint);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--tint) 20%, transparent);
 }
 
 .show {
@@ -42,6 +43,74 @@
 
 .hide {
   animation: hideNotification 0.3s var(--ease) forwards;
+}
+
+.notification-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+
+  color: var(--label-secondary);
+  background-color: var(--fill);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+
+  transition: background-color 0.15s var(--ease), color 0.15s var(--ease),
+    transform 0.4s var(--bounce);
+}
+
+.notification-close:hover {
+  color: var(--label);
+  background-color: var(--fill-hover);
+}
+
+.notification-close:active {
+  transform: scale(0.88);
+  transition-duration: 0.1s;
+}
+
+.notification-close:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Сколько уведомлению осталось висеть; наведение или фокус ставят на паузу */
+.notification-progress {
+  position: absolute;
+  left: 46px;
+  right: 18px;
+  bottom: 10px;
+  height: 3px;
+
+  background-color: var(--tint);
+  border-radius: 999px;
+  transform-origin: left;
+  animation: notificationProgress 3s linear forwards;
+}
+
+.notification:hover .notification-progress,
+.notification:focus-within .notification-progress {
+  animation-play-state: paused;
+}
+
+/* Полоска и есть таймер, поэтому «уменьшенное движение» её не ускоряет */
+@media (prefers-reduced-motion: reduce) {
+  .notification-progress {
+    animation-duration: 3s !important;
+  }
+}
+
+@keyframes notificationProgress {
+  to {
+    transform: scaleX(0);
+  }
 }
 
 .notification-title {

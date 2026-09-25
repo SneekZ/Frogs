@@ -39,7 +39,8 @@
   padding: 6px;
 
   background-color: var(--bg-grouped-row);
-  border-radius: 14px;
+  border-radius: 16px;
+  box-shadow: var(--rim);
 }
 
 .list-row {

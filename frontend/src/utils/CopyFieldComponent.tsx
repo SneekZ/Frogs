@@ -8,6 +8,7 @@ interface CopyTextFieldProps {
   style?: CSSProperties;
 }
 
+// Значение — обычный выделяемый текст, копирует кнопка-иконка в конце строки
 const CopyTextField: FC<CopyTextFieldProps> = ({
   inputText,
   className = "",
@@ -20,19 +21,20 @@ const CopyTextField: FC<CopyTextFieldProps> = ({
   }
 
   return (
-    <button
-      type="button"
-      className={`copy-text-div${copied ? " copied" : ""} ${className}`}
-      style={style}
-      title="Скопировать"
-      onClick={() => {
-        copy(inputText);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1200);
-      }}
-    >
-      {inputText}
-    </button>
+    <span className={`copy-field ${className}`} style={style}>
+      <span className="copy-field-text">{inputText}</span>
+      <button
+        type="button"
+        className={`copy-field-button${copied ? " copied" : ""}`}
+        title={copied ? "Скопировано" : "Скопировать"}
+        aria-label={copied ? "Скопировано" : "Скопировать"}
+        onClick={() => {
+          copy(inputText);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1200);
+        }}
+      />
+    </span>
   );
 };
 

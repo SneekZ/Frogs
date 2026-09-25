@@ -1,6 +1,5 @@
 import "./styleNotification.css";
 import { FC, useState, useEffect, useRef, CSSProperties } from "react";
-import { useNotificationTimer } from "../../utils/Timer";
 
 interface NotificationProps {
   tick: boolean;
@@ -20,10 +19,6 @@ export const Notification: FC<NotificationProps> = ({
   const [color, setColor] = useState("");
 
   const isFirstRender = useRef(true);
-
-  const { pause, resume, reset } = useNotificationTimer(3, () => {
-    setHidden(true);
-  });
 
   useEffect(() => {
     switch (type) {
@@ -56,8 +51,7 @@ export const Notification: FC<NotificationProps> = ({
     }
 
     setHidden(false);
-    reset();
-  }, [tick, reset]);
+  }, [tick]);
 
   return (
     <div
@@ -65,20 +59,41 @@ export const Notification: FC<NotificationProps> = ({
       style={{ "--tint": color } as CSSProperties}
       role="status"
       aria-live="polite"
-      onMouseOver={() => {
-        setExpanded(true);
-        pause();
-      }}
-      onMouseLeave={() => {
-        setExpanded(false);
-        resume();
-      }}
+      onMouseOver={() => setExpanded(true)}
+      onMouseLeave={() => setExpanded(false)}
     >
       <span className="notification-title">{title}</span>
 
       <div className={`message ${expanded ? "expanded" : "collapsed"}`}>
         {message}
       </div>
+
+      <button
+        type="button"
+        className="notification-close"
+        onClick={() => setHidden(true)}
+        aria-label="Закрыть уведомление"
+      >
+        <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+          <path
+            d="M1 1l8 8M9 1l-8 8"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
+
+      {/* Полоска и есть таймер: CSS-анимация встаёт на паузу при наведении,
+          по её окончании уведомление скрывается. key перезапускает её на новое сообщение */}
+      {hidden === false && (
+        <span
+          key={String(tick)}
+          className="notification-progress"
+          aria-hidden="true"
+          onAnimationEnd={() => setHidden(true)}
+        />
+      )}
     </div>
   );
 };
