@@ -47,6 +47,10 @@
   max-width: 820px;
 }
 
+.modal-content:has(.logs-modal-container) {
+  max-width: 1100px;
+}
+
 .modal-header {
   display: flex;
   align-items: center;

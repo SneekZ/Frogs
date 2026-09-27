@@ -14,8 +14,7 @@
   white-space: nowrap;
 }
 
-.install-containers-button {
-  margin-left: auto;
+.footer-button {
   height: 32px;
   padding: 0 16px;
   font-size: 14px;
@@ -25,7 +24,12 @@
   box-shadow: var(--shadow-control);
 }
 
-.install-containers-button:hover {
+/* Кнопки прижаты вправо: отступ только у первой */
+.logs-button {
+  margin-left: auto;
+}
+
+.footer-button:hover {
   background-color: var(--control-hover);
 }
 

@@ -1,0 +1,116 @@
+.logs-modal-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: min(640px, calc(100vh - 160px));
+}
+
+.logs-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logs-day {
+  flex: none;
+  height: 40px;
+  padding: 0 14px;
+
+  font: inherit;
+  font-size: 14px;
+  color: var(--label);
+
+  background-color: var(--control);
+  border: none;
+  border-radius: 999px;
+  box-shadow: var(--shadow-control);
+  cursor: pointer;
+}
+
+.logs-day:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-control), var(--focus-ring);
+}
+
+.logs-filter {
+  flex: 1;
+  max-width: 360px;
+}
+
+.logs-status {
+  margin-left: auto;
+  padding: 0 6px;
+  font-size: 13px;
+  color: var(--label-secondary);
+}
+
+.logs-status-error {
+  color: var(--red);
+}
+
+.logs-list {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 10px 14px;
+
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+
+  background-color: var(--bg-grouped-row);
+  border-radius: 16px;
+  box-shadow: var(--rim);
+}
+
+.logs-list:focus-visible {
+  outline: none;
+  box-shadow: var(--rim), var(--focus-ring);
+}
+
+.logs-line {
+  padding-left: 8px;
+  /* За день бывают десятки тысяч строк: браузер не рисует те, что вне экрана */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 18px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Уровень показываем полоской слева: оранжевый текст на светлом фоне плохо читается */
+.logs-line-warn {
+  box-shadow: inset 3px 0 var(--orange);
+}
+
+.logs-line-error {
+  color: var(--red);
+  box-shadow: inset 3px 0 var(--red);
+}
+
+.logs-line-debug {
+  color: var(--label-secondary);
+}
+
+.logs-empty {
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--label-secondary);
+  user-select: none;
+}
+
+@media (max-width: 560px) {
+  .logs-toolbar {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .logs-day,
+  .logs-filter {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .logs-status {
+    margin-left: 0;
+  }
+}

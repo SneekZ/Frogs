@@ -7,12 +7,13 @@ import (
 	"GoService/errorcodes"
 	"GoService/parser"
 	"GoService/regex"
-	"GoService/utils"
 	"fmt"
 	"sync"
 )
 
 var Config = config.LoadConfig("")
+
+const maxParallelChecks = 5
 
 func Signs(store string, dn string, thumbprint string) ([]parser.Sign, error) {
 	h, err := bashhandler.NewBashHandlerWrapper("utf-8", false)
@@ -159,26 +160,24 @@ func SignDocument(sign parser.Sign, filepath string, password string) (string, e
 	}
 }
 
-func checkSign(sign parser.Sign, password string) (string, error) {
+// Пустой файл, который подписывается при проверке пароля. Свой на каждую подпись,
+// чтобы параллельные проверки не писали в один и тот же .sgn
+func createCheckFile(sign parser.Sign) (string, func(), error) {
 	h, err := bashhandler.NewBashHandlerWrapper("utf-8", false)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
-	filepath := fmt.Sprintf("%s/228.pdf", Config.KeysPath)
-	commandTouch := fmt.Sprintf("touch %s", filepath)
-	_, err = h.Exec(commandTouch)
-
-	if err != nil {
-		return "", err
+	filepath := fmt.Sprintf("%s/check_%s.pdf", Config.KeysPath, sign.Thumbprint)
+	if _, err = h.Exec(fmt.Sprintf("touch %s", filepath)); err != nil {
+		return "", nil, err
 	}
 
-	_, err = SignDocument(sign, filepath, password)
-	if err != nil {
-		return "", err
+	remove := func() {
+		h.Exec(fmt.Sprintf("rm -f %s %s.sgn", filepath, filepath))
 	}
 
-	return password, nil
+	return filepath, remove, nil
 }
 
 func checkSignAuto(dh *databasehandler.DatabaseHandler, ch chan parser.Sign, sign parser.Sign) {
@@ -205,11 +204,22 @@ func checkSignAuto(dh *databasehandler.DatabaseHandler, ch chan parser.Sign, sig
 		ch <- sign
 		return
 	}
+	// Нет активной записи в базе — пробуем подпись без пароля
+	if len(passwords) == 0 {
+		passwords = []string{""}
+	}
 
-	var realPassword string
+	filepath, removeCheckFile, err := createCheckFile(sign)
+	if err != nil {
+		sign.CheckErrors = []string{err.Error()}
+		sign.Checked = true
+		ch <- sign
+		return
+	}
+	defer removeCheckFile()
 
 	for _, pass := range passwords {
-		realPassword, err = checkSign(sign, pass)
+		_, err = SignDocument(sign, filepath, pass)
 		if err != nil {
 			if err.Error() != "0x8010006b" {
 				sign.CheckErrors = []string{errorcodes.GetErrorCode(err.Error())}
@@ -224,28 +234,16 @@ func checkSignAuto(dh *databasehandler.DatabaseHandler, ch chan parser.Sign, sig
 
 		sign.Checked = true
 		sign.Valid = true
-		sign.Password = realPassword
+		sign.Password = pass
 		sign.CheckErrors = nil
 		ch <- sign
 		return
 	}
 
-	sign.CheckErrors = utils.RemoveDuplicates(sign.CheckErrors)
-
-	if len(sign.CheckErrors) > 0 {
-		sign.CheckErrors = []string{errorcodes.GetErrorCode(sign.CheckErrors[0])}
-
-		sign.Checked = true
-		ch <- sign
-		return
-	} else {
-		sign.Checked = true
-		sign.Valid = true
-		sign.Password = realPassword
-		sign.CheckErrors = nil
-		ch <- sign
-		return
-	}
+	// Сюда доходим, только если все пароли отклонены (0x8010006b)
+	sign.CheckErrors = []string{errorcodes.GetErrorCode(sign.CheckErrors[0])}
+	sign.Checked = true
+	ch <- sign
 }
 
 func CheckSignsList(signs []parser.Sign) ([]parser.Sign, error) {
@@ -258,11 +256,16 @@ func CheckSignsList(signs []parser.Sign) ([]parser.Sign, error) {
 
 	ch := make(chan parser.Sign, len(signs))
 	var wg sync.WaitGroup
+	// Ограничение параллельных проверок: при bashtype=ssh каждая команда — новое
+	// соединение, и sshd (MaxStartups 10 по умолчанию) начинает сбрасывать лишние
+	sem := make(chan struct{}, maxParallelChecks)
 
 	for _, sign := range signs {
 		wg.Add(1)
 		go func () {
 			defer wg.Done()
+			sem <- struct{}{}
+			defer func() { <-sem }()
 			checkSignAuto(&dh, ch, sign)
 		}()
 	}

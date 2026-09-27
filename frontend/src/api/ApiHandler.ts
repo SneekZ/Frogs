@@ -19,7 +19,7 @@ export function buildErrorMessage(
   return `HTTP ${res.status}: ${res.statusText}`;
 }
 
-async function safeParse(res: globalThis.Response): Promise<unknown> {
+export async function safeParse(res: globalThis.Response): Promise<unknown> {
   const ct = res.headers.get("content-type") ?? "";
   try {
     if (ct.includes("application/json")) return await res.json();

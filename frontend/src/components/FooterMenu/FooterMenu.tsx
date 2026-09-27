@@ -3,12 +3,14 @@ import { FC, useContext, useState } from "react";
 import { SignsContext } from "../SignsContext/SignsContext";
 import FrogsButton from "../Button/Button";
 import ContainersModal from "../ContainersModal/ContainersModal";
+import LogsModal from "../LogsModal/LogsModal";
 
 const FooterMenu: FC = () => {
   return (
     <footer className="footer-container">
       <SignsNumber />
       <ContainersNumber />
+      <LogsButton />
       <InstallContainersButton />
     </footer>
   );
@@ -32,6 +34,21 @@ const ContainersNumber: FC = () => {
   );
 };
 
+const LogsButton: FC = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+
+  return (
+    <>
+      <FrogsButton
+        label="Логи…"
+        className="footer-button logs-button"
+        onClick={() => setModalOpen(true)}
+      />
+      <LogsModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+    </>
+  );
+};
+
 const InstallContainersButton: FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -39,7 +56,7 @@ const InstallContainersButton: FC = () => {
     <>
       <FrogsButton
         label="Установить контейнеры…"
-        className="install-containers-button"
+        className="footer-button"
         onClick={() => setModalOpen(true)}
       />
       <ContainersModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />

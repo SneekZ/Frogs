@@ -1,5 +1,5 @@
 import { ServerConnection } from "../../structures/ServerConnection";
-import { Response } from "../../structures/Response";
+import { buildErrorMessage, safeParse } from "../ApiHandler";
 
 async function SignDocument(
   conn: ServerConnection,
@@ -31,11 +31,7 @@ async function SignDocument(
   });
 
   if (!response.ok) {
-    try {
-      throw new Error((response as unknown as Response).error);
-    } catch {
-      throw new Error(response.statusText);
-    }
+    throw new Error(buildErrorMessage(response, await safeParse(response)));
   }
 
   return await response.blob();
