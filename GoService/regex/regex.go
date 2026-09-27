@@ -31,7 +31,6 @@ var (
 	reCP1251			*regexp.Regexp
 
 	ErrorCode 			*regexp.Regexp
-	SignsNumber			*regexp.Regexp
 
 	LicenseCode			*regexp.Regexp
 	LicenseActuality	*regexp.Regexp
@@ -61,7 +60,6 @@ func init() {
     reCP1251 = regexp.MustCompile(`^[а-яА-Я0-9\s_\-\.]+`)
 
 	ErrorCode = regexp.MustCompile(`[ErrorCode:\s](\dx[\da-z]{8})`)
-	SignsNumber = regexp.MustCompile(`\d+-{7}\n`)
 
 	LicenseCode = regexp.MustCompile(`License validity:\n([A-Z0-9]{5}-?[A-Z0-9]{5}-?[A-Z0-9]{5}-?[A-Z0-9]{5}-?[A-Z0-9]{5})\n`)
 	LicenseActuality = regexp.MustCompile(`[A-Z0-9]{5}-?[A-Z0-9]{5}-?[A-Z0-9]{5}-?[A-Z0-9]{5}-?[A-Z0-9]{5}\n([^\n]*)\n`)
@@ -312,15 +310,6 @@ func ParseErrorCode(input string) string {
 	return errorCode[1]
 }
 
-func ParseSignsNumber(input string) int {
-	listSigns := SignsNumber.FindAllString(input, -1)
-	if listSigns != nil {
-		return len(listSigns)
-	}
-
-	return 0
-}
-
 func ParseLicenseCode(input string) string {
 	match := LicenseCode.FindStringSubmatch(input)
 	if len(match) != 2 {
@@ -369,9 +358,4 @@ func ParseContainerInList(input string) (string, string) {
 	}
 
 	return strings.TrimSpace(match[1]), match[2]
-}
-
-func ParseContainersNumber(input string) int {
-	match := ContainerInList.FindAllString(input, -1)
-	return len(match)
 }

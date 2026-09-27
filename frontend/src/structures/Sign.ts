@@ -99,6 +99,11 @@ export interface Sign {
   databaseids: number[];
 }
 
+export type SignStatus = "valid" | "invalid" | "unchecked";
+
+export const signStatus = (sign: Sign): SignStatus =>
+  !sign.checked ? "unchecked" : sign.valid ? "valid" : "invalid";
+
 export const defaultSign: Sign = {
   issuer: defaultIssuer,
   subject: defaultSubject,

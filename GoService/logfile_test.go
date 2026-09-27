@@ -62,7 +62,8 @@ func TestDailyLogRotates(t *testing.T) {
 	}
 }
 
-// Подписчик получает весь сегодняшний файл и следующие строки; дни и архивы читаются, чужие пути — нет.
+// Подписчик логов получает весь сегодняшний файл и следующие строки, подписчик без логов — только
+// broadcast-события; дни и архивы читаются, чужие пути — нет.
 func TestDailyLogSubscribeAndDays(t *testing.T) {
 	dir := t.TempDir()
 	now := time.Date(2026, 9, 27, 23, 59, 0, 0, time.Local)
@@ -73,14 +74,26 @@ func TestDailyLogSubscribeAndDays(t *testing.T) {
 	fmt.Fprint(d, "a\n")
 	fmt.Fprint(d, "b\n")
 
-	today, ch, ok := d.subscribe()
+	today, ch, ok := d.subscribe(true)
 	if !ok || string(today) != "a\nb\n" {
 		t.Fatalf("today = %q, ok=%v", today, ok)
 	}
+	noLogsToday, noLogs, _ := d.subscribe(false)
+	if noLogsToday != nil {
+		t.Fatalf("подписчику без логов отдан лог: %q", noLogsToday)
+	}
 	fmt.Fprint(d, "c\n")
-	if got := <-ch; got != "c" {
+	d.broadcast("status")
+	if got := <-ch; got != "log c" {
 		t.Fatalf("live = %q", got)
 	}
+	if got := <-ch; got != "status" {
+		t.Fatalf("broadcast подписчику логов = %q", got)
+	}
+	if got := <-noLogs; got != "status" {
+		t.Fatalf("подписчику без логов пришло %q, ожидалось только status", got)
+	}
+	d.unsubscribe(noLogs)
 
 	// Никто не читает канал: запись всё равно не должна зависнуть.
 	for i := 0; i < cap(ch)*2; i++ {
@@ -120,7 +133,7 @@ func TestDailyLogSubscribeAndDays(t *testing.T) {
 	d.closeSubs()
 	for range ch {
 	}
-	if _, _, ok := d.subscribe(); ok {
+	if _, _, ok := d.subscribe(false); ok {
 		t.Fatal("subscribe после closeSubs должен отказывать")
 	}
 	d.unsubscribe(ch) // повторное закрытие канала не должно паниковать

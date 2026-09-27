@@ -28,7 +28,7 @@ func GetInfo() Info {
 	bashtype := Config.BashType
 	useredis := Config.UseRedis
 	redisconnection := Config.RedisConnection
-	signsnumber, _ := handlers.SignsNumber("")
+	signsnumber, _ := handlers.SignsNumber()
 	containersnumber, _ := handlers.ContainersNumber()
 
 	info = Info {

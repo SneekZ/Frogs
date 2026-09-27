@@ -8,7 +8,7 @@ import {
   ChangeEvent,
 } from "react";
 import { SignsContext } from "../SignsContext/SignsContext";
-import { Sign, defaultSign } from "../../structures/Sign";
+import { Sign, defaultSign, signStatus } from "../../structures/Sign";
 import Modal from "../Modal/Modal";
 import CopyTextField from "../../utils/CopyFieldComponent";
 import DropdownDiv from "../Dropdown/DropdownDiv";
@@ -57,7 +57,7 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
     }
   }, [signsList, thumbprint]);
 
-  const status = !sign.checked ? "unchecked" : sign.valid ? "valid" : "invalid";
+  const status = signStatus(sign);
 
   return (
     <>
@@ -93,6 +93,12 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
               <span>СНИЛС</span>
               <CopyTextField inputText={sign.subject.snils} />
             </div>
+            {sign.container.foldername && (
+              <div className="sign-card-modal-row">
+                <span>Папка контейнера</span>
+                <CopyTextField inputText={sign.container.foldername} />
+              </div>
+            )}
             <div className="sign-card-modal-row">
               <span>Действует с</span>
               <span>{timestampToTime(sign.notvalidbefore)}</span>
@@ -110,7 +116,7 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
             {sign.valid && (
               <div className="sign-card-modal-row">
                 <span>Пароль</span>
-                <CopyTextField inputText={sign.password} />
+                <CopyTextField inputText={sign.password} secret />
               </div>
             )}
           </div>

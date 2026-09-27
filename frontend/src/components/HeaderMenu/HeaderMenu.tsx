@@ -51,7 +51,7 @@ const FilterInput: FC = () => {
     <FrogsInput
       id="signsSearch"
       className="filter-input input-search"
-      placeholder="ФИО или СНИЛС"
+      placeholder="ФИО, СНИЛС или отпечаток"
       onChange={(e) => setFilter(e.target.value)}
     />
   );
@@ -63,7 +63,7 @@ const UpdateButton: FC = () => {
 
   const handleClick = useCallback(async () => {
     setLoading(true);
-    refreshActiveConnectionStatus(() => setLoading(false));
+    refreshActiveConnectionStatus(() => setLoading(false), true);
   }, [refreshActiveConnectionStatus]);
 
   return (

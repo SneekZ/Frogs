@@ -1,86 +1,40 @@
 import "./styleChoice.css";
-import { FC, useState, useEffect, CSSProperties } from "react";
+import { FC } from "react";
 
-interface ChoiceOption<T> {
-  value: T;
+interface ChoiceOption {
+  value: string;
   label: string;
 }
 
 interface ChoiceProps {
-  options: ChoiceOption<string>[];
-  defaultOption?: number;
+  options: ChoiceOption[];
+  value: string;
+  onChange: (value: string) => void;
   className?: string;
-  style?: CSSProperties;
-  onChange?: (arg0: string) => void;
+  "aria-label"?: string;
 }
 
+// Сегментированный переключатель: выбран всегда ровно один вариант
 const Choice: FC<ChoiceProps> = ({
   options,
-  defaultOption,
-  className = "",
-  style,
-  onChange,
-}) => {
-  const [value, setValue] = useState<string>(
-    defaultOption !== undefined ? options[defaultOption].value : ""
-  );
-  useEffect(() => {
-    if (onChange) {
-      onChange(value);
-    }
-  }, [value, onChange]);
-  return (
-    <div
-      className={`choice-container ${className}`}
-      style={{
-        display: "grid",
-        gridTemplateColumns: `repeat(${options.length}, 1fr)`,
-        gap: "0px",
-        ...style,
-      }}
-    >
-      {options.map((option, index) => (
-        <OptionButton
-          value={option.value}
-          label={option.label}
-          activeValue={value}
-          onClick={() => {
-            setValue(option.value);
-          }}
-          key={index}
-        ></OptionButton>
-      ))}
-    </div>
-  );
-};
-
-interface OptionButtonProps<T> {
-  value: T;
-  label: string;
-  activeValue: T;
-  onClick: () => void;
-}
-
-const OptionButton: FC<OptionButtonProps<string>> = ({
   value,
-  label,
-  activeValue,
-  onClick,
-}) => {
-  const [active, setActive] = useState(false);
-
-  useEffect(() => {
-    if (value === activeValue) {
-      setActive(true);
-    } else {
-      setActive(false);
-    }
-  }, [activeValue, value]);
-  return (
-    <div className={`option ${active ? "active" : ""}`} onClick={onClick}>
-      {label}
-    </div>
-  );
-};
+  onChange,
+  className = "",
+  "aria-label": ariaLabel,
+}) => (
+  <div role="group" aria-label={ariaLabel} className={`choice ${className}`}>
+    {options.map((option) => (
+      <button
+        key={option.value}
+        type="button"
+        aria-pressed={option.value === value}
+        className={`choice-option${option.value === value ? " active" : ""}`}
+        onClick={() => onChange(option.value)}
+      >
+        {option.label}
+      </button>
+    ))}
+  </div>
+);
 
 export default Choice;

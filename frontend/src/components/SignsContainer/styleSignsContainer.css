@@ -4,11 +4,20 @@
 
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  /* Первая строка — фильтр статусов. У него overflow-x, поэтому при auto-строке
+     сетка, переполненная карточками, сжимает его до нуля */
+  grid-template-rows: max-content;
   gap: 16px;
   align-content: start;
 
   /* Поля под тени карточек, иначе их обрезает прокрутка */
   padding: 12px 8px 24px 12px;
+}
+
+/* Отдельной строкой над карточками */
+.signs-status-filter {
+  grid-column: 1 / -1;
+  justify-self: start;
 }
 
 .signs-empty {
@@ -38,5 +47,13 @@
     grid-column: 1 / -1;
     grid-row: 3 / 4;
     padding: 8px 4px 16px;
+  }
+
+  /* Четыре сегмента в строку не помещаются — сеткой 2×2 на всю ширину */
+  .signs-container .signs-status-filter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-self: stretch;
+    border-radius: 20px;
   }
 }

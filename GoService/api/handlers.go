@@ -5,10 +5,12 @@ import (
 	"GoService/errorcodes"
 	"GoService/handlers"
 	"GoService/parser"
+	"cmp"
 	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 )
@@ -43,27 +45,31 @@ func GetConfig(c *gin.Context) {
 // @Tags status
 // @Accept json
 // @Produce json
+// @Param refresh query bool false "true — перечитать данные с сервера, минуя кэш"
 // @Success 200 {string} Status
 // @Router /status [get]
 func GetStatus(c *gin.Context) {
+	if c.Query("refresh") == "true" {
+		handlers.RefreshCache()
+	}
+
+	// Три независимые команды на сервере — запускаем параллельно. NewResponse после них:
+	// его info берет количества из тех же кэшей и при пустом кэше загрузил бы их последовательно
+	var (
+		signs      []parser.Sign
+		containers []parser.Container
+		license    parser.License
+		errs       [3]error
+		wg         sync.WaitGroup
+	)
+	wg.Add(3)
+	go func() { defer wg.Done(); signs, errs[0] = handlers.Signs("", "") }()
+	go func() { defer wg.Done(); containers, errs[1] = handlers.Containers() }()
+	go func() { defer wg.Done(); license, errs[2] = handlers.GetLicense() }()
+	wg.Wait()
+
 	response := NewResponse()
-
-	signs, err := handlers.Signs("", "", "")
-	if err != nil {
-		response.Error = err.Error()
-		c.JSON(http.StatusOK, response)
-		return
-	}
-
-	containers, err := handlers.Containers()
-	if err != nil {
-		response.Error = err.Error()
-		c.JSON(http.StatusOK, response)
-		return
-	}
-
-	license, err := handlers.GetLicense()
-	if err != nil {
+	if err := cmp.Or(errs[:]...); err != nil {
 		response.Error = err.Error()
 		c.JSON(http.StatusOK, response)
 		return
@@ -85,7 +91,7 @@ func GetStatus(c *gin.Context) {
 func GetSigns(c *gin.Context) {
 	response := NewResponse()
 
-	signs, err := handlers.Signs("", "", "")
+	signs, err := handlers.Signs("", "")
 	if err != nil {
 		response.Error = err.Error()
 		c.JSON(http.StatusOK, response)
@@ -108,7 +114,7 @@ func GetSignsBySnils(c *gin.Context) {
 
 	response := NewResponse()
 
-	signs, err := handlers.Signs("", snils, "")
+	signs, err := handlers.Signs(snils, "")
 	if err != nil {
 		response.Error = err.Error()
 		c.JSON(http.StatusOK, response)
@@ -131,7 +137,7 @@ func GetSignsByThumbprint(c *gin.Context) {
 
 	response := NewResponse()
 
-	signs, err := handlers.Signs("", "", thumbprint)
+	signs, err := handlers.Signs("", thumbprint)
 	if err != nil {
 		response.Error = err.Error()
 		c.JSON(http.StatusOK, response)
@@ -152,7 +158,7 @@ func GetSignsByThumbprint(c *gin.Context) {
 func GetSignsCheck(c *gin.Context) {
 	response := NewResponse()
 
-	signs, err := handlers.Signs("", "", "")
+	signs, err := handlers.Signs("", "")
 	if err != nil {
 		response.Error = err.Error()
 		c.JSON(http.StatusOK, response)
@@ -182,7 +188,7 @@ func GetSignsCheckBySnils(c *gin.Context) {
 
 	response := NewResponse()
 
-	signs, err := handlers.Signs("", snils, "")
+	signs, err := handlers.Signs(snils, "")
 	if err != nil {
 		response.Error = err.Error()
 		c.JSON(http.StatusOK, response)
@@ -212,7 +218,7 @@ func GetSignsCheckByThumbprint(c *gin.Context) {
 
 	response := NewResponse()
 
-	signs, err := handlers.Signs("", "", thumbprint) 
+	signs, err := handlers.Signs("", thumbprint) 
 	if err != nil {
 		response.Error = err.Error()
 		c.JSON(http.StatusOK, response)
@@ -355,6 +361,61 @@ func GetInstallAllContainers(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// PostUploadContainers принимает архивы .zip/.tar.gz с открепленными контейнерами и кладет их рядом с остальными
+// @Description Принимает архивы .zip/.tar.gz (поле files, можно несколько) с открепленными контейнерами, проверяет их структуру и кладет рядом с остальными контейнерами
+// @Tags containers
+// @Accept multipart/form-data
+// @Produce json
+// @Success 200 {string} Status
+// @Router /containers/upload [post]
+func PostUploadContainers(c *gin.Context) {
+	response := NewResponse()
+
+	// Архивы не сохраняются в uploads: читаем прямо из запроса,
+	// временные файлы multipart net/http удаляет сам после ответа
+	form, err := c.MultipartForm()
+	if err != nil || len(form.File["files"]) == 0 {
+		response.Error = "не удалось найти архивы в запросе"
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	containers := map[string]map[string][]byte{}
+	for _, fh := range form.File["files"] {
+		f, err := fh.Open()
+		if err != nil {
+			response.Error = fmt.Sprintf("%s: не удалось открыть архив", fh.Filename)
+			c.JSON(http.StatusInternalServerError, response)
+			return
+		}
+		archived, err := parser.ParseContainersArchive(fh.Filename, f, fh.Size)
+		f.Close()
+		if err != nil {
+			response.Error = fmt.Sprintf("%s: %s", fh.Filename, err)
+			c.JSON(http.StatusBadRequest, response)
+			return
+		}
+		for folder, files := range archived {
+			if _, ok := containers[folder]; ok {
+				response.Error = fmt.Sprintf("%s: контейнер %s уже есть в другом архиве", fh.Filename, folder)
+				c.JSON(http.StatusBadRequest, response)
+				return
+			}
+			containers[folder] = files
+		}
+	}
+
+	uploaded, err := handlers.UploadContainers(containers)
+	if err != nil {
+		response.Error = err.Error()
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response.Containers = uploaded
+	c.JSON(http.StatusOK, response)
+}
+
 type SignDocumentRequest struct {
 	Thumbprint string `form:"thumbprint" json:"thumbprint"`
 	FindPassword bool `form:"findpassword" json:"findpassword"`
@@ -392,7 +453,7 @@ func PostSignDocument(c *gin.Context) {
 		return
 	}
 
-	sign, err := handlers.Signs("", "", signDocumentRequest.Thumbprint)
+	sign, err := handlers.Signs("", signDocumentRequest.Thumbprint)
 	if err != nil {
 		response.Error = err.Error()
 		c.JSON(http.StatusBadRequest, response)
@@ -456,7 +517,7 @@ func DeleteSignByThumbprint(c *gin.Context) {
 	thumbprint := c.Param("thumbprint")
 	response := NewResponse()
 
-	signs, err := handlers.Signs("", "", thumbprint)
+	signs, err := handlers.Signs("", thumbprint)
 	if err != nil {
 		response.Error = err.Error()
 		c.JSON(http.StatusBadRequest, response)

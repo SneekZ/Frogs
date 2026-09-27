@@ -23,6 +23,7 @@ type Config struct {
 	ConnectionData  	ConnectionData      `json:"connectiondata"`
 	DatabaseConnection 	DatabaseConnection 	`json:"databaseconnection"`
 	MaxFlows            int 				`json:"maxflows"`
+	CacheTTL			int					`json:"cachettl"`				// секунды, 0 — без кэша
 	Env					string				`json:"env"`					// debug or prod
 }
 

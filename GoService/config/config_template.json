@@ -33,6 +33,7 @@
     "password": "",
     "database": ""
   },
+  "cachettl": 300,
   "maxflows": 1,
   "env": "debug"
 }

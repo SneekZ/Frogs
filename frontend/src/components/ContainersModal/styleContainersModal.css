@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
-  height: 520px;
+  height: 580px;
 }
 
 .containers-column {
@@ -12,11 +12,54 @@
   min-height: 0;
 }
 
-.containers-column h2 {
-  margin: 0;
+.containers-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
   padding: 0 6px;
+}
+
+.containers-column h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
   font-size: 15px;
   font-weight: 600;
+}
+
+/* Номер шага: подсказывает порядок — сначала установить, потом скопировать */
+.containers-step {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--on-accent);
+  background-color: var(--accent-fill);
+  border-radius: 50%;
+}
+
+.containers-counter {
+  font-size: 13px;
+  color: var(--label-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.containers-clear {
+  padding: 0;
+  font: inherit;
+  font-size: 13px;
+  color: var(--label-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.containers-clear:hover {
+  color: var(--label);
 }
 
 .containers-hint,
@@ -46,8 +89,9 @@
 
 .list-row {
   flex: none;
-  justify-content: flex-start;
-  height: 40px;
+  justify-content: space-between;
+  min-height: 40px;
+  height: auto;
   padding: 0 12px;
   font-weight: 400;
   font-variant-numeric: tabular-nums;
@@ -59,9 +103,113 @@
   background-color: var(--fill);
 }
 
-.list-row-failed {
+.list-row-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 6px 0;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-row-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-row-sub {
+  font-size: 13px;
+  color: var(--label-secondary);
+}
+
+/* Действие строки видно при наведении, статусы «Установлен» и ошибка — всегда */
+.list-row-status {
+  flex: none;
+  font-size: 13px;
+  color: var(--label-secondary);
+  opacity: 0;
+  transition: opacity 0.15s var(--ease);
+}
+
+.list-row:hover .list-row-status,
+.list-row:focus-visible .list-row-status,
+.list-row-installed .list-row-status,
+.list-row-copied .list-row-status,
+.list-row-failed .list-row-status {
+  opacity: 1;
+}
+
+.list-row-installed .list-row-status::before,
+.list-row-copied .list-row-status::before {
+  content: "✓ ";
+  color: var(--green);
+}
+
+.list-row-copied .list-row-main {
+  opacity: 0.5;
+}
+
+.list-row-failed,
+.list-row-failed .list-row-status {
   color: var(--red);
+}
+
+.list-row-failed {
   background-color: var(--red-fill);
+}
+
+.containers-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 14px 16px;
+
+  font: inherit;
+  color: var(--label);
+  text-align: center;
+  background-color: transparent;
+  border: 1.5px dashed var(--label-tertiary);
+  border-radius: 16px;
+  cursor: pointer;
+
+  transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+
+/* Иначе dragleave срабатывает при переходе на вложенный текст и зона мигает */
+.containers-dropzone > * {
+  pointer-events: none;
+}
+
+.containers-dropzone:hover,
+.containers-dropzone.dragging {
+  background-color: var(--fill);
+  border-color: var(--label-secondary);
+}
+
+.containers-dropzone.dragging {
+  border-style: solid;
+}
+
+.containers-dropzone:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.containers-dropzone:disabled {
+  cursor: progress;
+}
+
+.containers-dropzone-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.containers-dropzone-hint {
+  font-size: 13px;
+  color: var(--label-secondary);
 }
 
 @media (max-width: 560px) {

@@ -7,27 +7,40 @@ import (
 	"GoService/errorcodes"
 	"GoService/parser"
 	"GoService/regex"
+	"archive/tar"
+	"bytes"
 	"fmt"
+	"maps"
+	"slices"
+	"strings"
 	"sync"
+	"time"
 )
 
 var Config = config.LoadConfig("")
 
 const maxParallelChecks = 5
 
-func Signs(store string, dn string, thumbprint string) ([]parser.Sign, error) {
+// Signs отдает сертификаты uMy из кэша, пустые snils и thumbprint не фильтруют.
+// СНИЛС сравнивается только по цифрам: "123-456-789 01" == "12345678901"
+func Signs(snils string, thumbprint string) ([]parser.Sign, error) {
+	filterSnils, snils := snils != "", digitsOnly(snils)
+	signs, err := cachedSigns()
+	if err != nil {
+		return signs, err
+	}
+	return slices.DeleteFunc(signs, func(s parser.Sign) bool {
+		return (filterSnils && digitsOnly(s.Subject.SNILS) != snils) || (thumbprint != "" && !strings.EqualFold(s.Thumbprint, thumbprint))
+	}), nil
+}
+
+func loadSigns() ([]parser.Sign, error) {
 	h, err := bashhandler.NewBashHandlerWrapper("utf-8", false)
 	if err != nil {
 		return []parser.Sign{}, err
 	}
 
-	if store == "" {
-		store = "uMy"
-	}
-
-	commandSigns := fmt.Sprintf("%s -list -store %s -dn \"%s\" -thumbprint \"%s\"", Config.CertmgrPath, store, dn, thumbprint)
-
-	out, err := h.Exec(commandSigns)
+	out, err := h.Exec(Config.CertmgrPath + " -list -store uMy")
 	if err != nil {
 		return []parser.Sign{}, err
 	}
@@ -41,6 +54,10 @@ func Signs(store string, dn string, thumbprint string) ([]parser.Sign, error) {
 }
 
 func Containers() ([]parser.Container, error) {
+	return cachedContainers()
+}
+
+func loadContainers() ([]parser.Container, error) {
 	h, err := bashhandler.NewBashHandlerWrapper("cp1250", false)
 	if err != nil {
 		return []parser.Container{}, err
@@ -104,12 +121,17 @@ func InstallContainerByName(containerName string) (parser.Sign, error) {
 	}
 
 	signs, err := parser.ParseSigns(out)
+	if err != nil || len(signs) != 1 {
+		// Сертификат мог установиться, но из вывода его не разобрать — перечитаем список целиком
+		signsCache.Invalidate()
+	}
 	if err != nil {
-		return parser.Sign{}, nil
+		return parser.Sign{}, err
 	}
 
 	switch len(signs) {
 	case 1:
+		updateCachedSigns(signs, true)
 		return signs[0], nil
 	case 0:
 		return parser.Sign{}, fmt.Errorf("%s", "после установки не был выведен контейнер")
@@ -119,6 +141,8 @@ func InstallContainerByName(containerName string) (parser.Sign, error) {
 }
 
 func InstallAllContainers() ([]parser.Container, error) {
+	defer invalidateCache()
+
 	h, err := bashhandler.NewBashHandlerWrapper("utf-8", false)
 	if err != nil {
 		return []parser.Container{}, err
@@ -136,6 +160,49 @@ func InstallAllContainers() ([]parser.Container, error) {
 	}
 
 	return containers, nil
+}
+
+// UploadContainers кладет контейнеры (имя папки -> файлы) в KeysPath рядом с остальными.
+// Существующие папки не перезаписываются: если хоть одна уже есть, не пишется ничего
+func UploadContainers(containers map[string]map[string][]byte) ([]parser.Container, error) {
+	h, err := bashhandler.NewBashHandlerWrapper("utf-8", false)
+	if err != nil {
+		return []parser.Container{}, err
+	}
+
+	out, err := h.Exec(fmt.Sprintf("ls -1A '%s'", Config.KeysPath))
+	if err != nil {
+		return []parser.Container{}, err
+	}
+	existing := strings.Split(out, "\n")
+
+	// Файлы передаются через stdin tar, так одинаково работает и local, и ssh
+	var buf bytes.Buffer
+	tw := tar.NewWriter(&buf)
+	uploaded := []parser.Container{}
+	now := time.Now()
+	for _, folder := range slices.Sorted(maps.Keys(containers)) {
+		if slices.Contains(existing, folder) {
+			return []parser.Container{}, fmt.Errorf("папка %s уже есть на сервере", folder)
+		}
+		tw.WriteHeader(&tar.Header{Typeflag: tar.TypeDir, Name: folder + "/", Mode: 0700, ModTime: now})
+		for _, file := range slices.Sorted(maps.Keys(containers[folder])) {
+			data := containers[folder][file]
+			tw.WriteHeader(&tar.Header{Typeflag: tar.TypeReg, Name: folder + "/" + file, Mode: 0600, Size: int64(len(data)), ModTime: now})
+			tw.Write(data)
+		}
+		uploaded = append(uploaded, parser.Container{FolderName: folder})
+	}
+	if err := tw.Close(); err != nil {
+		return []parser.Container{}, err
+	}
+
+	defer invalidateCache()
+	if _, err := h.ExecStdin(fmt.Sprintf("tar -x --no-same-owner -C '%s'", Config.KeysPath), &buf); err != nil {
+		return []parser.Container{}, fmt.Errorf("не удалось распаковать контейнеры на сервере: %w", err)
+	}
+
+	return uploaded, nil
 }
 
 func SignDocument(sign parser.Sign, filepath string, password string) (string, error) {
@@ -252,12 +319,17 @@ func CheckSignsList(signs []parser.Sign) ([]parser.Sign, error) {
 		return []parser.Sign{}, err
 	}
 
+	// Подписи могут прийти из кэша с результатами прошлой проверки — проверяем заново
+	now := time.Now().Unix()
+	for i := range signs {
+		signs[i] = parser.Precheck(signs[i], now)
+	}
 	signs = findDoubleSigns(signs)
 
 	ch := make(chan parser.Sign, len(signs))
 	var wg sync.WaitGroup
-	// Ограничение параллельных проверок: при bashtype=ssh каждая команда — новое
-	// соединение, и sshd (MaxStartups 10 по умолчанию) начинает сбрасывать лишние
+	// Ограничение параллельных проверок: при bashtype=ssh все команды идут через одно
+	// соединение, а sshd разрешает на нем 10 сессий (MaxSessions по умолчанию)
 	sem := make(chan struct{}, maxParallelChecks)
 
 	for _, sign := range signs {
@@ -280,6 +352,7 @@ func CheckSignsList(signs []parser.Sign) ([]parser.Sign, error) {
 		checkedSigns = append(checkedSigns, checkedSign)
 	}
 
+	updateCachedSigns(checkedSigns, false)
 	return checkedSigns, nil
 }
 
@@ -294,6 +367,7 @@ func DeleteSign(sign parser.Sign) (parser.Sign, error) {
 	if err != nil {
 		return parser.Sign{}, err
 	}
+	removeCachedSign(sign.Thumbprint)
 
 	signs, err := parser.ParseSigns(out)
 	if err != nil {
@@ -307,38 +381,23 @@ func DeleteSign(sign parser.Sign) (parser.Sign, error) {
 	return signs[0], nil
 }
 
-func SignsNumber(store string) (int, error) {
-	h, err := bashhandler.NewBashHandlerWrapper("utf-8", false)
-	if err != nil {
-		return 0, err
-	}
-
-	if store == "" {
-		store = "uMy"
-	}
-
-	out, err := h.Exec(Config.CertmgrPath + " -list -store " + store)
-	if err != nil {
-		return 0, err
-	}
-
-	return regex.ParseSignsNumber(out), nil
+// SignsNumber и ContainersNumber считают по тем же кэшам, что Signs и Containers:
+// отдельный certmgr/csptest ради количества стоил бы лишний SSH-вызов в каждом ответе
+func SignsNumber() (int, error) {
+	signs, err := signsCache.Get()
+	return len(signs), err
 }
 
 func ContainersNumber() (int, error) {
-	h, err := bashhandler.NewBashHandlerWrapper("cp1251", false)
-	if err != nil {
-		return 0, err
-	}
-
-	out, err := h.Exec(Config.CsptestPath + " -keyset -enum_cont -verifyc -unique -fqcn")
-	if err != nil {
-		return 0, err
-	}
-	return regex.ParseContainersNumber(out), nil
+	containers, err := containersCache.Get()
+	return len(containers), err
 }
 
 func GetLicense() (parser.License, error) {
+	return licenseCache.Get()
+}
+
+func loadLicense() (parser.License, error) {
 	h, err := bashhandler.NewBashHandlerWrapper("cp1251", false)
 	if err != nil {
 		return parser.License{}, err

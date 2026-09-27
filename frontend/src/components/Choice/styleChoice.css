@@ -1,56 +1,54 @@
-.choice-container {
-  /* background-color: #3b3b3b; */
-  border-width: 2px;
-  border-style: solid;
-  border-color: #3b3b3b;
-  border-radius: 11px;
+/* Сегментированный контрол: подложка-желобок, выбранный сегмент — приподнятая капсула */
+.choice {
+  display: inline-flex;
+  gap: 2px;
+  max-width: 100%;
+  padding: 3px;
 
-  overflow-y: scroll;
+  background-color: var(--fill);
+  border-radius: 999px;
 
+  overflow-x: auto;
   scrollbar-width: none;
-  scrollbar-color: transparent transparent;
-
-  /* IE 10+ */
-  -ms-overflow-style: none;
 }
 
-/* WebKit (Chrome, Safari, Edge Chromium) */
-.default-container::-webkit-scrollbar {
+.choice::-webkit-scrollbar {
   display: none;
 }
 
-.option {
-  --color: #3b3b3b;
-  --hover-color: #eaeaea;
+.choice-option {
+  flex: none;
+  height: 32px;
+  padding: 0 14px;
 
-  color: white;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  font-size: large;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--label-secondary);
+  white-space: nowrap;
   background-color: transparent;
-  border-radius: 11px;
+  border: none;
+  border-radius: 999px;
   cursor: pointer;
+  user-select: none;
 
-  padding-left: 8px;
-  padding-right: 8px;
-
-  transition: background-color 0.3s ease-in-out, color 0.1s ease-in-out;
+  transition:
+    background-color 0.2s var(--ease),
+    color 0.2s var(--ease),
+    box-shadow 0.2s var(--ease);
 }
 
-.option.active {
-  background-color: var(--hover-color) !important;
-  color: black !important;
+.choice-option:hover {
+  color: var(--label);
 }
 
-.option:hover {
-  background-color: var(--hover-color) !important;
-  color: black !important;
+.choice-option.active {
+  color: var(--label);
+  background-color: var(--control-hover);
+  box-shadow: var(--shadow-control);
 }
 
-.option:focus {
-  background-color: var(--hover-color);
-  color: black;
+.choice-option:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }

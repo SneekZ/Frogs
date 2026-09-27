@@ -64,3 +64,22 @@
   outline: none;
   box-shadow: var(--focus-ring);
 }
+
+/* Показать/скрыть секрет: eye, в раскрытом виде — eye.slash */
+.copy-field-button.reveal::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='black' stroke-width='1.4' stroke-linejoin='round'%3E%3Cpath d='M1 7s2.2-4.3 6-4.3S13 7 13 7s-2.2 4.3-6 4.3S1 7 1 7Z'/%3E%3Ccircle cx='7' cy='7' r='1.8'/%3E%3C/svg%3E");
+}
+
+.copy-field-button.reveal.shown::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='black' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 7s2.2-4.3 6-4.3S13 7 13 7s-2.2 4.3-6 4.3S1 7 1 7Z'/%3E%3Ccircle cx='7' cy='7' r='1.8'/%3E%3Cpath d='m2 1.5 10 11'/%3E%3C/svg%3E");
+}
+
+/* Очистить поле: xmark.circle.fill */
+.copy-field-button.clear::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cmask id='m'%3E%3Ccircle cx='7' cy='7' r='6' fill='white'/%3E%3Cpath d='m4.9 4.9 4.2 4.2m0-4.2-4.2 4.2' stroke='black' stroke-width='1.4' stroke-linecap='round'/%3E%3C/mask%3E%3Ccircle cx='7' cy='7' r='6' mask='url(%23m)'/%3E%3C/svg%3E");
+}
+
+/* Внутри поля ввода — прижать к правому краю */
+.input-container .copy-field-button {
+  margin-right: -8px;
+}

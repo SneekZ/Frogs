@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"GoService/parser"
+	"strings"
+	"unicode"
 )
 
 func findDoubleSigns(signs []parser.Sign) []parser.Sign {
@@ -19,4 +21,13 @@ func findDoubleSigns(signs []parser.Sign) []parser.Sign {
     }
     
     return signs
+}
+
+func digitsOnly(s string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.IsDigit(r) {
+			return r
+		}
+		return -1
+	}, s)
 }

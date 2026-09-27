@@ -2,12 +2,13 @@ package bashhandler
 
 import (
 	"fmt"
+	"io"
 
 	"golang.org/x/text/encoding/charmap"
 )
 
 type BashHandlerInterface interface {
-	Exec(command string) ([]byte, []byte, error)
+	Exec(command string, stdin io.Reader) ([]byte, []byte, error)
 }
 
 type BashHandlerWrapper struct {
@@ -18,7 +19,12 @@ type BashHandlerWrapper struct {
 }
 
 func (bhw *BashHandlerWrapper) Exec(command string) (string, error) {
-	stdout, stderr, err := bhw.BashHandler.Exec(command)
+	return bhw.ExecStdin(command, nil)
+}
+
+// ExecStdin выполняет команду, передавая ей stdin (nil — без ввода)
+func (bhw *BashHandlerWrapper) ExecStdin(command string, stdin io.Reader) (string, error) {
+	stdout, stderr, err := bhw.BashHandler.Exec(command, stdin)
 
 	if err != nil {
 		switch bhw.UseStdOutAsStdErr {

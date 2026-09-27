@@ -97,6 +97,8 @@ const ConnectionModal: FC<ConnectionModalProps> = ({
             onChange={(e) => setPassword(e.target.value)}
             defaultValue={conn?.password ?? ""}
             type="password"
+            // иначе в имя поля попадёт и подпись кнопки «глаз» из <label>
+            aria-label="Пароль"
           />
         </label>
       </div>

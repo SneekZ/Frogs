@@ -6,14 +6,19 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-// streamLogs отдаёт весь сегодняшний лог, а затем новые строки по мере появления (text/plain, построчно).
-func (d *dailyLog) streamLogs(c *gin.Context) {
-	today, ch, ok := d.subscribe()
+// streamEvents — единый поток событий клиенту (text/plain, построчно):
+//   - "status" — данные /status изменились, их пора перезапросить;
+//   - "log <строка>" — строка лога, только с ?logs=true. Тогда сначала идёт весь сегодняшний лог.
+//
+// Одно соединение на оба назначения: браузер держит не больше 6 HTTP/1.1-соединений на сервер на все вкладки.
+func (d *dailyLog) streamEvents(c *gin.Context) {
+	today, ch, ok := d.subscribe(c.Query("logs") == "true")
 	if !ok {
 		c.AbortWithStatus(http.StatusServiceUnavailable)
 		return
@@ -24,7 +29,9 @@ func (d *dailyLog) streamLogs(c *gin.Context) {
 	c.Header("Cache-Control", "no-cache")
 	c.Header("X-Content-Type-Options", "nosniff")
 	c.Status(http.StatusOK)
-	c.Writer.Write(today)
+	for line := range strings.Lines(string(today)) {
+		c.Writer.WriteString("log " + strings.TrimSuffix(line, "\n") + "\n")
+	}
 	c.Writer.Flush()
 
 	for {

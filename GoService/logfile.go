@@ -14,14 +14,15 @@ import (
 )
 
 // dailyLog пишет в <dir>/ГГГГ-ММ-ДД.log, с наступлением новых суток открывает новый файл,
-// а все файлы прошлых дней сжимает в .gz. Заодно раздаёт новые строки подписчикам live-логов.
+// а все файлы прошлых дней сжимает в .gz. Заодно раздаёт подписчикам потока событий новые строки
+// лога (тем, кто их просил) и прочие события (всем).
 type dailyLog struct {
 	dir    string
 	now    func() time.Time
 	mu     sync.Mutex
 	day    string
 	file   *os.File
-	subs   map[chan string]struct{}
+	subs   map[chan string]bool // значение — нужны ли подписчику строки лога
 	closed bool
 }
 
@@ -29,7 +30,7 @@ func newDailyLog(dir string, now func() time.Time) (*dailyLog, error) {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return nil, err
 	}
-	d := &dailyLog{dir: dir, now: now, subs: make(map[chan string]struct{})}
+	d := &dailyLog{dir: dir, now: now, subs: make(map[chan string]bool)}
 	// Сразу открываем файл, чтобы ошибки доступа всплыли при старте, и сжимаем логи прошлых запусков.
 	return d, d.rotate(now().Format(time.DateOnly))
 }
@@ -39,14 +40,8 @@ func (d *dailyLog) Write(p []byte) (int, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	// Подписчикам — даже если файл недоступен. Медленный клиент теряет строки, но не тормозит сервис.
-	line := strings.TrimRight(string(p), "\n")
-	for ch := range d.subs {
-		select {
-		case ch <- line:
-		default:
-		}
-	}
+	// Подписчикам — даже если файл недоступен
+	d.send("log "+strings.TrimRight(string(p), "\n"), true)
 
 	if err := d.ensureDay(); err != nil {
 		return 0, err
@@ -88,22 +83,42 @@ func (d *dailyLog) rotate(day string) error {
 	return nil
 }
 
-// subscribe возвращает весь сегодняшний лог и канал следующих строк. Под тем же локом, что и запись,
-// поэтому строка попадает либо в today, либо в канал — без потерь и повторов на стыке.
-// ok=false, если сервер уже останавливается.
+// send раздаёт событие подписчикам (только тем, кто просил логи, если onlyLogs). Вызывается под d.mu.
+// Медленный клиент теряет события, но не тормозит сервис.
+func (d *dailyLog) send(event string, onlyLogs bool) {
+	for ch, logs := range d.subs {
+		if logs || !onlyLogs {
+			select {
+			case ch <- event:
+			default:
+			}
+		}
+	}
+}
+
+// broadcast раздаёт событие всем подписчикам.
+func (d *dailyLog) broadcast(event string) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	d.send(event, false)
+}
+
+// subscribe возвращает канал событий: "log <строка>" (если logs) и всё, что пришло через broadcast.
+// С logs ещё и весь сегодняшний лог — под тем же локом, что и запись, поэтому строка попадает
+// либо в today, либо в канал, без потерь и повторов на стыке. ok=false, если сервер уже останавливается.
 // ponytail: файл за сутки читается целиком в память под локом; при логах в сотни МБ отдавать хвост.
-func (d *dailyLog) subscribe() (today []byte, ch chan string, ok bool) {
+func (d *dailyLog) subscribe(logs bool) (today []byte, ch chan string, ok bool) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
 	if d.closed {
 		return nil, nil, false
 	}
-	if d.ensureDay() == nil {
+	if logs && d.ensureDay() == nil {
 		today, _ = os.ReadFile(d.file.Name())
 	}
 	ch = make(chan string, 256)
-	d.subs[ch] = struct{}{}
+	d.subs[ch] = logs
 	return today, ch, true
 }
 
@@ -117,7 +132,7 @@ func (d *dailyLog) unsubscribe(ch chan string) {
 	}
 }
 
-// closeSubs завершает все live-потоки, иначе srv.Shutdown ждал бы их до таймаута.
+// closeSubs завершает все потоки событий, иначе srv.Shutdown ждал бы их до таймаута.
 func (d *dailyLog) closeSubs() {
 	d.mu.Lock()
 	defer d.mu.Unlock()

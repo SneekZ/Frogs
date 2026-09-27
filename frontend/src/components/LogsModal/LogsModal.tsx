@@ -3,14 +3,13 @@ import { FC, useContext, useEffect, useLayoutEffect, useRef, useState } from "re
 import { SignsContext } from "../SignsContext/SignsContext";
 import Modal, { ModalProps } from "../Modal/Modal";
 import Input from "../Input/Input";
-import { GetLogDay, GetLogDays, LogDays, StreamLogs } from "../../api/handlers/Logs";
+import { GetLogDay, GetLogDays, LogDays } from "../../api/handlers/Logs";
 
-const RECONNECT_MS = 3000;
 // Значение выбора «сегодня, в реальном времени»; остальные — даты ГГГГ-ММ-ДД.
 const LIVE = "";
 
 const LogsModal: FC<ModalProps> = ({ isOpen, onClose }) => {
-  const { activeConnection } = useContext(SignsContext);
+  const { activeConnection, subscribeLogs } = useContext(SignsContext);
   const [days, setDays] = useState<LogDays | null>(null);
   const [selected, setSelected] = useState(LIVE);
   const [lines, setLines] = useState<string[]>([]);
@@ -41,48 +40,33 @@ const LogsModal: FC<ModalProps> = ({ isOpen, onClose }) => {
     };
   }, [isOpen, activeConnection, noConnection]);
 
-  // Сегодня: весь файл и новые строки по мере появления.
+  // Сегодня: весь файл и новые строки по мере появления — из общего потока событий,
+  // переподключается он сам.
   useEffect(() => {
     setLines([]);
     setLive(false);
     setError("");
     if (!isOpen || noConnection || selected !== LIVE) return;
 
-    const ctrl = new AbortController();
-    let retry: ReturnType<typeof setTimeout> | undefined;
-
-    const connect = () => {
-      // При каждом подключении сервер заново шлёт весь сегодняшний лог: первый кусок заменяет список.
-      let fresh = true;
-      StreamLogs(
-        activeConnection,
-        (chunk) => {
-          const replace = fresh;
-          fresh = false;
-          setLive(true);
-          setError("");
-          setLines((prev) => (replace ? chunk : [...prev, ...chunk]));
-        },
-        ctrl.signal
-      )
-        .then(
-          () => "сервер закрыл соединение",
-          (e: Error) => e.message
-        )
-        .then((reason) => {
-          if (ctrl.signal.aborted) return;
-          setLive(false);
-          setError(reason);
-          retry = setTimeout(connect, RECONNECT_MS);
-        });
-    };
-    connect();
-
-    return () => {
-      ctrl.abort();
-      clearTimeout(retry);
-    };
-  }, [isOpen, activeConnection, noConnection, selected]);
+    // При каждом подключении сервер заново шлёт весь сегодняшний лог: первый кусок заменяет список.
+    let fresh = true;
+    return subscribeLogs({
+      onOpen: () => {
+        fresh = true;
+        setLive(true);
+        setError("");
+      },
+      onLines: (chunk) => {
+        const replace = fresh;
+        fresh = false;
+        setLines((prev) => (replace ? chunk : [...prev, ...chunk]));
+      },
+      onError: (reason) => {
+        setLive(false);
+        setError(reason);
+      },
+    });
+  }, [isOpen, activeConnection, noConnection, selected, subscribeLogs]);
 
   // Прошлый день: загружаем один раз целиком.
   useEffect(() => {

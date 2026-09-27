@@ -3,6 +3,7 @@ package main
 import (
 	"GoService/api"
 	"GoService/config"
+	"GoService/handlers"
 	"context"
 	"io"
 	"log"
@@ -97,10 +98,11 @@ func main() {
 	r.GET("/containers/install/foldername/:foldername", api.GetInstallContainerFolderName)
 	r.GET("/containers/install/containername/:containername", api.GetInstallContainerName)
 	r.GET("/containers/install/all", api.GetInstallAllContainers)
+	r.POST("/containers/upload", api.PostUploadContainers)
 
 	r.POST("/changepassword", api.PostChangePassword)
 
-	r.GET("/logs/stream", logFile.streamLogs)
+	r.GET("/events", logFile.streamEvents)
 	r.GET("/logs/days", logFile.getLogDays)
 	r.GET("/logs/days/:day", logFile.getLogDay)
 
@@ -108,6 +110,11 @@ func main() {
 
 	srv := &http.Server{Handler: r}
 	srv.RegisterOnShutdown(logFile.closeSubs)
+	go func() {
+		for range handlers.StatusChanged {
+			logFile.broadcast("status")
+		}
+	}()
 	ln, err := net.Listen("tcp", ":"+Config.ConnectionData.Port)
 	if err != nil {
 		slog.Error("Не удалось запустить сервис", "err", err)

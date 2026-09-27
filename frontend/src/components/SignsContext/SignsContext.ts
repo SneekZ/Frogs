@@ -1,19 +1,30 @@
 import { createContext } from "react";
 import { ServerConnection } from "../../structures/ServerConnection";
-import { Sign } from "../../structures/Sign";
+import { Sign, SignStatus } from "../../structures/Sign";
 import { Container } from "../../structures/Container";
 import { License, defaultLicense } from "../../structures/License";
 import { Response, defaultResponse } from "../../structures/Response";
+
+// Получатель live-логов из общего потока событий.
+export interface LogsListener {
+  // Поток (пере)подключился, следом придёт весь сегодняшний лог.
+  onOpen: () => void;
+  onLines: (lines: string[]) => void;
+  onError: (reason: string) => void;
+}
 
 interface SignsContextProps {
   activeConnection: ServerConnection;
   setActiveConnection: (arg0: ServerConnection) => void;
   activeConnectionStatus: Response;
-  refreshActiveConnectionStatus: (callback: () => void) => void;
+  refreshActiveConnectionStatus: (callback: () => void, refresh?: boolean) => void;
+  // Возвращает отписку. Пока есть подписчик, поток событий идёт вместе с логами.
+  subscribeLogs: (listener: LogsListener) => () => void;
   signsList: Map<string, Sign>;
   filteredSignsList: Map<string, Sign>;
   setFilter: (arg0: string) => void;
-  setFilterType: (arg0: "snils" | "name") => void;
+  statusFilter: SignStatus | "";
+  setStatusFilter: (arg0: SignStatus | "") => void;
   refreshSignsList: (callback: () => void) => void;
   checkSign: (sign: Sign, callback: () => void) => void;
   checkAllSigns: (callback: () => void) => void;
@@ -24,6 +35,7 @@ interface SignsContextProps {
     callback: () => void,
     callbackError?: () => void
   ) => void;
+  uploadContainers: (files: File[], callback: () => void) => void;
   installedSignsList: Sign[];
   deleteInstalledSign: (sign: Sign, callback: () => void) => void;
   license: License;
@@ -49,16 +61,19 @@ export const SignsContext = createContext<SignsContextProps>({
   setActiveConnection: () => {},
   activeConnectionStatus: defaultResponse,
   refreshActiveConnectionStatus: () => {},
+  subscribeLogs: () => () => {},
   signsList: new Map<string, Sign>(),
   filteredSignsList: new Map<string, Sign>(),
   setFilter: () => {},
-  setFilterType: () => {},
+  statusFilter: "",
+  setStatusFilter: () => {},
   refreshSignsList: () => {},
   checkSign: () => {},
   checkAllSigns: () => {},
   containersList: [],
   refreshContainersList: () => {},
   installContainer: () => {},
+  uploadContainers: () => {},
   installedSignsList: [],
   deleteInstalledSign: () => {},
   license: defaultLicense,

@@ -68,7 +68,15 @@ func parseSign(input string, ch chan Sign, timestampNow *int64) {
 		ProviderName: regex.ParseProviderName(input),
 	}
 
-	if sign.NotValidAfter < *timestampNow {
+	ch <- Precheck(sign, *timestampNow)
+}
+
+// Precheck сбрасывает результаты прошлой проверки и заново помечает подписи,
+// которые не нужно проверять паролем: просроченные и без снилса
+func Precheck(sign Sign, timestampNow int64) Sign {
+	sign.Checked, sign.Valid, sign.CheckErrors, sign.Password, sign.DatabaseIds = false, false, nil, "", nil
+
+	if sign.NotValidAfter < timestampNow {
 		sign.Checked = true
 		sign.CheckErrors = append(sign.CheckErrors, "Сертификат просрочен")
 	}
@@ -76,11 +84,9 @@ func parseSign(input string, ch chan Sign, timestampNow *int64) {
 	if sign.Subject.SNILS == "" {
 		sign.Checked = true
 		sign.CheckErrors = append(sign.CheckErrors, "Сертификат не имеет снилса")
-		ch <- sign
-		return
 	}
 
-	ch <- sign
+	return sign
 }
 
 func parseIssuer(input string) Issuer {

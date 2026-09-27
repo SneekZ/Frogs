@@ -33,6 +33,7 @@
     "password": "dbpassword",
     "database": "s11"
   },
+  "cachettl": 3600,
   "maxflows": -1,
   "env": "debug"
 }
