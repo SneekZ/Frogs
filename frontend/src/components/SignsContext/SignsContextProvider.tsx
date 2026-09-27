@@ -73,6 +73,7 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const [activeConnectionStatus, setActiveConnectionStatus] =
     useState<Response>(defaultResponse);
+  const [statusLoading, setStatusLoading] = useState(false);
 
   // Ответы /status могут прийти не по порядку (кнопка «Обновить» и событие сервера
   // одновременно, смена подключения) — применяем только последний запрошенный.
@@ -81,6 +82,7 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const clearConnectionStatus = useCallback(() => {
     statusSeq.current++;
     setActiveConnectionStatus(defaultResponse);
+    setStatusLoading(false);
     setSignsList(new Map<string, Sign>());
   }, []);
 
@@ -97,6 +99,9 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSignsList(signsMap);
 
         setContainersList(response.containers);
+      }).finally(() => {
+        // Более новый запрос сам снимет флаг, когда завершится
+        if (seq === statusSeq.current) setStatusLoading(false);
       });
     },
     [activeConnection]
@@ -109,6 +114,7 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
         callback();
         return;
       }
+      setStatusLoading(true);
       loadStatus(refresh)
         .catch((e) =>
           Notify({
@@ -459,6 +465,7 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
         activeConnection,
         setActiveConnection,
         activeConnectionStatus,
+        statusLoading,
         refreshActiveConnectionStatus,
         subscribeLogs,
         signsList,

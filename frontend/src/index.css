@@ -1,7 +1,7 @@
 /* Палитра «Liquid Glass»: стеклянные панели над нейтральным серым фоном.
-   Светлая тема по умолчанию, тёмная — по prefers-color-scheme */
+   Тема задаётся data-theme на <html>: скрипт в index.html ставит сохранённую или системную */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui,
     "Segoe UI", Roboto, sans-serif;
@@ -70,45 +70,45 @@
   background-color: var(--bg-base);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-base: #121212;
-    --dot: rgba(255, 255, 255, 0.1);
+:root[data-theme="dark"] {
+  color-scheme: dark;
 
-    --glass: rgba(40, 40, 40, 0.56);
-    --glass-strong: rgba(32, 32, 32, 0.86);
-    --bg-elevated: rgba(40, 40, 40, 0.94);
-    --bg-grouped-row: rgba(255, 255, 255, 0.06);
-    --control: rgba(255, 255, 255, 0.09);
-    --control-hover: rgba(255, 255, 255, 0.15);
-    --bg-overlay: rgba(0, 0, 0, 0.45);
+  --bg-base: #121212;
+  --dot: rgba(255, 255, 255, 0.1);
 
-    --label: #f5f5f5;
-    --label-secondary: rgba(255, 255, 255, 0.64);
-    --label-tertiary: rgba(255, 255, 255, 0.32);
-    --separator: rgba(255, 255, 255, 0.1);
-    --fill: rgba(255, 255, 255, 0.08);
-    --fill-hover: rgba(255, 255, 255, 0.13);
-    --fill-pressed: rgba(255, 255, 255, 0.18);
+  --glass: rgba(40, 40, 40, 0.56);
+  --glass-strong: rgba(32, 32, 32, 0.86);
+  --bg-elevated: rgba(40, 40, 40, 0.94);
+  --bg-grouped-row: rgba(255, 255, 255, 0.06);
+  --control: rgba(255, 255, 255, 0.09);
+  --control-hover: rgba(255, 255, 255, 0.15);
+  --bg-overlay: rgba(0, 0, 0, 0.45);
 
-    --accent: #f5f5f5;
-    --accent-fill: #e5e5e5;
-    --on-accent: #1c1c1e;
-    --green: #30d158;
-    --red: #ff5a4f;
-    --red-fill: rgba(255, 90, 79, 0.16);
-    --orange: #ffb340;
-    --gray: #8e8e93;
+  --label: #f5f5f5;
+  --label-secondary: rgba(255, 255, 255, 0.64);
+  --label-tertiary: rgba(255, 255, 255, 0.32);
+  --separator: rgba(255, 255, 255, 0.1);
+  --fill: rgba(255, 255, 255, 0.08);
+  --fill-hover: rgba(255, 255, 255, 0.13);
+  --fill-pressed: rgba(255, 255, 255, 0.18);
 
-    --rim: inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      0 0 0 var(--hairline) rgba(255, 255, 255, 0.1);
-    --shadow-control: var(--rim), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
-    --shadow-card: var(--rim), 0 8px 24px -8px rgba(0, 0, 0, 0.5);
-    --shadow-card-hover: var(--rim), 0 20px 44px -14px rgba(0, 0, 0, 0.7);
-    --shadow-panel: var(--rim), 0 24px 60px -24px rgba(0, 0, 0, 0.7);
-    --shadow-sheet: var(--rim), 0 32px 80px -16px rgba(0, 0, 0, 0.75);
-    --focus-ring: 0 0 0 3px rgba(255, 255, 255, 0.4);
-  }
+  --accent: #f5f5f5;
+  --accent-fill: #e5e5e5;
+  --on-accent: #1c1c1e;
+  --green: #30d158;
+  --red: #ff5a4f;
+  --red-fill: rgba(255, 90, 79, 0.16);
+  --orange: #ffb340;
+  --gray: #8e8e93;
+
+  --rim: inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 0 var(--hairline) rgba(255, 255, 255, 0.1);
+  --shadow-control: var(--rim), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
+  --shadow-card: var(--rim), 0 8px 24px -8px rgba(0, 0, 0, 0.5);
+  --shadow-card-hover: var(--rim), 0 20px 44px -14px rgba(0, 0, 0, 0.7);
+  --shadow-panel: var(--rim), 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+  --shadow-sheet: var(--rim), 0 32px 80px -16px rgba(0, 0, 0, 0.75);
+  --focus-ring: 0 0 0 3px rgba(255, 255, 255, 0.4);
 }
 
 /* Retina: волосяные линии в полпикселя */

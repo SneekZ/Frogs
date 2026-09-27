@@ -13,8 +13,13 @@ const statusOptions = [
 ];
 
 const SignsContainer: FC = () => {
-  const { filteredSignsList, activeConnection, statusFilter, setStatusFilter } =
-    useContext(SignsContext);
+  const {
+    filteredSignsList,
+    activeConnection,
+    statusLoading,
+    statusFilter,
+    setStatusFilter,
+  } = useContext(SignsContext);
 
   if (activeConnection.id === -1) {
     return (
@@ -26,7 +31,7 @@ const SignsContainer: FC = () => {
   }
 
   return (
-    <main className="default-container signs-container">
+    <main className="default-container signs-container" aria-busy={statusLoading}>
       <Choice
         className="signs-status-filter"
         aria-label="Статус сертификатов"
@@ -34,6 +39,12 @@ const SignsContainer: FC = () => {
         value={statusFilter}
         onChange={(value) => setStatusFilter(value as SignStatus | "")}
       />
+      {statusLoading && (
+        <div className="signs-loading" role="status">
+          <span className="signs-loading-ring" />
+          Загрузка сертификатов…
+        </div>
+      )}
       {Array.from(filteredSignsList.entries()).map(([thumbprint]) => (
         <SignCard key={thumbprint} inputThumbprint={thumbprint} />
       ))}

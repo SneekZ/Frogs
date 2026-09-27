@@ -14,6 +14,32 @@
   white-space: nowrap;
 }
 
+/* Точка статуса, как у карточек сертификатов */
+.license-status {
+  --tint: var(--gray);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.license-status.valid {
+  --tint: var(--green);
+}
+
+.license-status.invalid {
+  --tint: var(--red);
+  color: var(--red);
+}
+
+.license-status::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--tint);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tint) 18%, transparent);
+}
+
 .footer-button {
   height: 32px;
   padding: 0 16px;
@@ -27,6 +53,13 @@
 /* Кнопки прижаты вправо: отступ только у первой */
 .logs-button {
   margin-left: auto;
+}
+
+/* Круглая кнопка-иконка, по высоте вровень с остальными */
+.theme-button {
+  flex-shrink: 0;
+  width: 32px;
+  padding: 0;
 }
 
 .footer-button:hover {

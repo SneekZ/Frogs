@@ -17,6 +17,8 @@ interface SignsContextProps {
   activeConnection: ServerConnection;
   setActiveConnection: (arg0: ServerConnection) => void;
   activeConnectionStatus: Response;
+  // Идёт загрузка статуса после выбора сервера или ручного обновления
+  statusLoading: boolean;
   refreshActiveConnectionStatus: (callback: () => void, refresh?: boolean) => void;
   // Возвращает отписку. Пока есть подписчик, поток событий идёт вместе с логами.
   subscribeLogs: (listener: LogsListener) => () => void;
@@ -60,6 +62,7 @@ export const SignsContext = createContext<SignsContextProps>({
   },
   setActiveConnection: () => {},
   activeConnectionStatus: defaultResponse,
+  statusLoading: false,
   refreshActiveConnectionStatus: () => {},
   subscribeLogs: () => () => {},
   signsList: new Map<string, Sign>(),
