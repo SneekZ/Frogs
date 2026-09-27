@@ -2,3 +2,4 @@ GoService/bin/
 config.json
 GoService/log/
 .playwright-mcp
+GoService/config/config.json
