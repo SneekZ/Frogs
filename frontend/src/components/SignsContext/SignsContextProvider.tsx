@@ -9,7 +9,7 @@ import {
   useCallback,
   useRef,
 } from "react";
-import { Sign, SignStatus, signStatus } from "../../structures/Sign";
+import { Sign, SignFilter, signStatus, expiresThisMonth } from "../../structures/Sign";
 import { Container } from "../../structures/Container";
 import { License, defaultLicense } from "../../structures/License";
 import { GetSigns } from "../../api/handlers/GetSigns";
@@ -237,7 +237,7 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     new Map<string, Sign>()
   );
   const [filter, setFilter] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<SignStatus | "">("");
+  const [statusFilter, setStatusFilter] = useState<SignFilter>("");
   const [containersList, setContainersList] = useState<Container[]>([]);
   const [installedSignsList, setInstalledSignsList] = useState<Sign[]>([]);
   const [license, setLicense] = useState<License>(defaultLicense);
@@ -412,7 +412,10 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const signsMap = new Map<string, Sign>();
     signsList.forEach((value, key) => {
       if (
-        (statusFilter === "" || signStatus(value) === statusFilter) &&
+        (statusFilter === "" ||
+          (statusFilter === "expiring"
+            ? expiresThisMonth(value)
+            : signStatus(value) === statusFilter)) &&
         (value.subject.cn.toLowerCase().includes(needle) ||
           value.subject.snils.includes(needle) ||
           value.thumbprint.toLowerCase().includes(thumbprintNeedle))

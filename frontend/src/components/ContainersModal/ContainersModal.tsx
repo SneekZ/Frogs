@@ -58,6 +58,8 @@ const ContainersModal: FC<ModalProps> = ({ isOpen, onClose }) => {
         <Input
           placeholder="Поиск по имени папки"
           className="input-search"
+          // Модалка размонтирует поле при закрытии, а фильтр живёт здесь
+          defaultValue={filter}
           onChange={(e) => setFilter(e.target.value)}
         />
         <div className="default-container containers-list">

@@ -3,13 +3,14 @@ import { SignsContext } from "../SignsContext/SignsContext";
 import "./styleSignsContainer.css";
 import SignCard from "../SignCard/SignCard";
 import Choice from "../Choice/Choice";
-import { SignStatus } from "../../structures/Sign";
+import { SignFilter } from "../../structures/Sign";
 
 const statusOptions = [
   { value: "", label: "Все" },
   { value: "valid", label: "Действительные" },
   { value: "invalid", label: "Недействительные" },
   { value: "unchecked", label: "Непроверенные" },
+  { value: "expiring", label: "Истекают в этом месяце" },
 ];
 
 const SignsContainer: FC = () => {
@@ -37,7 +38,7 @@ const SignsContainer: FC = () => {
         aria-label="Статус сертификатов"
         options={statusOptions}
         value={statusFilter}
-        onChange={(value) => setStatusFilter(value as SignStatus | "")}
+        onChange={(value) => setStatusFilter(value as SignFilter)}
       />
       {statusLoading && (
         <div className="signs-loading" role="status">

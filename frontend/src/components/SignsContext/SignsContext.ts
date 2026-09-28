@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import { ServerConnection, noConnection } from "../../structures/ServerConnection";
-import { Sign, SignStatus } from "../../structures/Sign";
+import { Sign, SignFilter } from "../../structures/Sign";
 import { Container } from "../../structures/Container";
 import { License, defaultLicense } from "../../structures/License";
 import { Response, defaultResponse } from "../../structures/Response";
@@ -35,8 +35,8 @@ interface SignsContextProps {
   signsList: Map<string, Sign>;
   filteredSignsList: Map<string, Sign>;
   setFilter: (arg0: string) => void;
-  statusFilter: SignStatus | "";
-  setStatusFilter: (arg0: SignStatus | "") => void;
+  statusFilter: SignFilter;
+  setStatusFilter: (arg0: SignFilter) => void;
   refreshSignsList: (callback: () => void) => void;
   checkSign: (sign: Sign, callback: () => void) => void;
   checkAllSigns: (callback: () => void) => void;

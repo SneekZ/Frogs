@@ -101,6 +101,15 @@ export interface Sign {
 
 export type SignStatus = "valid" | "invalid" | "unchecked";
 
+// "expiring" — не статус проверки, а срок: ещё действует, но истекает до конца текущего месяца
+export type SignFilter = SignStatus | "expiring" | "";
+
+export const expiresThisMonth = (sign: Sign, now = new Date()): boolean => {
+  const expiresAt = sign.notvalidafter * 1000;
+  const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1).getTime();
+  return expiresAt >= now.getTime() && expiresAt < monthEnd;
+};
+
 export const signStatus = (sign: Sign): SignStatus =>
   !sign.checked ? "unchecked" : sign.valid ? "valid" : "invalid";
 
