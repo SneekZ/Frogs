@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback, ReactNode, FC } from "react";
+import { useState, useEffect, useCallback, useContext, ReactNode, FC } from "react";
 import {
   ConnectionsContext,
   loadConnections,
   LS_KEY,
 } from "./ConnectionsContext";
-import { ServerConnection } from "../../structures/ServerConnection";
+import { ServerConnection, noConnection } from "../../structures/ServerConnection";
+import { SignsContext } from "../../components/SignsContext/SignsContext";
 
 interface ConnectionsContextProviderProps {
   children: ReactNode;
@@ -16,18 +17,20 @@ const ConnectionsContextProvider: FC<ConnectionsContextProviderProps> = ({
   const [listConnections, setListConnections] = useState<ServerConnection[]>(
     loadConnections()
   );
+  const { activeConnection, setActiveConnection } = useContext(SignsContext);
 
   const saveConnections = useCallback(() => {
     window.localStorage.setItem(LS_KEY, JSON.stringify(listConnections));
   }, [listConnections]);
 
   const addConnection = (conn: ServerConnection) => {
-    conn.id = listConnections.length;
+    // Не length: после удаления id совпал бы с чужим
+    conn.id = Math.max(-1, ...listConnections.map((item) => item.id)) + 1;
     setListConnections([...listConnections, conn]);
   };
 
   const updateConnection = (conn: ServerConnection) => {
-    if (conn.id >= listConnections.length || conn.id === -1) {
+    if (!listConnections.some((item) => item.id === conn.id)) {
       addConnection(conn);
       return;
     }
@@ -38,6 +41,8 @@ const ConnectionsContextProvider: FC<ConnectionsContextProviderProps> = ({
 
   const deleteConnection = (conn: ServerConnection) => {
     setListConnections(listConnections.filter((item) => item.id !== conn.id));
+    // Иначе поток /events и запросы продолжат ходить на удалённый сервер
+    if (conn.id === activeConnection.id) setActiveConnection(noConnection);
   };
 
   const pinConnection = (conn: ServerConnection) => {

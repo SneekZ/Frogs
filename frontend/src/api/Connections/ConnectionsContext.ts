@@ -22,7 +22,10 @@ export const LS_KEY = "frogs.connections";
 export function loadConnections(): ServerConnection[] {
   try {
     const raw = window.localStorage.getItem(LS_KEY);
-    return raw ? (JSON.parse(raw) as ServerConnection[]) : [];
+    // Перенумеровываем: в старых сохранениях id могли повторяться
+    return raw
+      ? (JSON.parse(raw) as ServerConnection[]).map((c, i) => ({ ...c, id: i }))
+      : [];
   } catch {
     window.localStorage.removeItem(LS_KEY);
     return [];

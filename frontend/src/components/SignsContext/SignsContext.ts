@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { ServerConnection } from "../../structures/ServerConnection";
+import { ServerConnection, noConnection } from "../../structures/ServerConnection";
 import { Sign, SignStatus } from "../../structures/Sign";
 import { Container } from "../../structures/Container";
 import { License, defaultLicense } from "../../structures/License";
@@ -52,14 +52,7 @@ interface SignsContextProps {
 }
 
 export const SignsContext = createContext<SignsContextProps>({
-  activeConnection: {
-    id: -1,
-    host: "",
-    port: "",
-    name: "",
-    password: "",
-    starred: false,
-  },
+  activeConnection: noConnection,
   setActiveConnection: () => {},
   activeConnectionStatus: defaultResponse,
   statusLoading: false,

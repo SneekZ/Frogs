@@ -27,10 +27,10 @@ import { GetInstallContainer } from "../../api/handlers/GetInstallContainer";
 import { ChangePassword } from "../../api/handlers/ChangePassword";
 import UploadContainers from "../../api/handlers/UploadContainers";
 import { StreamEvents } from "../../api/handlers/Events";
-import { ServerConnection } from "../../structures/ServerConnection";
+import { ServerConnection, noConnection } from "../../structures/ServerConnection";
 import { loadConnections } from "../../api/Connections/ConnectionsContext";
 
-const RECONNECT_MS = 3000;
+const RECONNECT_MS = 5000;
 const ACTIVE_LS_KEY = "frogs.activeConnection";
 
 const connectionKey = (c: ServerConnection) => `${c.host}:${c.port}`;
@@ -52,20 +52,14 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     () =>
       loadConnections().find(
         (c) => connectionKey(c) === readActiveConnectionKey()
-      ) ?? {
-        id: -1,
-        host: "",
-        port: "",
-        name: "",
-        password: "",
-        starred: false,
-      }
+      ) ?? noConnection
   );
 
   useEffect(() => {
-    if (activeConnection.id === -1) return;
     try {
-      window.localStorage.setItem(ACTIVE_LS_KEY, connectionKey(activeConnection));
+      // Выбор сброшен (сервер удалили) — забываем его, чтобы не открыть снова после перезагрузки
+      if (activeConnection.id === -1) window.localStorage.removeItem(ACTIVE_LS_KEY);
+      else window.localStorage.setItem(ACTIVE_LS_KEY, connectionKey(activeConnection));
     } catch {
       // Хранилище недоступно (приватный режим) — просто не запомним выбор
     }
