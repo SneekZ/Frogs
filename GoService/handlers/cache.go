@@ -48,12 +48,14 @@ func WatchStore(interval time.Duration) {
 		return
 	}
 	// КриптоПро раскладывает данные пользователя по /var/opt/cprocsp/{keys,users}/<пользователь>.
-	// check_* — временные файлы проверки подписей в KeysPath, они не изменение. -ignore_readdir_race:
+	// check_* — временные файлы проверки подписей в KeysPath, они не изменение. masks*.key и primary*.key
+	// КриптоПро перемаскирует при каждом использовании ключа (подписание в МИС — хоть раз в секунды), а список
+	// контейнеров от них не зависит: он по папкам, name.key и header.key. -ignore_readdir_race:
 	// файл, удаленный посреди обхода (те же check_*), иначе дал бы ошибку find
 	keys := path.Clean(Config.KeysPath)
 	store := path.Join(path.Dir(path.Dir(keys)), "users", path.Base(keys), "stores", "my.sto")
 	// Отдельные отпечатки: подписи и контейнеры перечитываются, только если изменились их файлы
-	find := "find '%s' -ignore_readdir_race -type f ! -name 'check_*' -printf '%%p %%s %%T@\\n' | sort | md5sum"
+	find := "find '%s' -ignore_readdir_race -type f ! -name 'check_*' ! -name 'masks*.key' ! -name 'primary*.key' -printf '%%p %%s %%T@\\n' | sort | md5sum"
 	cmd := fmt.Sprintf("set -o pipefail; "+find+" && "+find, store, keys)
 
 	// Первый отпечаток — точка отсчета, но после ошибки (сервер недоступен, my.sto еще не создан)
