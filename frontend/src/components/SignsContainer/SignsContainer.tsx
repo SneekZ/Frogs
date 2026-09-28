@@ -11,6 +11,7 @@ const statusOptions = [
   { value: "invalid", label: "Недействительные" },
   { value: "unchecked", label: "Непроверенные" },
   { value: "expiring", label: "Истекают в этом месяце" },
+  { value: "duplicates", label: "Дубликаты по СНИЛС" },
 ];
 
 const SignsContainer: FC = () => {

@@ -102,7 +102,8 @@ export interface Sign {
 export type SignStatus = "valid" | "invalid" | "unchecked";
 
 // "expiring" — не статус проверки, а срок: ещё действует, но истекает до конца текущего месяца
-export type SignFilter = SignStatus | "expiring" | "";
+// "duplicates" — СНИЛС владельца встречается больше чем в одном сертификате
+export type SignFilter = SignStatus | "expiring" | "duplicates" | "";
 
 export const expiresThisMonth = (sign: Sign, now = new Date()): boolean => {
   const expiresAt = sign.notvalidafter * 1000;

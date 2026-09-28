@@ -409,13 +409,32 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const needle = filter.toLowerCase();
     // отпечаток часто копируют с пробелами между байтами
     const thumbprintNeedle = needle.replace(/\s/g, "");
+    // СНИЛС бывает как с дефисами и пробелами, так и без — сравниваем только цифры
+    const snilsKey = (sign: Sign) => sign.subject.snils.replace(/\D/g, "");
+    const snilsCount = new Map<string, number>();
+    if (statusFilter === "duplicates") {
+      signsList.forEach((sign) => {
+        const key = snilsKey(sign);
+        if (key) snilsCount.set(key, (snilsCount.get(key) ?? 0) + 1);
+      });
+    }
+    const matchesStatus = (sign: Sign) => {
+      switch (statusFilter) {
+        case "":
+          return true;
+        case "expiring":
+          return expiresThisMonth(sign);
+        case "duplicates":
+          return (snilsCount.get(snilsKey(sign)) ?? 0) > 1;
+        default:
+          return signStatus(sign) === statusFilter;
+      }
+    };
+
     const signsMap = new Map<string, Sign>();
     signsList.forEach((value, key) => {
       if (
-        (statusFilter === "" ||
-          (statusFilter === "expiring"
-            ? expiresThisMonth(value)
-            : signStatus(value) === statusFilter)) &&
+        matchesStatus(value) &&
         (value.subject.cn.toLowerCase().includes(needle) ||
           value.subject.snils.includes(needle) ||
           value.thumbprint.toLowerCase().includes(thumbprintNeedle))
@@ -423,7 +442,16 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
         signsMap.set(key, value);
       }
     });
-    setFilteredSignsList(signsMap);
+    setFilteredSignsList(
+      statusFilter === "duplicates"
+        ? // дубликаты идут подряд, чтобы их было видно рядом
+          new Map(
+            [...signsMap].sort(([, a], [, b]) =>
+              snilsKey(a).localeCompare(snilsKey(b))
+            )
+          )
+        : signsMap
+    );
   }, [filter, statusFilter, signsList]);
 
   const signDocument = useCallback(
