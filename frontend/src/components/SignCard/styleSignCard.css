@@ -183,3 +183,20 @@
     gap: 2px;
   }
 }
+
+/* Первая ошибка обрезается многоточием, «+N» всегда виден */
+.card-status {
+  max-width: 100%;
+}
+
+.card-status .status-error {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-more {
+  flex-shrink: 0;
+  font-weight: 600;
+}

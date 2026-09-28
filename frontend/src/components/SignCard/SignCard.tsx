@@ -70,7 +70,9 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
         <span className="card-collapsed-snils">
           {formatSnils(sign.subject.snils)}
         </span>
-        <span className={`card-status ${status}`}>{statusLabels[status]}</span>
+        <span className={`card-status ${status}`}>
+          <StatusLabel sign={sign} />
+        </span>
       </button>
       <Modal
         isOpen={modalOpen}
@@ -81,7 +83,9 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
         <div className="sign-card-modal">
           <div className={`sign-hero ${status}`}>
             <h2>{sign.subject.cn}</h2>
-            <span className="sign-hero-status">{statusLabels[status]}</span>
+            <span className="sign-hero-status">
+              <StatusLabel sign={sign} />
+            </span>
           </div>
 
           <div className="grouped-list">
@@ -247,6 +251,26 @@ const ChangePasswordButton: FC<{ sign: Sign; className: string }> = ({
           </div>
         </div>
       </Modal>
+    </>
+  );
+};
+
+// У недействительной вместо статуса — первая ошибка и счётчик остальных
+const StatusLabel: FC<{ sign: Sign }> = ({ sign }) => {
+  const status = signStatus(sign);
+  const [first, ...rest] = sign.checkerror ?? [];
+  if (status !== "invalid" || !first) return statusLabels[status];
+  return (
+    <>
+      <span className="status-error" title={first}>
+        {first}
+      </span>
+      {rest.length > 0 && " "}
+      {rest.length > 0 && (
+        <span className="status-more" title={rest.join("\n")}>
+          +{rest.length}
+        </span>
+      )}
     </>
   );
 };
