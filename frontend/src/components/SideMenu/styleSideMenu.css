@@ -99,11 +99,18 @@
   background-color: var(--fill-hover);
 }
 
-/* Иконки появляются по наведению; закреплённая звезда видна всегда */
+/* Иконки появляются по наведению; закреплённая звезда видна всегда.
+   На сенсорном экране наведения нет — показываем сразу */
 .side-menu-list-item-container:hover .side-menu-icon-button,
 .side-menu-list-item-container:focus-within .side-menu-icon-button,
 .side-menu-list-item-container.starred .side-menu-list-item-button-starred {
   opacity: 1;
+}
+
+@media (hover: none) {
+  .side-menu-icon-button {
+    opacity: 1;
+  }
 }
 
 .side-menu-list-item-container.starred .side-menu-list-item-button-starred {
@@ -131,9 +138,20 @@
 }
 
 @media (max-width: 760px) {
+  /* В выезжающей панели — лист как у модальных окон */
   .side-menu-container {
-    grid-row: 1 / 2;
-    max-height: 40vh;
+    flex: 1;
+    padding-top: 4px;
+    background-color: var(--bg-sheet);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     border-radius: 20px;
+    box-shadow: var(--shadow-sheet);
+  }
+
+  /* Поиск в одну строку с кнопкой закрытия панели (44px + 8px зазор) */
+  .side-menu-container > .input-container {
+    height: 44px;
+    margin-left: 46px;
   }
 }

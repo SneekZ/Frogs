@@ -90,7 +90,7 @@
 @media (max-width: 760px) {
   .signs-container {
     grid-column: 1 / -1;
-    grid-row: 3 / 4;
+    grid-row: 2 / 3;
     padding: 8px 4px 16px;
   }
 

@@ -66,12 +66,43 @@
   background-color: var(--control-hover);
 }
 
+/* На телефоне футер — карточка под серверами в выезжающей панели:
+   сводка по серверу, под ней отдельной строкой кнопки */
 @media (max-width: 760px) {
   .footer-container {
-    grid-column: 1 / -1;
-    grid-row: 4 / 5;
+    flex: none;
     flex-wrap: wrap;
-    gap: 4px 16px;
-    padding: 8px 4px;
+    gap: 6px 8px;
+    padding: 16px;
+
+    background-color: var(--bg-sheet);
+    border-radius: 20px;
+    box-shadow: var(--shadow-sheet);
+  }
+
+  /* Каждый показатель своей строкой */
+  .footer-container > span {
+    flex-basis: 100%;
+  }
+
+  /* Кнопки под сводкой: установка на всю ширину, под ней логи и тема */
+  .footer-button {
+    order: 2;
+    flex: 1;
+    height: 44px;
+  }
+
+  .install-button {
+    order: 1;
+    flex-basis: 100%;
+    margin-top: 8px;
+  }
+
+  .logs-button {
+    margin-left: 0;
+  }
+
+  .theme-button {
+    flex: 0 0 44px;
   }
 }

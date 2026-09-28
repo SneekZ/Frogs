@@ -6,9 +6,32 @@ import FrogsButton from "../Button/Button";
 import { NotificationContext } from "../Notification/NotificationContext";
 import { ConnectionsContext } from "../../api/Connections/ConnectionsContext";
 
-const HeaderMenu: FC = () => {
+interface HeaderMenuProps {
+  menuOpen: boolean;
+  onMenuClick: () => void;
+}
+
+const HeaderMenu: FC<HeaderMenuProps> = ({ menuOpen, onMenuClick }) => {
   return (
     <header className="header-container">
+      {/* Видна только на телефоне: открывает панель с серверами */}
+      <button
+        type="button"
+        className="button menu-button"
+        aria-label="Серверы"
+        aria-controls="drawer"
+        aria-expanded={menuOpen}
+        onClick={onMenuClick}
+      >
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+          <path
+            d="M3 5h12M3 9h12M3 13h12"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
       <ToolbarTitle />
       <FilterInput />
       <UpdateButton />

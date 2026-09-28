@@ -83,7 +83,7 @@ const InstallContainersButton: FC = () => {
     <>
       <FrogsButton
         label="Установить контейнеры"
-        className="footer-button"
+        className="footer-button install-button"
         onClick={() => setModalOpen(true)}
       />
       <ContainersModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />

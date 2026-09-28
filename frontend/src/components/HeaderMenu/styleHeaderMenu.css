@@ -43,6 +43,10 @@
   height: 44px;
 }
 
+.menu-button {
+  display: none;
+}
+
 /* Отдельные стеклянные капсулы, по высоте вровень с поиском */
 .header-container .button {
   height: 44px;
@@ -52,13 +56,13 @@
 @media (max-width: 760px) {
   .header-container {
     grid-column: 1 / -1;
-    grid-row: 2 / 3;
+    grid-row: 1 / 2;
     flex-wrap: wrap;
-    padding: 12px 4px;
+    padding: 4px 4px 12px;
   }
 
-  .toolbar-title {
-    display: none;
+  .toolbar-title h1 {
+    font-size: 28px;
   }
 
   .filter-input {
@@ -67,5 +71,14 @@
 
   .header-container .button {
     flex: 1;
+  }
+
+  /* К верху, а не по центру заголовка: кнопка закрытия панели стоит ровно здесь */
+  .header-container .menu-button {
+    display: inline-flex;
+    align-self: flex-start;
+    flex: none;
+    width: 44px;
+    padding: 0;
   }
 }

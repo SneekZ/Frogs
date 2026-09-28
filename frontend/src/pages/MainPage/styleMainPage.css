@@ -10,12 +10,89 @@
   column-gap: 12px;
 }
 
+/* На компьютере обёртки нет: серверы и футер остаются ячейками сетки */
+.drawer {
+  display: contents;
+}
+
+.drawer-backdrop {
+  display: none;
+}
+
+/* На телефоне серверы и сводка по серверу уезжают в панель слева, открывается кнопкой в шапке */
 @media (max-width: 760px) {
   .main-container {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr);
     height: auto;
     min-height: 100vh;
     padding: 8px;
+  }
+
+  .drawer {
+    position: fixed;
+    z-index: 20;
+    inset: 8px auto 8px 8px;
+    width: min(320px, calc(100vw - 56px));
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    transform: translateX(calc(-100% - 16px));
+    /* Закрытая панель не должна ловить фокус с клавиатуры */
+    visibility: hidden;
+    transition: transform 0.3s var(--ease), visibility 0s 0.3s;
+  }
+
+  /* Точно поверх кнопки открытия: отступ сетки 8px + шапки 4px = 4px от края панели */
+  .drawer .drawer-close {
+    display: inline-flex;
+    position: absolute;
+    z-index: 1;
+    top: 4px;
+    left: 4px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    /* Капсула как у кнопки открытия в шапке */
+    background-color: var(--control);
+    border-radius: 999px;
+    box-shadow: var(--shadow-control);
+  }
+
+  .drawer .drawer-close:hover {
+    background-color: var(--control-hover);
+  }
+
+  .drawer .drawer-close:focus-visible {
+    box-shadow: var(--shadow-control), var(--focus-ring);
+  }
+
+  .drawer.open {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.3s var(--ease);
+  }
+
+  .drawer-backdrop {
+    display: block;
+    position: fixed;
+    z-index: 19;
+    inset: 0;
+    padding: 0;
+    border: none;
+    /* Затемнение как у модальных окон */
+    background: var(--bg-overlay);
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s var(--ease);
+  }
+
+  .drawer.open ~ .drawer-backdrop {
+    opacity: 1;
+    pointer-events: auto;
   }
 }
