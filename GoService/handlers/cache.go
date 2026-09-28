@@ -1,8 +1,12 @@
 package handlers
 
 import (
+	"GoService/bashhandler"
 	"GoService/cache"
 	"GoService/parser"
+	"fmt"
+	"log/slog"
+	"path"
 	"slices"
 	"strings"
 	"time"
@@ -32,6 +36,77 @@ func invalidateCache() {
 	signsCache.Invalidate()
 	containersCache.Invalidate()
 	notifyStatusChanged()
+}
+
+// WatchStore раз в interval снимает отпечаток файлов хранилища uMy и контейнеров и при его
+// изменении обновляет кэш и шлет StatusChanged — так клиенты видят и изменения мимо сервиса
+// (certmgr, csptest, копирование контейнеров руками). CSP не запускается: команда занимает миллисекунды
+func WatchStore(interval time.Duration) {
+	h, err := bashhandler.NewBashHandlerWrapper("utf-8", false)
+	if err != nil {
+		slog.Error("Слежение за хранилищем КриптоПро не запущено", "err", err)
+		return
+	}
+	// КриптоПро раскладывает данные пользователя по /var/opt/cprocsp/{keys,users}/<пользователь>.
+	// check_* — временные файлы проверки подписей в KeysPath, они не изменение. -ignore_readdir_race:
+	// файл, удаленный посреди обхода (те же check_*), иначе дал бы ошибку find
+	keys := path.Clean(Config.KeysPath)
+	store := path.Join(path.Dir(path.Dir(keys)), "users", path.Base(keys), "stores", "my.sto")
+	// Отдельные отпечатки: подписи и контейнеры перечитываются, только если изменились их файлы
+	find := "find '%s' -ignore_readdir_race -type f ! -name 'check_*' -printf '%%p %%s %%T@\\n' | sort | md5sum"
+	cmd := fmt.Sprintf("set -o pipefail; "+find+" && "+find, store, keys)
+
+	// Первый отпечаток — точка отсчета, но после ошибки (сервер недоступен, my.sto еще не создан)
+	// изменения могли пройти мимо — перечитываем все. Первый тик сразу: иначе изменение между
+	// загрузкой кэша и первым тиком потерялось бы до TTL
+	var lastStore, lastKeys, lastErr string
+	failed := false
+	for tick := time.Tick(interval); ; <-tick {
+		out, err := h.Exec(cmd)
+		if err != nil {
+			// Раз в interval одна и та же ошибка забила бы лог
+			if !failed || err.Error() != lastErr {
+				slog.Error("Не удалось снять отпечаток хранилища КриптоПро", "err", err)
+			}
+			failed, lastErr = true, err.Error()
+			continue
+		}
+		store, keys, _ := strings.Cut(out, "\n")
+		if lastStore != "" || failed {
+			storeChanged(failed || store != lastStore, failed || keys != lastKeys)
+		}
+		lastStore, lastKeys, failed = store, keys, false
+	}
+}
+
+// storeChanged обновляет кэш после изменения файлов и шлет StatusChanged, если данные поменялись.
+// Подписи перечитываются с сохранением результатов проверки: Invalidate стер бы их у всех клиентов.
+// Изменения через сам сервис уже в кэше и уже разосланы — сравнение не дает разослать их второй раз.
+// ponytail: удаление между LoadSigns и Update вернет подпись в кэш до следующего тика WatchStore
+func storeChanged(signs, containers bool) {
+	changed := containers
+	if containers {
+		// Контейнеры не сравниваем: для этого пришлось бы сразу запускать csptest
+		containersCache.Invalidate()
+	}
+	if signs {
+		fresh, err := LoadSigns()
+		if err != nil {
+			signsCache.Invalidate()
+		}
+		signsChanged := true // и если кэш пуст или устарел: Update его не тронет
+		if err == nil {
+			signsCache.Update(func(cached []parser.Sign) []parser.Sign {
+				fresh = parser.KeepChecks(fresh, cached)
+				signsChanged = !parser.SameSigns(fresh, cached)
+				return fresh
+			})
+		}
+		changed = changed || signsChanged
+	}
+	if changed {
+		notifyStatusChanged()
+	}
 }
 
 // Копии, чтобы вызывающий код (findDoubleSigns и т.п.) не менял содержимое кэша

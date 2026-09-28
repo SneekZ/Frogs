@@ -24,6 +24,7 @@ type Config struct {
 	DatabaseConnection 	DatabaseConnection 	`json:"databaseconnection"`
 	MaxFlows            int 				`json:"maxflows"`
 	CacheTTL			int					`json:"cachettl"`				// секунды, 0 — без кэша
+	StoreWatchInterval	int					`json:"storewatchinterval"`	// секунды между проверками хранилища КриптоПро на изменения, 0 — не проверять
 	Env					string				`json:"env"`					// debug or prod
 }
 

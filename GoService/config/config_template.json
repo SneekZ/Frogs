@@ -34,6 +34,7 @@
     "database": ""
   },
   "cachettl": 300,
+  "storewatchinterval": 10,
   "maxflows": 1,
   "env": "debug"
 }

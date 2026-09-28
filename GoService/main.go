@@ -115,6 +115,9 @@ func main() {
 			logFile.broadcast("status")
 		}
 	}()
+	if Config.StoreWatchInterval > 0 {
+		go handlers.WatchStore(time.Duration(Config.StoreWatchInterval) * time.Second)
+	}
 	ln, err := net.Listen("tcp", ":"+Config.ConnectionData.Port)
 	if err != nil {
 		slog.Error("Не удалось запустить сервис", "err", err)

@@ -2,7 +2,10 @@ package parser
 
 import (
 	regex "GoService/regex"
+	"cmp"
 	"fmt"
+	"reflect"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -87,6 +90,34 @@ func Precheck(sign Sign, timestampNow int64) Sign {
 	}
 
 	return sign
+}
+
+// KeepChecks переносит в свежий список результаты проверки из старого. Результат годен,
+// пока у сертификата (отпечатка) тот же контейнер: с другим контейнером пароль мог поменяться
+func KeepChecks(fresh, old []Sign) []Sign {
+	for i, f := range fresh {
+		for _, o := range old {
+			if strings.EqualFold(o.Thumbprint, f.Thumbprint) && o.Container == f.Container {
+				fresh[i].Checked, fresh[i].Valid, fresh[i].CheckErrors, fresh[i].Password, fresh[i].DatabaseIds =
+					o.Checked, o.Valid, o.CheckErrors, o.Password, o.DatabaseIds
+				break
+			}
+		}
+	}
+	return fresh
+}
+
+// SameSigns сравнивает списки без учета порядка: ParseSigns разбирает подписи параллельно,
+// и порядок в каждом разборе свой
+func SameSigns(a, b []Sign) bool {
+	byThumbprint := func(s []Sign) []Sign {
+		s = slices.Clone(s)
+		slices.SortFunc(s, func(x, y Sign) int {
+			return cmp.Or(strings.Compare(x.Thumbprint, y.Thumbprint), strings.Compare(x.Container.FolderName, y.Container.FolderName))
+		})
+		return s
+	}
+	return reflect.DeepEqual(byThumbprint(a), byThumbprint(b))
 }
 
 func parseIssuer(input string) Issuer {
