@@ -37,6 +37,14 @@ const ConnectionsContextProvider: FC<ConnectionsContextProviderProps> = ({
     setListConnections(
       listConnections.map((item) => (item.id === conn.id ? conn : item))
     );
+    // Иначе запросы и поток /events продолжат ходить по старому адресу
+    if (
+      conn.id === activeConnection.id &&
+      (conn.host !== activeConnection.host ||
+        conn.port !== activeConnection.port ||
+        conn.password !== activeConnection.password)
+    )
+      setActiveConnection(conn);
   };
 
   const deleteConnection = (conn: ServerConnection) => {

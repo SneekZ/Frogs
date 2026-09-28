@@ -24,9 +24,8 @@
   max-width: 640px;
   max-height: min(880px, calc(100vh - 48px));
 
-  background-color: var(--glass-strong);
-  backdrop-filter: saturate(180%) blur(40px);
-  -webkit-backdrop-filter: saturate(180%) blur(40px);
+  /* Почти непрозрачный: свой backdrop-filter внутри оверлея с blur не размывает страницу */
+  background-color: var(--bg-sheet);
   border-radius: 30px;
   box-shadow: var(--shadow-sheet);
   overflow: hidden;

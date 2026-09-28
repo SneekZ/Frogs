@@ -12,8 +12,8 @@ export default function MainPage() {
       <SignsContextProvider>
         <ConnectionsContextProvider>
           <SideMenu />
+          <HeaderMenu />
         </ConnectionsContextProvider>
-        <HeaderMenu />
         <SignsContainer />
         <FooterMenu />
       </SignsContextProvider>

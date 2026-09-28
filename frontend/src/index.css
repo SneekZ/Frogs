@@ -1,5 +1,26 @@
 /* Палитра «Liquid Glass»: стеклянные панели над нейтральным серым фоном.
    Тема задаётся data-theme на <html>: скрипт в index.html ставит сохранённую или системную */
+
+/* Inter лежит локально, чтобы фронт работал без выхода в интернет (подмножества Google Fonts) */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("./assets/fonts/inter-cyrillic.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("./assets/fonts/inter-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
 :root {
   color-scheme: light;
 
@@ -17,7 +38,8 @@
   --bg-grouped-row: rgba(255, 255, 255, 0.74);
   --control: rgba(255, 255, 255, 0.66);
   --control-hover: rgba(255, 255, 255, 0.9);
-  --bg-overlay: rgba(0, 0, 0, 0.18);
+  --bg-sheet: rgba(250, 250, 250, 0.97);
+  --bg-overlay: rgba(0, 0, 0, 0.3);
 
   --label: #1d1d1f;
   --label-secondary: rgba(0, 0, 0, 0.6);
@@ -82,7 +104,8 @@
   --bg-grouped-row: rgba(255, 255, 255, 0.06);
   --control: rgba(255, 255, 255, 0.09);
   --control-hover: rgba(255, 255, 255, 0.15);
-  --bg-overlay: rgba(0, 0, 0, 0.45);
+  --bg-sheet: rgba(32, 32, 32, 0.97);
+  --bg-overlay: rgba(0, 0, 0, 0.55);
 
   --label: #f5f5f5;
   --label-secondary: rgba(255, 255, 255, 0.64);

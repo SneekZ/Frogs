@@ -4,6 +4,7 @@ import { SignsContext } from "../SignsContext/SignsContext";
 import FrogsInput from "../Input/Input";
 import FrogsButton from "../Button/Button";
 import { NotificationContext } from "../Notification/NotificationContext";
+import { ConnectionsContext } from "../../api/Connections/ConnectionsContext";
 
 const HeaderMenu: FC = () => {
   return (
@@ -18,10 +19,13 @@ const HeaderMenu: FC = () => {
 
 const ToolbarTitle: FC = () => {
   const { activeConnection, activeConnectionStatus } = useContext(SignsContext);
+  const { listConnections } = useContext(ConnectionsContext);
+  // Имя берём из списка: переименование не меняет activeConnection, чтобы не перезагружать статус
+  const name = listConnections.find((c) => c.id === activeConnection.id)?.name;
 
   return (
     <div className="toolbar-title">
-      <h1>{activeConnection.name || "Frogs"}</h1>
+      <h1>{name || "Frogs"}</h1>
       {activeConnectionStatus.info.name && (
         <span>{activeConnectionStatus.info.name}</span>
       )}
