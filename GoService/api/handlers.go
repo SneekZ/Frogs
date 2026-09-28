@@ -50,8 +50,11 @@ func GetConfig(c *gin.Context) {
 // @Success 200 {string} Status
 // @Router /status [get]
 func GetStatus(c *gin.Context) {
+	// refresh читает мимо кэша и не трогает его: сброс кэша стер бы у остальных клиентов
+	// результаты проверки сертификатов, которые хранятся только в нем
+	getSigns, getContainers, getLicense := func() ([]parser.Sign, error) { return handlers.Signs("", "") }, handlers.Containers, handlers.GetLicense
 	if c.Query("refresh") == "true" {
-		handlers.RefreshCache()
+		getSigns, getContainers, getLicense = handlers.LoadSigns, handlers.LoadContainers, handlers.LoadLicense
 	}
 
 	// Три независимые команды на сервере — запускаем параллельно. NewResponse после них:
@@ -64,9 +67,9 @@ func GetStatus(c *gin.Context) {
 		wg         sync.WaitGroup
 	)
 	wg.Add(3)
-	go func() { defer wg.Done(); signs, errs[0] = handlers.Signs("", "") }()
-	go func() { defer wg.Done(); containers, errs[1] = handlers.Containers() }()
-	go func() { defer wg.Done(); license, errs[2] = handlers.GetLicense() }()
+	go func() { defer wg.Done(); signs, errs[0] = getSigns() }()
+	go func() { defer wg.Done(); containers, errs[1] = getContainers() }()
+	go func() { defer wg.Done(); license, errs[2] = getLicense() }()
 	wg.Wait()
 
 	response := NewResponse()

@@ -1,6 +1,6 @@
 import "./styleFooterMenu.css";
 import { FC, useContext, useState } from "react";
-import { SignsContext } from "../SignsContext/SignsContext";
+import { SignsContext, SyncState } from "../SignsContext/SignsContext";
 import FrogsButton from "../Button/Button";
 import ContainersModal from "../ContainersModal/ContainersModal";
 import LogsModal from "../LogsModal/LogsModal";
@@ -11,6 +11,7 @@ const FooterMenu: FC = () => {
       <SignsNumber />
       <ContainersNumber />
       <LicenseStatus />
+      <SyncSwitch />
       <LogsButton />
       <InstallContainersButton />
       <ThemeButton />
@@ -58,6 +59,37 @@ const LicenseStatus: FC = () => {
     >
       Лицензия: {text}
     </span>
+  );
+};
+
+const syncText: Record<SyncState, string> = {
+  idle: "включена",
+  connecting: "подключение…",
+  online: "на связи",
+  error: "нет связи",
+};
+
+// Переключатель автообновления; подпись и цвет дорожки — состояние потока событий
+const SyncSwitch: FC = () => {
+  const { sync, setSync, syncState, syncError } = useContext(SignsContext);
+  const state = sync ? syncState : "off";
+
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={sync}
+      className={`sync-switch ${state}`}
+      title={
+        state === "error"
+          ? `${syncError}. Повторное подключение через несколько секунд`
+          : "Автообновление данных при изменениях на сервере"
+      }
+      onClick={() => setSync(!sync)}
+    >
+      <span className="sync-track" aria-hidden="true" />
+      Синхронизация: {sync ? syncText[syncState] : "выключена"}
+    </button>
   );
 };
 

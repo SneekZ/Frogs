@@ -40,6 +40,74 @@
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--tint) 18%, transparent);
 }
 
+/* Переключатель: дорожка окрашена в цвет состояния потока, как точка лицензии */
+.sync-switch {
+  --tint: var(--gray);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s var(--ease);
+}
+
+.sync-switch.connecting {
+  --tint: var(--orange);
+}
+
+.sync-switch.online {
+  --tint: var(--green);
+}
+
+.sync-switch.error {
+  --tint: var(--red);
+  color: var(--red);
+}
+
+.sync-track {
+  position: relative;
+  flex-shrink: 0;
+  width: 28px;
+  height: 16px;
+  background-color: color-mix(in srgb, var(--gray) 40%, transparent);
+  border-radius: 999px;
+  transition: background-color 0.2s var(--ease);
+}
+
+.sync-switch[aria-checked="true"] .sync-track {
+  background-color: var(--tint);
+}
+
+.sync-track::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s var(--ease);
+}
+
+.sync-switch[aria-checked="true"] .sync-track::after {
+  transform: translateX(12px);
+}
+
+.sync-switch:focus-visible {
+  outline: none;
+}
+
+.sync-switch:focus-visible .sync-track {
+  box-shadow: var(--focus-ring);
+}
+
 .footer-button {
   height: 32px;
   padding: 0 16px;
@@ -81,7 +149,8 @@
   }
 
   /* Каждый показатель своей строкой */
-  .footer-container > span {
+  .footer-container > span,
+  .sync-switch {
     flex-basis: 100%;
   }
 

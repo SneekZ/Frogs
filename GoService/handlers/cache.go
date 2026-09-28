@@ -10,9 +10,9 @@ import (
 
 var (
 	cacheTTL        = time.Duration(Config.CacheTTL) * time.Second
-	signsCache      = cache.Cache[[]parser.Sign]{TTL: cacheTTL, Load: loadSigns}
-	containersCache = cache.Cache[[]parser.Container]{TTL: cacheTTL, Load: loadContainers}
-	licenseCache    = cache.Cache[parser.License]{TTL: cacheTTL, Load: loadLicense} // сбрасывается только по TTL: команд, меняющих лицензию, нет
+	signsCache      = cache.Cache[[]parser.Sign]{TTL: cacheTTL, Load: LoadSigns}
+	containersCache = cache.Cache[[]parser.Container]{TTL: cacheTTL, Load: LoadContainers}
+	licenseCache    = cache.Cache[parser.License]{TTL: cacheTTL, Load: LoadLicense} // сбрасывается только по TTL: команд, меняющих лицензию, нет
 
 	// StatusChanged получает сигнал, когда данные /status изменились или сброшены. Загрузка кэша
 	// сигнал не шлет: иначе клиенты, перезапросив статус по сигналу, вызывали бы новый.
@@ -32,12 +32,6 @@ func invalidateCache() {
 	signsCache.Invalidate()
 	containersCache.Invalidate()
 	notifyStatusChanged()
-}
-
-// RefreshCache сбрасывает все кэши, включая лицензию: следующие запросы перечитают данные с сервера
-func RefreshCache() {
-	licenseCache.Invalidate()
-	invalidateCache()
 }
 
 // Копии, чтобы вызывающий код (findDoubleSigns и т.п.) не менял содержимое кэша

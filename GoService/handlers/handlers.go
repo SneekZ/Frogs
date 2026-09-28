@@ -34,7 +34,7 @@ func Signs(snils string, thumbprint string) ([]parser.Sign, error) {
 	}), nil
 }
 
-func loadSigns() ([]parser.Sign, error) {
+func LoadSigns() ([]parser.Sign, error) {
 	h, err := bashhandler.NewBashHandlerWrapper("utf-8", false)
 	if err != nil {
 		return []parser.Sign{}, err
@@ -57,7 +57,7 @@ func Containers() ([]parser.Container, error) {
 	return cachedContainers()
 }
 
-func loadContainers() ([]parser.Container, error) {
+func LoadContainers() ([]parser.Container, error) {
 	h, err := bashhandler.NewBashHandlerWrapper("cp1250", false)
 	if err != nil {
 		return []parser.Container{}, err
@@ -397,7 +397,7 @@ func GetLicense() (parser.License, error) {
 	return licenseCache.Get()
 }
 
-func loadLicense() (parser.License, error) {
+func LoadLicense() (parser.License, error) {
 	h, err := bashhandler.NewBashHandlerWrapper("cp1251", false)
 	if err != nil {
 		return parser.License{}, err

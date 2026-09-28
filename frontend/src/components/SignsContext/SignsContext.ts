@@ -13,6 +13,9 @@ export interface LogsListener {
   onError: (reason: string) => void;
 }
 
+// Состояние потока событий: idle — сервер не выбран
+export type SyncState = "idle" | "connecting" | "online" | "error";
+
 interface SignsContextProps {
   activeConnection: ServerConnection;
   setActiveConnection: (arg0: ServerConnection) => void;
@@ -22,6 +25,13 @@ interface SignsContextProps {
   refreshActiveConnectionStatus: (callback: () => void, refresh?: boolean) => void;
   // Возвращает отписку. Пока есть подписчик, поток событий идёт вместе с логами.
   subscribeLogs: (listener: LogsListener) => () => void;
+  // Автообновление статуса по событиям сервера. Выключено — поток событий открыт
+  // только для окна логов, а события об изменении статуса пропускаются
+  sync: boolean;
+  setSync: (sync: boolean) => void;
+  syncState: SyncState;
+  // Причина последнего обрыва потока, пока syncState === "error"
+  syncError: string;
   signsList: Map<string, Sign>;
   filteredSignsList: Map<string, Sign>;
   setFilter: (arg0: string) => void;
@@ -58,6 +68,10 @@ export const SignsContext = createContext<SignsContextProps>({
   statusLoading: false,
   refreshActiveConnectionStatus: () => {},
   subscribeLogs: () => () => {},
+  sync: false,
+  setSync: () => {},
+  syncState: "idle",
+  syncError: "",
   signsList: new Map<string, Sign>(),
   filteredSignsList: new Map<string, Sign>(),
   setFilter: () => {},

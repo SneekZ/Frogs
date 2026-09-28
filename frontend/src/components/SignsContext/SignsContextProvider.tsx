@@ -1,4 +1,4 @@
-import { LogsListener, SignsContext } from "./SignsContext";
+import { LogsListener, SignsContext, SyncState } from "./SignsContext";
 import { NotificationContext } from "../Notification/NotificationContext";
 import {
   FC,
@@ -32,6 +32,7 @@ import { loadConnections } from "../../api/Connections/ConnectionsContext";
 
 const RECONNECT_MS = 5000;
 const ACTIVE_LS_KEY = "frogs.activeConnection";
+const SYNC_LS_KEY = "frogs.sync";
 
 const connectionKey = (c: ServerConnection) => `${c.host}:${c.port}`;
 
@@ -144,11 +145,45 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return () => document.removeEventListener("visibilitychange", onChange);
   }, []);
 
+  const [sync, setSync] = useState(() => {
+    try {
+      return window.localStorage.getItem(SYNC_LS_KEY) === "true";
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(SYNC_LS_KEY, String(sync));
+    } catch {
+      // Хранилище недоступно (приватный режим) — просто не запомним выбор
+    }
+  }, [sync]);
+  const [syncState, setSyncState] = useState<SyncState>("idle");
+  const [syncError, setSyncError] = useState("");
+
   // Один поток событий на вкладку и только пока она видна: браузер держит не больше
   // 6 соединений с сервером на все вкладки, а поток занимает одно постоянно.
+  // Без синхронизации поток нужен только открытому окну логов.
   const streamedConnection = useRef<ServerConnection | null>(null);
   useEffect(() => {
-    if (activeConnection.id === -1 || !visible) return;
+    // Пока синхронизация выключена, изменения проходят мимо — при включении статус перечитается
+    if (!sync) streamedConnection.current = activeConnection;
+    if (activeConnection.id === -1) {
+      setSyncState("idle");
+      return;
+    }
+    // Выключенной синхронизации состояние не видно: сразу готовим «подключение»,
+    // чтобы при включении переключатель не мигнул серым
+    if (!(sync || logsWanted)) {
+      setSyncState("connecting");
+      return;
+    }
+    // Скрытую вкладку никто не видит — состояние не трогаем, чтобы при возврате
+    // переключатель не мигал «выключенным»
+    if (!visible) return;
+    // Переподключение живого потока (возврат на вкладку) — доли секунды: не мигаем «подключением»
+    setSyncState((state) => (state === "online" ? state : "connecting"));
 
     const ctrl = new AbortController();
     let retry: ReturnType<typeof setTimeout> | undefined;
@@ -163,13 +198,14 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
         logsWanted,
         {
           onOpen: () => {
+            setSyncState("online");
             logsListener.current?.onOpen();
             // Пока потока не было (переподключение, скрытая вкладка), изменения могли пройти
             // мимо. Первое подключение к серверу пропускаем: статус загружен при его выборе.
-            if (streamedConnection.current === activeConnection) reload();
+            if (sync && streamedConnection.current === activeConnection) reload();
             streamedConnection.current = activeConnection;
           },
-          onStatus: reload,
+          onStatus: () => sync && reload(),
           onLogs: (lines) => logsListener.current?.onLines(lines),
         },
         ctrl.signal
@@ -180,6 +216,8 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
         )
         .then((reason) => {
           if (ctrl.signal.aborted) return;
+          setSyncState("error");
+          setSyncError(reason);
           logsListener.current?.onError(reason);
           retry = setTimeout(connect, RECONNECT_MS);
         });
@@ -190,7 +228,7 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       ctrl.abort();
       clearTimeout(retry);
     };
-  }, [Notify, activeConnection, logsWanted, visible, loadStatus]);
+  }, [Notify, activeConnection, logsWanted, visible, sync, loadStatus]);
 
   const [signsList, setSignsList] = useState<Map<string, Sign>>(
     new Map<string, Sign>()
@@ -462,6 +500,10 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
         statusLoading,
         refreshActiveConnectionStatus,
         subscribeLogs,
+        sync,
+        setSync,
+        syncState,
+        syncError,
         signsList,
         filteredSignsList,
         setFilter,

@@ -28,7 +28,11 @@ func (d *dailyLog) streamEvents(c *gin.Context) {
 	c.Header("Content-Type", "text/plain; charset=utf-8")
 	c.Header("Cache-Control", "no-cache")
 	c.Header("X-Content-Type-Options", "nosniff")
+	c.Header("X-Accel-Buffering", "no") // nginx перед сервисом не копит поток в буфере
 	c.Status(http.StatusOK)
+	// Прокси может не отдать одни заголовки, пока не пойдут данные (у nginx — postpone_output):
+	// клиент ждал бы до первого события и считал поток неподключенным. Шлем строку сразу
+	c.Writer.WriteString("hello\n")
 	for line := range strings.Lines(string(today)) {
 		c.Writer.WriteString("log " + strings.TrimSuffix(line, "\n") + "\n")
 	}

@@ -10,7 +10,8 @@ export interface EventHandlers {
 }
 
 // Читает /events построчно, пока сервер не закроет поток или не сработает signal.
-// Строки: "status" — статус изменился, "log <строка>" — строка лога (только с logs).
+// Строки: "status" — статус изменился, "log <строка>" — строка лога (только с logs),
+// остальные (например, "hello" сразу после открытия) пропускаются.
 // EventSource не подходит: он не умеет отправлять заголовок Authorization.
 export async function StreamEvents(
   conn: ServerConnection,
