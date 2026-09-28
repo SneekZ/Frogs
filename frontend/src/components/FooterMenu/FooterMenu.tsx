@@ -22,7 +22,7 @@ const SignsNumber: FC = () => {
   const { activeConnectionStatus } = useContext(SignsContext);
 
   return (
-    <span>Подписей на сервере: {activeConnectionStatus.info.signsnumber}</span>
+    <span>Сертификатов на сервере: {activeConnectionStatus.info.signsnumber}</span>
   );
 };
 

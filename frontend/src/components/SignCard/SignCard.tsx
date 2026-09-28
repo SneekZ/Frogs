@@ -163,7 +163,7 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
 
           <div className="grouped-list">
             <FrogsButton
-              label="Проверить подпись"
+              label="Проверить сертификат"
               onClick={() => {
                 setLoadingCheck(true);
                 checkSign(sign, () => setLoadingCheck(false));
@@ -196,6 +196,12 @@ const ChangePasswordButton: FC<{ sign: Sign; className: string }> = ({
 
   const [loading, setLoading] = useState(false);
 
+  // Пароль в БД меняем, только если проверка показала, что текущий не подходит.
+  // У действительного сертификата бэк присылает checkerror: null
+  const wrongPassword =
+    sign.checked &&
+    !!sign.checkerror?.some((e) => e.startsWith("Неверный пароль"));
+
   const handleChangePassword = () => {
     setLoading(true);
     changePassword(sign, newPassword, () => {
@@ -213,16 +219,20 @@ const ChangePasswordButton: FC<{ sign: Sign; className: string }> = ({
         className={className}
       />
       <Modal
-        title="Смена пароля подписи"
+        title="Смена пароля сертификата"
         isOpen={openModal}
         onClose={() => setOpenModal(false)}
       >
         <div className="change-password-form">
           <p className="modal-description">
-            Новый пароль сохранится в базе данных для этой подписи.
+            {wrongPassword
+              ? "Новый пароль сохранится в базе данных для этого сертификата."
+              : "Сначала проверьте сертификат: сменить пароль можно, только если он неверный."}
           </p>
           <FrogsInput
+            type="password"
             placeholder="Новый пароль"
+            disabled={!wrongPassword}
             onChange={(e) => setNewPassword(e.target.value)}
           />
           <div className="modal-actions">
@@ -230,6 +240,7 @@ const ChangePasswordButton: FC<{ sign: Sign; className: string }> = ({
             <FrogsButton
               label="Сменить пароль"
               className="button-primary"
+              disabled={!wrongPassword}
               onClick={handleChangePassword}
               loading={loading}
             />

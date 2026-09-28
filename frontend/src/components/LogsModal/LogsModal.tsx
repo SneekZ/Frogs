@@ -8,6 +8,10 @@ import { GetLogDay, GetLogDays, LogDays } from "../../api/handlers/Logs";
 // Значение выбора «сегодня, в реальном времени»; остальные — даты ГГГГ-ММ-ДД.
 const LIVE = "";
 
+// Держим только хвост лога: каждая новая строка перерисовывает весь список,
+// и на десятках тысяч строк вкладка начинает тормозить.
+const MAX_LINES = 5000;
+
 const LogsModal: FC<ModalProps> = ({ isOpen, onClose }) => {
   const { activeConnection, subscribeLogs } = useContext(SignsContext);
   const [days, setDays] = useState<LogDays | null>(null);
@@ -59,7 +63,9 @@ const LogsModal: FC<ModalProps> = ({ isOpen, onClose }) => {
       onLines: (chunk) => {
         const replace = fresh;
         fresh = false;
-        setLines((prev) => (replace ? chunk : [...prev, ...chunk]));
+        setLines((prev) =>
+          (replace ? chunk : [...prev, ...chunk]).slice(-MAX_LINES)
+        );
       },
       onError: (reason) => {
         setLive(false);
@@ -74,7 +80,7 @@ const LogsModal: FC<ModalProps> = ({ isOpen, onClose }) => {
     let cancelled = false;
     setLoading(true);
     GetLogDay(activeConnection, selected)
-      .then((dayLines) => !cancelled && setLines(dayLines))
+      .then((dayLines) => !cancelled && setLines(dayLines.slice(-MAX_LINES)))
       .catch((e: Error) => !cancelled && setError(e.message))
       .finally(() => !cancelled && setLoading(false));
     return () => {
@@ -154,6 +160,11 @@ const LogsModal: FC<ModalProps> = ({ isOpen, onClose }) => {
             el.scrollHeight - el.scrollTop - el.clientHeight < 24;
         }}
       >
+        {lines.length === MAX_LINES && (
+          <div className="logs-empty">
+            Показаны последние {MAX_LINES} строк
+          </div>
+        )}
         {shown.map((line, i) => (
           <div key={i} className={`logs-line ${levelClass(line)}`}>
             {line}

@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"slices"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -542,23 +543,47 @@ func DeleteSignByThumbprint(c *gin.Context) {
 }
 
 type ChangePasswordRequest struct {
-	Snils string `json:"snils"`
+	Thumbprint string `json:"thumbprint"`
 	Password string `json:"password"`
 }
 
-// PostChangePassword принимает снилс и пароль, меняет в базе пароль у всех пользователей с этимм снилсом
-// @Description Принимает снилс и пароль, меняет в базе пароль у всех пользователей с этимм снилсом
+// PostChangePassword принимает отпечаток сертификата и пароль, меняет в базе пароль у всех пользователей со снилсом сертификата
+// @Description Принимает отпечаток сертификата и пароль, меняет в базе пароль у всех пользователей со снилсом сертификата. Менять можно, только если последняя проверка сертификата вернула «Неверный пароль»
 // @Tags password
 // @Accept json
 // @Produce json
 // @Success 200 {string} Status
 // @Router /changepassword [post]
 func PostChangePassword(c *gin.Context) {
-	response := Response{} 
+	response := Response{}
 
 	var request = ChangePasswordRequest{}
 
-	c.ShouldBindBodyWithJSON(&request)
+	if err := c.ShouldBindBodyWithJSON(&request); err != nil || request.Thumbprint == "" {
+		response.Error = "не удалось найти отпечаток сертификата в запросе"
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	signs, err := handlers.Signs("", request.Thumbprint)
+	if err != nil {
+		response.Error = err.Error()
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	if len(signs) != 1 {
+		response.Error = "сертификат не найден"
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// Результат проверки хранится в кэше сертификатов: после сброса кэша нужно проверить заново
+	if !slices.Contains(signs[0].CheckErrors, errorcodes.GetErrorCode("0x8010006b")) {
+		response.Error = "сначала проверьте сертификат: сменить пароль можно, только если проверка вернула ошибку «Неверный пароль»"
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 
 	db, err := databasehandler.NewHandler()
 	if err != nil {
@@ -567,7 +592,7 @@ func PostChangePassword(c *gin.Context) {
 		return
 	}
 
-	err = db.ChangePassword(request.Snils, request.Password)
+	err = db.ChangePassword(signs[0].Subject.SNILS, request.Password)
 	if err != nil {
 		response.Error = err.Error()
 		c.JSON(http.StatusBadRequest, response)

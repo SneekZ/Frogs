@@ -10,7 +10,7 @@ export function ChangePassword(
   const changed = defaultRequest(connection, "/changepassword", {
     method: "POST",
     body: JSON.stringify({
-      snils: sign.subject.snils,
+      thumbprint: sign.thumbprint,
       password: newPassword,
     }),
   })

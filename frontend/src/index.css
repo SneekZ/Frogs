@@ -131,7 +131,6 @@ body {
   background-color: var(--bg-base);
   background-image: radial-gradient(var(--dot) 1px, transparent 1.6px);
   background-size: 22px 22px;
-  background-attachment: fixed;
 }
 
 *,
@@ -222,5 +221,17 @@ body {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Только Firefox понимает -moz-appearance. Размытие фона он считает на каждый кадр,
+   а на Linux часто программно (WebRender Software) — с радиусом 30–40px и вложенными
+   слоями (затемнение + окно) это вешало весь браузер. Панели и так почти непрозрачные,
+   без размытия разница едва видна.
+   ponytail: выключено во всём Firefox целиком; если стекло нужно вернуть — по одному
+   слою, начиная с .modal-overlay, и проверять на Linux */
+@supports (-moz-appearance: none) {
+  * {
+    backdrop-filter: none !important;
   }
 }

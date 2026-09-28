@@ -19,11 +19,11 @@ export async function GetCheckSignByThumbprint(
       } else {
         if (response.signs.length == 1) {
           throw new Error(
-            `после проверки пришло ${response.signs.length} подписей`
+            `после проверки пришло ${response.signs.length} сертификатов`
           );
         } else {
           throw new Error(
-            `отпечаток полученной подписи не совпадает: ожидался ${signToCheck.thumbprint}, пришло ${response.signs[0].thumbprint}`
+            `отпечаток полученного сертификата не совпадает: ожидался ${signToCheck.thumbprint}, пришло ${response.signs[0].thumbprint}`
           );
         }
       }
