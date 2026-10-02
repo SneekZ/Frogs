@@ -12,6 +12,7 @@ const statusOptions = [
   { value: "unchecked", label: "Непроверенные" },
   { value: "expiring", label: "Истекают в этом месяце" },
   { value: "duplicates", label: "Дубликаты по СНИЛС" },
+  { value: "mo", label: "Сертификат МО" },
 ];
 
 const SignsContainer: FC = () => {

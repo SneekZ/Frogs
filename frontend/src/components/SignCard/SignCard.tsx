@@ -70,6 +70,7 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
         <span className="card-collapsed-snils">
           {formatSnils(sign.subject.snils)}
         </span>
+        {sign.isMO && <span className="sign-tag">Сертификат МО</span>}
         <span className={`card-status ${status}`}>
           <StatusLabel sign={sign} />
         </span>
@@ -86,6 +87,7 @@ const SignCard: FC<SignCardProps> = ({ inputThumbprint }) => {
             <span className="sign-hero-status">
               <StatusLabel sign={sign} />
             </span>
+            {sign.isMO && <span className="sign-tag">Сертификат МО</span>}
           </div>
 
           <div className="grouped-list">

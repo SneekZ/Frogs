@@ -136,6 +136,16 @@
   color: var(--label-secondary);
 }
 
+/* Тэг типа сертификата: нейтральная плашка, чтобы не спорить с цветом статуса */
+.sign-tag {
+  padding: 2px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--label-secondary);
+  background-color: var(--fill);
+  border-radius: 999px;
+}
+
 .sign-card-modal-row {
   display: grid;
   grid-template-columns: 140px minmax(0, 1fr);

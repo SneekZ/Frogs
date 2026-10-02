@@ -57,9 +57,10 @@ func parseSign(input string, ch chan Sign, timestampNow *int64) {
 		FolderName: contFolderName,
 	}
 
+	subject := parseSubject(input)
 	sign := Sign{
 		Issuer: parseIssuer(input),
-		Subject: parseSubject(input),
+		Subject: subject,
 		Serial: regex.ParseSerial(input),
 		Thumbprint: regex.ParseThumbprint(input),
 		SubjKey: regex.ParseSubjKey(input),
@@ -69,6 +70,7 @@ func parseSign(input string, ch chan Sign, timestampNow *int64) {
 		NotValidAfter: regex.ParseNotValidAfter(input),
 		Container: container,
 		ProviderName: regex.ParseProviderName(input),
+		IsMO: subject.OGRN != "",
 	}
 
 	ch <- Precheck(sign, *timestampNow)

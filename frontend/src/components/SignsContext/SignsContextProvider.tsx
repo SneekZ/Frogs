@@ -426,6 +426,8 @@ const SignsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
           return expiresThisMonth(sign);
         case "duplicates":
           return (snilsCount.get(snilsKey(sign)) ?? 0) > 1;
+        case "mo":
+          return sign.isMO;
         default:
           return signStatus(sign) === statusFilter;
       }

@@ -22,6 +22,7 @@ type Sign struct {
 	CheckErrors        []string  `json:"checkerror"`
 	Password           string    `json:"password"`
 	DatabaseIds        []int     `json:"databaseids"`
+	IsMO               bool      `json:"isMO"` // сертификат медицинской организации: в субъекте есть ОГРН
 }
 
 func (s Sign) GetFolderName() string {

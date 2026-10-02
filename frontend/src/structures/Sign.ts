@@ -97,13 +97,16 @@ export interface Sign {
   checkerror: string[];
   password: string;
   databaseids: number[];
+  // Сертификат медицинской организации: в субъекте есть ОГРН
+  isMO: boolean;
 }
 
 export type SignStatus = "valid" | "invalid" | "unchecked";
 
 // "expiring" — не статус проверки, а срок: ещё действует, но истекает до конца текущего месяца
 // "duplicates" — СНИЛС владельца встречается больше чем в одном сертификате
-export type SignFilter = SignStatus | "expiring" | "duplicates" | "";
+// "mo" — сертификат медицинской организации
+export type SignFilter = SignStatus | "expiring" | "duplicates" | "mo" | "";
 
 export const expiresThisMonth = (sign: Sign, now = new Date()): boolean => {
   const expiresAt = sign.notvalidafter * 1000;
@@ -131,6 +134,7 @@ export const defaultSign: Sign = {
   checkerror: [],
   password: "",
   databaseids: [],
+  isMO: false,
 };
 
 export const mockSign: Sign = {
@@ -153,4 +157,5 @@ export const mockSign: Sign = {
   checkerror: ["Сертификат просрочен"],
   password: "",
   databaseids: [],
+  isMO: false,
 };
