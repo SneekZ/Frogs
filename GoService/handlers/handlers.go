@@ -7,10 +7,12 @@ import (
 	"GoService/errorcodes"
 	"GoService/parser"
 	"GoService/regex"
+	"GoService/utils"
 	"archive/tar"
 	"bytes"
 	"fmt"
 	"maps"
+	"path"
 	"slices"
 	"strings"
 	"sync"
@@ -92,7 +94,7 @@ func InstallContainer(container parser.Container) (parser.Sign, error) {
 		}
 		return sign, err
 	}
-	commandGetContainerName := fmt.Sprintf("%s -keyset -enum_cont -verifyc -unique -fqcn | grep %s", Config.CsptestPath, container.FolderName)
+	commandGetContainerName := fmt.Sprintf("%s -keyset -enum_cont -verifyc -unique -fqcn | grep -F -- %s", Config.CsptestPath, utils.ShellQuote(container.FolderName))
 	out, err := h.Exec(commandGetContainerName)
 	if err != nil {
 		return parser.Sign{}, err
@@ -114,7 +116,8 @@ func InstallContainerByName(containerName string) (parser.Sign, error) {
 		return parser.Sign{}, err
 	}
 
-	commandInstall := fmt.Sprintf("%s -install -container '\\\\.\\HDIMAGE\\%s'", Config.CertmgrPath, containerName)
+	// Имя приходит из URL: кавычка внутри него закрыла бы ручные '...'
+	commandInstall := fmt.Sprintf("%s -install -container %s", Config.CertmgrPath, utils.ShellQuote(`\\.\HDIMAGE\`+containerName))
 	out, err := h.Exec(commandInstall)
 	if err != nil {
 		return parser.Sign{}, err
@@ -211,7 +214,10 @@ func SignDocument(sign parser.Sign, filepath string, password string) (string, e
 		return "", err
 	}
 
-	commandSignDocument := fmt.Sprintf("%s -signf -cert -nochain -thumbprint %s -display -pin \"%s\" %s", Config.CryptcpPath, sign.Thumbprint, password, filepath)
+	// -dir: без него cryptcp кладет .sgn в текущий каталог процесса, а не рядом с файлом
+	// Имя файла и пароль приходят из запроса — только в кавычках, иначе это инъекция команд
+	commandSignDocument := fmt.Sprintf("%s -signf -dir %s -cert -nochain -thumbprint %s -display -pin %s %s",
+		Config.CryptcpPath, utils.ShellQuote(path.Dir(filepath)), utils.ShellQuote(sign.Thumbprint), utils.ShellQuote(password), utils.ShellQuote(filepath))
 	out, err := h.Exec(commandSignDocument)
 
 	if err != nil {

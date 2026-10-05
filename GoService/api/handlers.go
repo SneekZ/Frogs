@@ -470,6 +470,7 @@ func PostSignDocument(c *gin.Context) {
 		return	
 	}
 
+	var signedFilePath string
 	if signDocumentRequest.FindPassword {
 		checkedSign, err := handlers.CheckSignsList(sign)
 		if err != nil {
@@ -478,14 +479,14 @@ func PostSignDocument(c *gin.Context) {
 			return
 		}
 
-		_, err = handlers.SignDocument(checkedSign[0], uploadedFilePath, checkedSign[0].Password)
+		signedFilePath, err = handlers.SignDocument(checkedSign[0], uploadedFilePath, checkedSign[0].Password)
 		if err != nil {
 			response.Error = errorcodes.GetErrorCode(err.Error())
 			c.JSON(http.StatusBadRequest, response)
 			return
 		}
 	} else {
-		_, err = handlers.SignDocument(sign[0], uploadedFilePath, signDocumentRequest.Password)
+		signedFilePath, err = handlers.SignDocument(sign[0], uploadedFilePath, signDocumentRequest.Password)
 		if err != nil {
 			response.Error = errorcodes.GetErrorCode(err.Error())
 			c.JSON(http.StatusBadRequest, response)
@@ -499,15 +500,15 @@ func PostSignDocument(c *gin.Context) {
 		return
 	}
 
-	if _, err := os.Stat(file.Filename + ".sgn"); os.IsNotExist(err) {
+	if _, err := os.Stat(signedFilePath); os.IsNotExist(err) {
 		response.Error = "подписанный файл не был создан" 
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
-	c.File(file.Filename + ".sgn")
-	os.Remove(file.Filename + ".sgn")
-	os.Remove("uploads/" + file.Filename)
+	c.File(signedFilePath)
+	os.Remove(signedFilePath)
+	os.Remove(uploadedFilePath)
 }
 
 // DeleteSignByThumbprint принимает thumbprint и удаляет подпись по нему
